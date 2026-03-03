@@ -1,7 +1,9 @@
-import { Link, useLocation } from "react-router-dom";
-import { Search, Menu, X } from "lucide-react";
-import { useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Search, Menu, X, LogOut, User } from "lucide-react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
 
 const NAV_LINKS = [
   { to: "/", label: "Home" },
@@ -13,7 +15,28 @@ const NAV_LINKS = [
 
 const Navbar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [session, setSession] = useState<any>(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    navigate("/");
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">
@@ -32,11 +55,10 @@ const Navbar = () => {
             <Link
               key={link.to}
               to={link.to}
-              className={`relative rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-                location.pathname === link.to
+              className={`relative rounded-lg px-3 py-2 text-sm font-medium transition-colors ${location.pathname === link.to
                   ? "text-primary"
                   : "text-muted-foreground hover:text-foreground"
-              }`}
+                }`}
             >
               {link.label}
               {location.pathname === link.to && (
@@ -56,6 +78,38 @@ const Navbar = () => {
           >
             <Search className="h-4 w-4" />
           </Link>
+
+          <div className="hidden border-l border-border h-4 mx-2 md:block" />
+
+          {session ? (
+            <div className="flex items-center gap-3">
+              <div className="hidden items-center gap-2 md:flex">
+                <div className="flex bg-secondary h-8 w-8 items-center justify-center rounded-full">
+                  <User className="h-4 w-4 text-muted-foreground" />
+                </div>
+                <span className="text-sm font-medium text-foreground">
+                  {session.user.user_metadata?.display_name || session.user.email?.split("@")[0]}
+                </span>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleSignOut}
+                className="text-muted-foreground hover:text-destructive transition-colors"
+              >
+                <LogOut className="h-4 w-4 md:mr-2" />
+                <span className="hidden md:inline">Sign Out</span>
+              </Button>
+            </div>
+          ) : (
+            <Link
+              to="/auth"
+              className="inline-flex h-9 items-center justify-center rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary/90"
+            >
+              Sign In
+            </Link>
+          )}
+
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
             className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground md:hidden"
@@ -79,15 +133,23 @@ const Navbar = () => {
                   key={link.to}
                   to={link.to}
                   onClick={() => setMobileOpen(false)}
-                  className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-                    location.pathname === link.to
+                  className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${location.pathname === link.to
                       ? "bg-primary/10 text-primary"
                       : "text-muted-foreground hover:text-foreground"
-                  }`}
+                    }`}
                 >
                   {link.label}
                 </Link>
               ))}
+              {!session && (
+                <Link
+                  to="/auth"
+                  onClick={() => setMobileOpen(false)}
+                  className="mt-2 rounded-lg bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground"
+                >
+                  Sign In
+                </Link>
+              )}
             </div>
           </motion.div>
         )}
