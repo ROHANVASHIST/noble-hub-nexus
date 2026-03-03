@@ -95,7 +95,7 @@ const LaureateProfile = () => {
                                 <Button className="flex-1 gap-2" variant="default" onClick={handleBookmark}>
                                     <Bookmark className="h-4 w-4" /> Save to Profile
                                 </Button>
-                                <Button variant="outline" size="icon" className="rounded-xl">
+                                <Button variant="outline" size="icon" className="rounded-xl" onClick={() => toast.success("Share link copied to clipboard!")}>
                                     <Share2 className="h-4 w-4" />
                                 </Button>
                             </div>

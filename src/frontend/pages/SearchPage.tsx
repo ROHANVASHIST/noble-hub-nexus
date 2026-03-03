@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Search, SlidersHorizontal } from "lucide-react";
+import { toast } from "sonner";
 import PageLayout from "@/frontend/components/layout/PageLayout";
 import LaureateCard from "@/frontend/components/cards/LaureateCard";
 import LectureCard from "@/frontend/components/cards/LectureCard";
@@ -73,10 +74,12 @@ const SearchPage = () => {
               {TABS.map((tab) => (
                 <button
                   key={tab.key}
-                  onClick={() => setContentType(tab.key)}
-                  className={`rounded-full px-3 py-1.5 text-xs font-medium transition-all ${
-                    contentType === tab.key ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground hover:text-foreground"
-                  }`}
+                  onClick={() => {
+                    setContentType(tab.key);
+                    toast.info(`Filtering results: ${tab.label}`);
+                  }}
+                  className={`rounded-full px-3 py-1.5 text-xs font-medium transition-all ${contentType === tab.key ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground hover:text-foreground"
+                    }`}
                 >
                   {tab.label} ({tab.count})
                 </button>

@@ -6,6 +6,7 @@ import LectureCard from "@/frontend/components/cards/LectureCard";
 import { CATEGORIES, NobelCategory } from "@/backend/data/mock-data";
 import { fetchLectures } from "@/backend/services/lectures";
 import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 const LecturesPage = () => {
   const [selectedCategory, setSelectedCategory] = useState<NobelCategory | "All">("All");
@@ -25,7 +26,10 @@ const LecturesPage = () => {
 
         <div className="mt-6 flex flex-wrap gap-2">
           <button
-            onClick={() => setSelectedCategory("All")}
+            onClick={() => {
+              setSelectedCategory("All");
+              toast.info("Viewing all lectures");
+            }}
             className={`rounded-full px-3 py-1.5 text-xs font-medium transition-all ${selectedCategory === "All" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground hover:text-foreground"
               }`}
           >
@@ -34,7 +38,10 @@ const LecturesPage = () => {
           {CATEGORIES.map((c) => (
             <button
               key={c.name}
-              onClick={() => setSelectedCategory(c.name)}
+              onClick={() => {
+                setSelectedCategory(c.name);
+                toast.success(`Showing ${c.name} lectures`);
+              }}
               className={`rounded-full px-3 py-1.5 text-xs font-medium transition-all ${selectedCategory === c.name ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground hover:text-foreground"
                 }`}
             >

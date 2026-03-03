@@ -131,11 +131,12 @@ const Index = () => {
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05, duration: 0.4 }}
-              className={`rounded-xl border border-border/50 bg-gradient-to-br ${cat.color} p-4 text-center transition-all hover:border-primary/30 cursor-pointer`}
+              onClick={() => toast.info(`Filtering for ${cat.name}... (Demo)`)}
+              className={`rounded-xl border border-border/50 bg-gradient-to-br ${cat.color} p-4 text-center transition-all hover:border-primary/30 cursor-pointer hover:scale-105 active:scale-95`}
             >
               <span className="text-2xl">{cat.icon}</span>
               <p className="mt-2 font-display text-sm font-semibold text-foreground">{cat.name}</p>
-              <p className="mt-0.5 text-xs text-muted-foreground">{cat.count} laureates</p>
+              <p className="mt-0.5 text-[10px] font-bold text-muted-foreground uppercase opacity-70">{cat.count} records</p>
             </motion.div>
           ))}
         </div>

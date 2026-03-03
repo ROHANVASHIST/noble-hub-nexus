@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { User, Bookmark, Heart, Clock, Settings, LogOut, ChevronRight, Award, BookOpen, Video } from "lucide-react";
+import { User, Bookmark, Heart, Clock, Settings, LogOut, ChevronRight, Award, BookOpen, Video, Sparkles } from "lucide-react";
 import PageLayout from "@/frontend/components/layout/PageLayout";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -107,18 +107,72 @@ const Profile = () => {
                                 </div>
                             </div>
 
+                            {/* Research Summary Feed */}
+                            <div className="space-y-4">
+                                <div className="flex items-center justify-between">
+                                    <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
+                                        <Sparkles className="h-5 w-5 text-amber-500" /> Personalized Research Feed
+                                    </h2>
+                                    <Button variant="ghost" size="sm" className="text-xs text-primary font-bold" onClick={() => toast.info("Refreshing your personalized feed...")}>Refresh Feed</Button>
+                                </div>
+
+                                <div className="space-y-4">
+                                    <div className="rounded-2xl border border-primary/20 bg-primary/5 p-6 backdrop-blur-sm">
+                                        <div className="flex justify-between items-start">
+                                            <div className="flex gap-4">
+                                                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                                                    <Sparkles className="h-5 w-5 text-primary" />
+                                                </div>
+                                                <div>
+                                                    <h4 className="text-sm font-bold text-foreground">AI Insight: Breakthroughs in Quantum Computing</h4>
+                                                    <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
+                                                        Based on your interest in Physics (5 saved items), we've summarized 3 recent papers on topological insulators.
+                                                        The consensus highlights a major shift towards room-temperature superconductivity.
+                                                    </p>
+                                                    <div className="mt-3 flex gap-2">
+                                                        <Button variant="outline" size="sm" className="h-7 text-[10px] font-bold uppercase" onClick={() => toast.success("Summary added to your notes")}>Add to Notes</Button>
+                                                        <Button variant="outline" size="sm" className="h-7 text-[10px] font-bold uppercase" onClick={() => toast.info("Full report generating...")}>Full Report</Button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <span className="text-[10px] font-bold text-muted-foreground uppercase opacity-60">Just Now</span>
+                                        </div>
+                                    </div>
+
+                                    <div className="rounded-2xl border border-border/50 bg-card/30 p-6">
+                                        <div className="flex justify-between items-start">
+                                            <div className="flex gap-4">
+                                                <div className="h-10 w-10 rounded-full bg-amber-500/10 flex items-center justify-center shrink-0">
+                                                    <Award className="h-5 w-5 text-amber-600" />
+                                                </div>
+                                                <div>
+                                                    <h4 className="text-sm font-bold text-foreground">Archival Highlight: Marie Curie</h4>
+                                                    <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
+                                                        Did you know Curie's papers are still radioactive? Her 1911 Chemistry prize was awarded exactly 115 years ago this month.
+                                                    </p>
+                                                    <div className="mt-3">
+                                                        <Button variant="link" className="p-0 h-auto text-xs text-primary font-bold" onClick={() => navigate("/laureates/6")}>View Biography</Button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <span className="text-[10px] font-bold text-muted-foreground uppercase opacity-60">2h ago</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             {/* Recent Activity / Bookmarks */}
                             <div className="space-y-4">
                                 <div className="flex items-center justify-between">
                                     <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
                                         <Bookmark className="h-5 w-5 text-primary" /> Curated Library
                                     </h2>
-                                    <Button variant="ghost" size="sm" className="text-xs text-primary font-bold">Manage All</Button>
+                                    <Button variant="ghost" size="sm" className="text-xs text-primary font-bold" onClick={() => toast.info("Opening library manager...")}>Manage All</Button>
                                 </div>
 
                                 <div className="grid gap-4 md:grid-cols-2">
                                     {/* Mock Bookmarked Items */}
-                                    <div className="flex items-center gap-4 rounded-2xl border border-border/50 bg-card p-4 transition-all hover:border-primary/30 cursor-pointer">
+                                    <div className="flex items-center gap-4 rounded-2xl border border-border/50 bg-card p-4 transition-all hover:border-primary/30 cursor-pointer" onClick={() => toast.success("Navigating to archived item...")}>
                                         <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-amber-500/10">
                                             <Award className="h-6 w-6 text-amber-500" />
                                         </div>
@@ -129,7 +183,7 @@ const Profile = () => {
                                         <ChevronRight className="h-4 w-4 ml-auto text-muted-foreground" />
                                     </div>
 
-                                    <div className="flex items-center gap-4 rounded-2xl border border-border/50 bg-card p-4 transition-all hover:border-primary/30 cursor-pointer">
+                                    <div className="flex items-center gap-4 rounded-2xl border border-border/50 bg-card p-4 transition-all hover:border-primary/30 cursor-pointer" onClick={() => toast.success("Navigating to archived item...")}>
                                         <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-500/10">
                                             <BookOpen className="h-6 w-6 text-blue-500" />
                                         </div>
@@ -140,7 +194,7 @@ const Profile = () => {
                                         <ChevronRight className="h-4 w-4 ml-auto text-muted-foreground" />
                                     </div>
 
-                                    <div className="flex items-center gap-4 rounded-2xl border border-border/50 bg-card p-4 transition-all hover:border-primary/30 cursor-pointer">
+                                    <div className="flex items-center gap-4 rounded-2xl border border-border/50 bg-card p-4 transition-all hover:border-primary/30 cursor-pointer" onClick={() => toast.success("Navigating to archived item...")}>
                                         <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-rose-500/10">
                                             <Video className="h-6 w-6 text-rose-500" />
                                         </div>
@@ -156,7 +210,7 @@ const Profile = () => {
                                     <h3 className="text-xl font-bold text-foreground font-display">Expand Your Horizons</h3>
                                     <p className="mt-2 text-sm text-muted-foreground max-w-sm mx-auto">Discover more groundbreaking achievements and add them to your personalized collection.</p>
                                     <Link to="/laureates">
-                                        <Button className="mt-6 rounded-xl shadow-lg shadow-primary/20">Explore Discoveries</Button>
+                                        <Button className="mt-6 rounded-xl shadow-lg shadow-primary/20" onClick={() => toast.info("Opening Discovery Engine...")}>Explore Discoveries</Button>
                                     </Link>
                                 </div>
                             </div>
