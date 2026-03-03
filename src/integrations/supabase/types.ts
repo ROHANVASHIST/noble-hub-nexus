@@ -14,7 +14,219 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      bookmarks: {
+        Row: {
+          created_at: string
+          id: string
+          item_id: string
+          item_type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          item_id: string
+          item_type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          item_id?: string
+          item_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      laureates: {
+        Row: {
+          biography: string | null
+          birth_year: number
+          category: Database["public"]["Enums"]["nobel_category"]
+          created_at: string
+          death_year: number | null
+          first_name: string
+          id: string
+          institution: string
+          last_name: string
+          motivation: string
+          nationality: string
+          photo: string | null
+          year: number
+        }
+        Insert: {
+          biography?: string | null
+          birth_year: number
+          category: Database["public"]["Enums"]["nobel_category"]
+          created_at?: string
+          death_year?: number | null
+          first_name: string
+          id?: string
+          institution?: string
+          last_name: string
+          motivation: string
+          nationality: string
+          photo?: string | null
+          year: number
+        }
+        Update: {
+          biography?: string | null
+          birth_year?: number
+          category?: Database["public"]["Enums"]["nobel_category"]
+          created_at?: string
+          death_year?: number | null
+          first_name?: string
+          id?: string
+          institution?: string
+          last_name?: string
+          motivation?: string
+          nationality?: string
+          photo?: string | null
+          year?: number
+        }
+        Relationships: []
+      }
+      lectures: {
+        Row: {
+          category: Database["public"]["Enums"]["nobel_category"]
+          created_at: string
+          description: string | null
+          duration: string
+          id: string
+          speaker_name: string
+          thumbnail: string | null
+          title: string
+          views: number
+          year: number
+        }
+        Insert: {
+          category: Database["public"]["Enums"]["nobel_category"]
+          created_at?: string
+          description?: string | null
+          duration?: string
+          id?: string
+          speaker_name: string
+          thumbnail?: string | null
+          title: string
+          views?: number
+          year: number
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["nobel_category"]
+          created_at?: string
+          description?: string | null
+          duration?: string
+          id?: string
+          speaker_name?: string
+          thumbnail?: string | null
+          title?: string
+          views?: number
+          year?: number
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          display_name: string | null
+          email: string | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      research_papers: {
+        Row: {
+          abstract: string | null
+          authors: string[]
+          category: Database["public"]["Enums"]["nobel_category"]
+          citations: number
+          created_at: string
+          doi: string | null
+          id: string
+          journal: string | null
+          title: string
+          year: number
+        }
+        Insert: {
+          abstract?: string | null
+          authors?: string[]
+          category: Database["public"]["Enums"]["nobel_category"]
+          citations?: number
+          created_at?: string
+          doi?: string | null
+          id?: string
+          journal?: string | null
+          title: string
+          year: number
+        }
+        Update: {
+          abstract?: string | null
+          authors?: string[]
+          category?: Database["public"]["Enums"]["nobel_category"]
+          citations?: number
+          created_at?: string
+          doi?: string | null
+          id?: string
+          journal?: string | null
+          title?: string
+          year?: number
+        }
+        Relationships: []
+      }
+      user_activity: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          item_id: string | null
+          item_type: string | null
+          metadata: Json | null
+          user_id: string
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          item_id?: string | null
+          item_type?: string | null
+          metadata?: Json | null
+          user_id: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          item_id?: string | null
+          item_type?: string | null
+          metadata?: Json | null
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +235,13 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      nobel_category:
+        | "Physics"
+        | "Chemistry"
+        | "Medicine"
+        | "Literature"
+        | "Peace"
+        | "Economics"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +368,15 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      nobel_category: [
+        "Physics",
+        "Chemistry",
+        "Medicine",
+        "Literature",
+        "Peace",
+        "Economics",
+      ],
+    },
   },
 } as const
