@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Lecture } from "@/data/mock-data";
+import { Lecture } from "@/backend/data/mock-data";
 import { Play, Clock, Eye } from "lucide-react";
 
 const LectureCard = ({ lecture, index = 0 }: { lecture: Lecture; index?: number }) => (

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import PageLayout from "@/components/layout/PageLayout";
-import LectureCard from "@/components/cards/LectureCard";
-import { LECTURES, CATEGORIES, NobelCategory } from "@/data/mock-data";
+import PageLayout from "@/frontend/components/layout/PageLayout";
+import LectureCard from "@/frontend/components/cards/LectureCard";
+import { LECTURES, CATEGORIES, NobelCategory } from "@/backend/data/mock-data";
 
 const LecturesPage = () => {
   const [selectedCategory, setSelectedCategory] = useState<NobelCategory | "All">("All");

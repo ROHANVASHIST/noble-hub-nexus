@@ -1,12 +1,12 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Search, ArrowRight, Award, BookOpen, Video, BarChart3, Users, Globe } from "lucide-react";
-import PageLayout from "@/components/layout/PageLayout";
-import LaureateCard from "@/components/cards/LaureateCard";
-import LectureCard from "@/components/cards/LectureCard";
-import StatCard from "@/components/cards/StatCard";
-import { CATEGORIES, LAUREATES, LECTURES, ANALYTICS_DATA } from "@/data/mock-data";
-import heroBg from "@/assets/hero-bg.jpg";
+import PageLayout from "@/frontend/components/layout/PageLayout";
+import LaureateCard from "@/frontend/components/cards/LaureateCard";
+import LectureCard from "@/frontend/components/cards/LectureCard";
+import StatCard from "@/frontend/components/cards/StatCard";
+import { CATEGORIES, LAUREATES, LECTURES, ANALYTICS_DATA } from "@/backend/data/mock-data";
+import heroBg from "@/frontend/assets/hero-bg.jpg";
 
 const stats = [
   { icon: Award, label: "Nobel Laureates", value: ANALYTICS_DATA.stats.totalLaureates },
