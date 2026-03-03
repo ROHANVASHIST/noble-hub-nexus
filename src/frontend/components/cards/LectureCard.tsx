@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Lecture } from "@/backend/data/mock-data";
-import { Play, Clock, Eye, Sparkles, X, ExternalLink, Download } from "lucide-react";
+import { Play, Clock, Eye, Sparkles, X, ExternalLink, Download, Bookmark } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -46,6 +46,11 @@ const LectureCard = ({ lecture, index = 0 }: { lecture: Lecture; index?: number 
             {lecture.title}
           </h3>
           <div className="flex gap-1 shrink-0">
+            <Button variant="ghost" size="icon" className="h-7 w-7 rounded-md" onClick={() => {
+              toast.success("Saved to your watch list");
+            }}>
+              <Bookmark className="h-3.5 w-3.5 text-primary" />
+            </Button>
             <Button variant="ghost" size="icon" className="h-7 w-7 rounded-md" onClick={() => setShowSummary(true)}>
               <Sparkles className="h-3.5 w-3.5 text-amber-500" />
             </Button>

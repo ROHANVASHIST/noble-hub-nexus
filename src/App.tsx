@@ -10,6 +10,8 @@ import ResearchPage from "./frontend/pages/ResearchPage";
 import AnalyticsPage from "./frontend/pages/AnalyticsPage";
 import SearchPage from "./frontend/pages/SearchPage";
 import Auth from "./frontend/pages/Auth";
+import Profile from "./frontend/pages/Profile";
+import LaureateProfile from "./frontend/pages/LaureateProfile";
 import NotFound from "./frontend/pages/NotFound";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -49,10 +51,12 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
           <Route path="/laureates" element={<ProtectedRoute><LaureatesPage /></ProtectedRoute>} />
+          <Route path="/laureates/:id" element={<ProtectedRoute><LaureateProfile /></ProtectedRoute>} />
           <Route path="/lectures" element={<ProtectedRoute><LecturesPage /></ProtectedRoute>} />
           <Route path="/research" element={<ProtectedRoute><ResearchPage /></ProtectedRoute>} />
           <Route path="/analytics" element={<ProtectedRoute><AnalyticsPage /></ProtectedRoute>} />
           <Route path="/search" element={<ProtectedRoute><SearchPage /></ProtectedRoute>} />
+          <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { ResearchPaper } from "@/backend/data/mock-data";
-import { FileText, Quote, ExternalLink, Download, FileJson, Sparkles, X } from "lucide-react";
+import { FileText, Quote, ExternalLink, Download, FileJson, Sparkles, X, Bookmark } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -36,6 +36,11 @@ const PaperCard = ({ paper, index = 0 }: { paper: ResearchPaper; index?: number 
               {paper.title}
             </h3>
             <div className="flex gap-1 shrink-0">
+              <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg" onClick={() => {
+                toast.success("Saved to your research collection");
+              }}>
+                <Bookmark className="h-4 w-4 text-primary" />
+              </Button>
               <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg" onClick={() => setShowSummary(true)}>
                 <Sparkles className="h-4 w-4 text-amber-500" />
               </Button>

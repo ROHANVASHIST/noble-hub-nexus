@@ -56,8 +56,8 @@ const Navbar = () => {
               key={link.to}
               to={link.to}
               className={`relative rounded-lg px-3 py-2 text-sm font-medium transition-colors ${location.pathname === link.to
-                  ? "text-primary"
-                  : "text-muted-foreground hover:text-foreground"
+                ? "text-primary"
+                : "text-muted-foreground hover:text-foreground"
                 }`}
             >
               {link.label}
@@ -83,19 +83,19 @@ const Navbar = () => {
 
           {session ? (
             <div className="flex items-center gap-3">
-              <div className="hidden items-center gap-2 md:flex">
-                <div className="flex bg-secondary h-8 w-8 items-center justify-center rounded-full">
-                  <User className="h-4 w-4 text-muted-foreground" />
+              <Link to="/profile" className="hidden items-center gap-2 md:flex group">
+                <div className="flex bg-secondary h-8 w-8 items-center justify-center rounded-full group-hover:bg-primary/10 transition-colors">
+                  <User className="h-4 w-4 text-muted-foreground group-hover:text-primary" />
                 </div>
-                <span className="text-sm font-medium text-foreground">
+                <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
                   {session.user.user_metadata?.display_name || session.user.email?.split("@")[0]}
                 </span>
-              </div>
+              </Link>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={handleSignOut}
-                className="text-muted-foreground hover:text-destructive transition-colors"
+                className="text-muted-foreground hover:text-destructive transition-colors h-8"
               >
                 <LogOut className="h-4 w-4 md:mr-2" />
                 <span className="hidden md:inline">Sign Out</span>
@@ -134,8 +134,8 @@ const Navbar = () => {
                   to={link.to}
                   onClick={() => setMobileOpen(false)}
                   className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${location.pathname === link.to
-                      ? "bg-primary/10 text-primary"
-                      : "text-muted-foreground hover:text-foreground"
+                    ? "bg-primary/10 text-primary"
+                    : "text-muted-foreground hover:text-foreground"
                     }`}
                 >
                   {link.label}
