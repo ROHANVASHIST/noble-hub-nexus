@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Laureate } from "@/data/mock-data";
+import { Laureate } from "@/backend/data/mock-data";
 import { Award } from "lucide-react";
 
 const CATEGORY_COLORS: Record<string, string> = {

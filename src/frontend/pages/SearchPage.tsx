@@ -1,11 +1,11 @@
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Search, SlidersHorizontal } from "lucide-react";
-import PageLayout from "@/components/layout/PageLayout";
-import LaureateCard from "@/components/cards/LaureateCard";
-import LectureCard from "@/components/cards/LectureCard";
-import PaperCard from "@/components/cards/PaperCard";
-import { LAUREATES, LECTURES, PAPERS } from "@/data/mock-data";
+import PageLayout from "@/frontend/components/layout/PageLayout";
+import LaureateCard from "@/frontend/components/cards/LaureateCard";
+import LectureCard from "@/frontend/components/cards/LectureCard";
+import PaperCard from "@/frontend/components/cards/PaperCard";
+import { LAUREATES, LECTURES, PAPERS } from "@/backend/data/mock-data";
 
 type ContentType = "all" | "laureates" | "lectures" | "papers";
 

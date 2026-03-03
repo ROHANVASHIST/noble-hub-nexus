@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ResearchPaper } from "@/data/mock-data";
+import { ResearchPaper } from "@/backend/data/mock-data";
 import { FileText, Quote, ExternalLink } from "lucide-react";
 
 const PaperCard = ({ paper, index = 0 }: { paper: ResearchPaper; index?: number }) => (

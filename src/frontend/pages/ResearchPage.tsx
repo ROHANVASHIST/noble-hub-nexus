@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import PageLayout from "@/components/layout/PageLayout";
-import PaperCard from "@/components/cards/PaperCard";
-import { PAPERS, CATEGORIES, NobelCategory } from "@/data/mock-data";
+import PageLayout from "@/frontend/components/layout/PageLayout";
+import PaperCard from "@/frontend/components/cards/PaperCard";
+import { PAPERS, CATEGORIES, NobelCategory } from "@/backend/data/mock-data";
 
 const ResearchPage = () => {
   const [selectedCategory, setSelectedCategory] = useState<NobelCategory | "All">("All");

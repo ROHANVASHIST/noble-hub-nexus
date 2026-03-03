@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
-import PageLayout from "@/components/layout/PageLayout";
-import StatCard from "@/components/cards/StatCard";
-import { ANALYTICS_DATA } from "@/data/mock-data";
+import PageLayout from "@/frontend/components/layout/PageLayout";
+import StatCard from "@/frontend/components/cards/StatCard";
+import { ANALYTICS_DATA } from "@/backend/data/mock-data";
 import { Award, BookOpen, Video, Globe, Users, TrendingUp } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
 
