@@ -12,6 +12,9 @@ import SearchPage from "./frontend/pages/SearchPage";
 import Auth from "./frontend/pages/Auth";
 import Profile from "./frontend/pages/Profile";
 import LaureateProfile from "./frontend/pages/LaureateProfile";
+import AboutPage from "./frontend/pages/AboutPage";
+import PrivacyPage from "./frontend/pages/PrivacyPage";
+import TermsPage from "./frontend/pages/TermsPage";
 import NotFound from "./frontend/pages/NotFound";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -57,6 +60,9 @@ const App = () => (
           <Route path="/analytics" element={<ProtectedRoute><AnalyticsPage /></ProtectedRoute>} />
           <Route path="/search" element={<ProtectedRoute><SearchPage /></ProtectedRoute>} />
           <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+          <Route path="/about" element={<ProtectedRoute><AboutPage /></ProtectedRoute>} />
+          <Route path="/privacy" element={<ProtectedRoute><PrivacyPage /></ProtectedRoute>} />
+          <Route path="/terms" element={<ProtectedRoute><TermsPage /></ProtectedRoute>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
