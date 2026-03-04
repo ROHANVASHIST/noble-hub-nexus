@@ -30,7 +30,10 @@ const LectureCard = ({ lecture, index = 0 }: { lecture: Lecture; index?: number 
         {lecture.thumbnail ? (
           <img src={lecture.thumbnail} alt={lecture.title} className="absolute inset-0 h-full w-full object-cover opacity-60 transition-transform duration-500 group-hover:scale-110" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
         ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary" />
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary flex flex-col items-center justify-center p-6 text-center">
+            <p className="text-[10px] font-mono text-primary mb-2">MEDIA_ASSET_RESTRICTED</p>
+            <p className="text-[10px] text-muted-foreground leading-tight uppercase tracking-tighter">Redirecting to Nobel.org for high-fidelity stream access...</p>
+          </div>
         )}
         <div className="relative z-10 flex h-14 w-14 items-center justify-center rounded-full bg-primary/20 backdrop-blur-sm transition-transform group-hover:scale-110">
           <Play className="h-6 w-6 text-primary ml-1 fill-primary" />

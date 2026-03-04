@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 import { Search, ArrowRight, Award, BookOpen, Video, Globe, Loader2, Sparkles } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import PageLayout from "@/frontend/components/layout/PageLayout";
@@ -12,6 +12,7 @@ import { CATEGORIES, ANALYTICS_DATA, NobelCategory } from "@/backend/data/mock-d
 import { fetchLaureates } from "@/backend/services/laureates";
 import { fetchLectures } from "@/backend/services/lectures";
 import heroBg from "@/frontend/assets/hero-bg.jpg";
+import { useState, useRef } from "react";
 
 const Index = () => {
   const { data: laureates, isLoading: loadingLaureates } = useQuery({
@@ -24,6 +25,16 @@ const Index = () => {
     queryFn: () => fetchLectures(),
   });
 
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const handleMouseMove = (e: React.MouseEvent) => {
+    const { clientX, clientY } = e;
+    const { innerWidth, innerHeight } = window;
+    setMousePos({
+      x: (clientX / innerWidth - 0.5) * 20,
+      y: (clientY / innerHeight - 0.5) * 20,
+    });
+  };
+
   const stats = [
     { icon: Award, label: "Nobel Laureates", value: 971 },
     { icon: BookOpen, label: "Research Papers", value: 10500 },
@@ -31,77 +42,102 @@ const Index = () => {
     { icon: Globe, label: "Countries", value: 81 },
   ];
 
+
   return (
     <PageLayout>
       {/* Hero */}
-      <section className="relative overflow-hidden">
+      <section
+        onMouseMove={handleMouseMove}
+        className="relative overflow-hidden min-h-[80vh] flex items-center"
+      >
         <div className="absolute inset-0">
-          <img src={heroBg} alt="" className="h-full w-full object-cover opacity-30" />
-          <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/80 to-background" />
+          <motion.div
+            style={{ x: mousePos.x, y: mousePos.y }}
+            className="h-full w-full"
+          >
+            <img src={heroBg} alt="" className="h-full w-full object-cover opacity-20 scale-110" />
+          </motion.div>
+          <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/90 to-background" />
         </div>
-        <div className="container relative mx-auto px-4 pb-20 pt-24 md:pt-32 md:pb-20">
+        <div className="container relative mx-auto px-4 py-32">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7 }}
-            className="mx-auto max-w-4xl"
+            className="mx-auto max-w-5xl"
           >
-            <div className="flex flex-col md:flex-row gap-8 items-center">
+            <div className="flex flex-col md:flex-row gap-12 items-center">
               <div className="flex-1 text-center md:text-left">
-                <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5">
-                  <Sparkles className="h-3.5 w-3.5 text-amber-500" />
-                  <span className="text-xs font-bold text-primary tracking-wide uppercase">Research Intelligence Active</span>
-                </div>
-                <h1 className="font-display text-4xl font-bold tracking-tight text-foreground md:text-6xl leading-[1.1]">
-                  Master the <span className="text-gradient-gold">Nobel Legacy</span>
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5"
+                >
+                  <Sparkles className="h-3.5 w-3.5 text-amber-500 animate-pulse" />
+                  <span className="text-xs font-black text-primary tracking-[0.2em] uppercase">Universal Archive Node</span>
+                </motion.div>
+                <h1 className="font-display text-5xl font-bold tracking-tight text-foreground md:text-8xl leading-[0.9]">
+                  Unlocking Human <br />
+                  <span className="text-gradient-gold">Potential</span>
                 </h1>
-                <p className="mt-6 text-base text-muted-foreground md:text-lg max-w-xl leading-relaxed">
-                  Access deep-dive summaries, exportable research data, and over a century of academic excellence in one unified platform.
+                <p className="mt-8 text-lg text-muted-foreground md:text-xl max-w-xl leading-relaxed font-light">
+                  Navigate a century of groundbreaking discoveries with our high-fidelity intelligence platform.
                 </p>
-                <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-start">
+                <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-start">
                   <Link
                     to="/search"
-                    className="inline-flex h-12 items-center gap-2 rounded-xl bg-primary px-8 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:translate-y-[-2px] hover:shadow-primary/30"
+                    className="group relative inline-flex h-14 items-center gap-3 overflow-hidden rounded-2xl bg-primary px-10 text-sm font-black uppercase tracking-widest text-primary-foreground shadow-2xl shadow-primary/20 transition-all hover:scale-105 active:scale-95"
                   >
-                    <Search className="h-4 w-4" /> Smart Search
+                    <div className="absolute inset-0 bg-gradient-to-r from-primary via-amber-500 to-primary opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <Search className="relative z-10 h-4 w-4" />
+                    <span className="relative z-10">Launch Discover</span>
                   </Link>
                   <Link
                     to="/laureates"
-                    className="inline-flex h-12 items-center gap-2 rounded-xl border border-border bg-card/50 backdrop-blur-sm px-8 text-sm font-medium text-foreground transition-all hover:bg-card"
+                    className="inline-flex h-14 items-center gap-3 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md px-10 text-sm font-bold text-foreground transition-all hover:bg-white/10 hover:border-primary/30"
                   >
-                    Browse All <ArrowRight className="h-4 w-4" />
+                    Archive Directory <ArrowRight className="h-4 w-4" />
                   </Link>
                 </div>
               </div>
 
               <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.3 }}
-                className="w-full max-w-sm rounded-2xl border border-border/50 bg-card/50 p-6 backdrop-blur-xl shadow-2xl relative"
+                initial={{ opacity: 0, scale: 0.8, rotate: -5 }}
+                animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                transition={{ delay: 0.4, type: "spring", stiffness: 100 }}
+                className="w-full max-w-sm rounded-[2.5rem] border border-white/10 bg-card/30 p-8 backdrop-blur-3xl shadow-[0_20px_50px_-15px_rgba(0,0,0,0.5)] relative group"
               >
-                <div className="absolute -top-3 -right-3 h-12 w-12 rounded-full bg-amber-500/10 flex items-center justify-center animate-pulse">
-                  <Sparkles className="h-6 w-6 text-amber-500" />
+                <div className="absolute -top-4 -right-4 h-14 w-14 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center animate-bounce duration-[3000ms]">
+                  <Award className="h-7 w-7 text-primary" />
                 </div>
-                <h3 className="font-display text-lg font-bold text-foreground">Daily Research Digest</h3>
-                <div className="mt-4 space-y-4">
-                  <div className="space-y-1">
-                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Featured Insight</p>
-                    <p className="text-sm font-medium text-foreground/90">The discovery of chemical dynamics by van 't Hoff continues to underpin modern thermodynamics.</p>
-                  </div>
-                  <div className="h-px bg-border/50" />
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Active Laureates</p>
-                      <p className="text-lg font-display font-bold text-primary">971</p>
+                <h3 className="font-display text-xl font-bold text-foreground">Archival Intelligence</h3>
+                <div className="mt-6 space-y-6">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Latest Synchronization</p>
                     </div>
-                    <div>
-                      <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Archived Lectures</p>
-                      <p className="text-lg font-display font-bold text-primary">1,243</p>
+                    <p className="text-sm font-medium text-foreground/80 leading-relaxed italic">
+                      "The transition of state for topological phases of matter observed in 2016 remains a foundational pillar for quantum computing."
+                    </p>
+                  </div>
+                  <div className="h-px bg-white/5" />
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="rounded-2xl bg-white/5 p-4 border border-white/5 group-hover:border-primary/20 transition-colors">
+                      <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Active nodes</p>
+                      <p className="text-2xl font-display font-black text-primary mt-1 text-gradient-gold">971</p>
+                    </div>
+                    <div className="rounded-2xl bg-white/5 p-4 border border-white/5 group-hover:border-primary/20 transition-colors">
+                      <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Global Peers</p>
+                      <p className="text-2xl font-display font-black text-primary mt-1 text-gradient-gold">81</p>
                     </div>
                   </div>
-                  <Button variant="outline" className="w-full text-xs font-bold uppercase tracking-tighter h-9" onClick={() => toast.success("Summary generated for your feed")}>
-                    Generate Weekly Report
+                  <Button
+                    className="w-full h-12 rounded-xl bg-primary/10 text-primary border border-primary/20 hover:bg-primary hover:text-primary-foreground font-black text-[10px] uppercase tracking-[0.2em] transition-all"
+                    onClick={() => toast.success("Weekly summary initialized")}
+                  >
+                    Access Global Report
                   </Button>
                 </div>
               </motion.div>
@@ -110,106 +146,130 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Stats */}
-      <section className="container mx-auto px-4 -mt-8">
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+      {/* Content Sections with Scroll Reveal */}
+      <motion.section
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.6 }}
+        className="container mx-auto px-4 -mt-12 mb-24"
+      >
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
           {stats.map((s, i) => (
             <StatCard key={s.label} {...s} index={i} />
           ))}
         </div>
-      </section>
+      </motion.section>
 
-      {/* Categories */}
-      <section className="container mx-auto px-4 py-16">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="font-display text-2xl font-bold text-foreground">Prize Categories</h2>
+      <motion.section
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.6 }}
+        className="container mx-auto px-4 py-24 border-t border-white/5"
+      >
+        <div className="text-center mb-16">
+          <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-primary mb-4">Classifications</h4>
+          <h2 className="font-display text-4xl font-bold text-foreground md:text-5xl">Universal Categories</h2>
         </div>
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
           {CATEGORIES.map((cat, i) => (
             <motion.div
               key={cat.name}
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.05, duration: 0.4 }}
-              onClick={() => toast.info(`Filtering for ${cat.name}... (Demo)`)}
-              className={`rounded-xl border border-border/50 bg-gradient-to-br ${cat.color} p-4 text-center transition-all hover:border-primary/30 cursor-pointer hover:scale-105 active:scale-95`}
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.05 }}
+              onClick={() => toast.info(`Initializing bridge for ${cat.name}...`)}
+              className={`group relative rounded-[2rem] border border-white/5 bg-gradient-to-br ${cat.color} p-6 text-center transition-all hover:scale-105 active:scale-95 cursor-pointer hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/5`}
             >
-              <span className="text-2xl">{cat.icon}</span>
-              <p className="mt-2 font-display text-sm font-semibold text-foreground">{cat.name}</p>
-              <p className="mt-0.5 text-[10px] font-bold text-muted-foreground uppercase opacity-70">{cat.count} records</p>
+              <div className="absolute inset-0 rounded-[2rem] bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+              <span className="text-4xl block relative z-10">{cat.icon}</span>
+              <p className="mt-4 font-display text-base font-bold text-foreground relative z-10">{cat.name}</p>
+              <p className="mt-1 text-[10px] font-black text-muted-foreground uppercase tracking-widest relative z-10 opacity-60">
+                {cat.count} Archives
+              </p>
             </motion.div>
           ))}
         </div>
-      </section>
+      </motion.section>
 
-      {/* Featured Laureates */}
-      <section className="container mx-auto px-4 pb-16">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="font-display text-2xl font-bold text-foreground">Laureates</h2>
-          <Link to="/laureates" className="flex items-center gap-1 text-sm text-primary hover:underline">
-            View all <ArrowRight className="h-3 w-3" />
+      <motion.section
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.6 }}
+        className="container mx-auto px-4 py-24 bg-card/20 rounded-[4rem] border border-white/5"
+      >
+        <div className="flex flex-col md:flex-row items-end justify-between mb-12 gap-6">
+          <div>
+            <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-primary mb-4">Directory</h4>
+            <h2 className="font-display text-4xl font-bold text-foreground md:text-5xl">Featured Laureates</h2>
+          </div>
+          <Link to="/laureates">
+            <Button variant="ghost" className="gap-2 font-bold uppercase text-[10px] tracking-widest hover:text-primary">
+              Explore Full Directory <ArrowRight className="h-4 w-4" />
+            </Button>
           </Link>
         </div>
         {loadingLaureates ? (
-          <div className="flex justify-center py-10"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
+          <div className="flex justify-center py-20"><Loader2 className="h-10 w-10 animate-spin text-primary" /></div>
         ) : (
-          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             {laureates?.slice(0, 4).map((l, i) => (
               <LaureateCard
                 key={l.id}
                 laureate={{
-                  id: l.id,
+                  ...l,
                   firstName: l.first_name,
                   lastName: l.last_name,
                   birthYear: l.birth_year,
                   deathYear: l.death_year || undefined,
-                  nationality: l.nationality,
                   category: l.category as NobelCategory,
-                  year: l.year,
-                  motivation: l.motivation,
-                  institution: l.institution,
-                  photo: l.photo || "",
-                  biography: l.biography || ""
                 } as any}
                 index={i}
               />
             ))}
           </div>
         )}
-      </section>
+      </motion.section>
 
-      {/* Featured Lectures */}
-      <section className="container mx-auto px-4 pb-16">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="font-display text-2xl font-bold text-foreground">Lectures</h2>
-          <Link to="/lectures" className="flex items-center gap-1 text-sm text-primary hover:underline">
-            View all <ArrowRight className="h-3 w-3" />
+      <motion.section
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.6 }}
+        className="container mx-auto px-4 py-32"
+      >
+        <div className="flex flex-col md:flex-row items-end justify-between mb-12 gap-6">
+          <div>
+            <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-primary mb-4">Screening Room</h4>
+            <h2 className="font-display text-4xl font-bold text-foreground md:text-5xl">Curated Lectures</h2>
+          </div>
+          <Link to="/lectures">
+            <Button variant="ghost" className="gap-2 font-bold uppercase text-[10px] tracking-widest hover:text-primary">
+              Access Full Library <ArrowRight className="h-4 w-4" />
+            </Button>
           </Link>
         </div>
         {loadingLectures ? (
-          <div className="flex justify-center py-10"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
+          <div className="flex justify-center py-20"><Loader2 className="h-10 w-10 animate-spin text-primary" /></div>
         ) : (
-          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {lectures?.slice(0, 3).map((l, i) => (
               <LectureCard
                 key={l.id}
                 lecture={{
-                  id: l.id,
-                  title: l.title,
+                  ...l,
                   speakerName: l.speaker_name,
                   category: l.category as NobelCategory,
-                  year: l.year,
-                  duration: l.duration,
-                  views: l.views,
-                  thumbnail: l.thumbnail || "",
-                  description: l.description || ""
                 } as any}
                 index={i}
               />
             ))}
           </div>
         )}
-      </section>
+      </motion.section>
     </PageLayout>
   );
 };

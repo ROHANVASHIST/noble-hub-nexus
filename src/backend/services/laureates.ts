@@ -45,7 +45,7 @@ export const fetchLaureates = async (category?: string) => {
 
     // Fallback to Nobel API
     console.log("Supabase empty, fetching from Nobel API...");
-    let url = "https://api.nobelprize.org/2.1/laureates?limit=50";
+    let url = "https://api.nobelprize.org/2.1/laureates?limit=100";
     if (category && category !== "All") {
       const catCode = NOBEL_CATEGORY_MAP[category] || "phy";
       url += `&nobelPrizeCategory=${catCode}`;
@@ -75,7 +75,7 @@ export const fetchLaureateById = async (id: string) => {
 export const searchLaureates = async (query: string) => {
   // Escape special LIKE pattern characters to prevent injection
   const sanitizedQuery = query.replace(/[%_\\]/g, '\\$&');
-  
+
   const { data, error } = await supabase
     .from("laureates")
     .select("*")

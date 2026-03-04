@@ -15,7 +15,7 @@ export const fetchPapers = async (category?: string) => {
     if (data && data.length > 0) return data;
 
     // Fallback: Use prizes + laureate facts as research entries
-    const response = await fetch("https://api.nobelprize.org/2.1/nobelPrizes?limit=30&sort=desc");
+    const response = await fetch("https://api.nobelprize.org/2.1/nobelPrizes?limit=50&sort=desc");
     const apiData = await response.json();
 
     return apiData.nobelPrizes.map((p: any) => {

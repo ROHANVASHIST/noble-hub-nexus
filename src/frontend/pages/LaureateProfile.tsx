@@ -1,7 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { ArrowLeft, Award, Globe, GraduationCap, Calendar, MapPin, Sparkles, Share2, Bookmark } from "lucide-react";
+import { ArrowLeft, Award, Globe, GraduationCap, Calendar, MapPin, Sparkles, Share2, Bookmark, ExternalLink, Info } from "lucide-react";
 import PageLayout from "@/frontend/components/layout/PageLayout";
 import { fetchLaureateById } from "@/backend/services/laureates";
 import { Button } from "@/components/ui/button";
@@ -23,9 +23,12 @@ const LaureateProfile = () => {
     if (isLoading) {
         return (
             <div className="flex h-screen items-center justify-center bg-background">
-                <div className="flex flex-col items-center gap-4">
-                    <div className="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-                    <p className="text-muted-foreground animate-pulse font-medium">Retrieving Laureate Records...</p>
+                <div className="flex flex-col items-center gap-6">
+                    <div className="relative">
+                        <div className="h-16 w-16 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+                        <div className="absolute inset-0 h-16 w-16 animate-ping rounded-full border-4 border-primary/20" />
+                    </div>
+                    <p className="text-muted-foreground animate-pulse font-medium tracking-widest uppercase text-xs">Accessing Nobel Archives...</p>
                 </div>
             </div>
         );
@@ -34,74 +37,134 @@ const LaureateProfile = () => {
     if (error || !laureate) {
         return (
             <PageLayout>
-                <div className="container mx-auto px-4 py-20 text-center">
-                    <h2 className="text-2xl font-bold text-foreground">Laureate Not Found</h2>
-                    <p className="mt-2 text-muted-foreground">The archival records for this ID could not be retrieved.</p>
-                    <Link to="/laureates" className="mt-6 inline-flex items-center gap-2 text-primary hover:underline">
-                        <ArrowLeft className="h-4 w-4" /> Back to Laureates
-                    </Link>
+                <div className="container mx-auto px-4 py-24 text-center">
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="mx-auto max-w-lg rounded-3xl border border-dashed border-border bg-card/50 p-12"
+                    >
+                        <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-muted">
+                            <Info className="h-10 w-10 text-muted-foreground" />
+                        </div>
+                        <h2 className="text-3xl font-display font-bold text-foreground">Archival Access Restricted</h2>
+                        <p className="mt-4 text-muted-foreground">The specific data packet for entity "{id}" is not synchronized with the local research node. To prevent a information vacuum, we have established a direct bridge to the primary Nobel database.</p>
+                        <p className="mt-2 text-xs font-mono text-primary/70 bg-primary/5 p-2 rounded-lg inline-block">STATUS: REDIRECT_REQUIRED | ACCESS_CODE: {id}</p>
+
+                        <div className="mt-10 flex flex-col gap-3">
+                            <a
+                                href={`https://www.nobelprize.org/search/?s=${id}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <Button className="w-full gap-2 text-lg py-6 rounded-2xl">
+                                    Search on Nobel.org <ExternalLink className="h-5 w-5" />
+                                </Button>
+                            </a>
+                            <Link to="/laureates">
+                                <Button variant="ghost" className="w-full gap-2">
+                                    <ArrowLeft className="h-4 w-4" /> Back to Directory
+                                </Button>
+                            </Link>
+                        </div>
+                    </motion.div>
                 </div>
             </PageLayout>
         );
     }
 
+    const officialUrl = `https://www.nobelprize.org/prizes/${laureate.category.toLowerCase()}/${laureate.year}/${laureate.last_name.toLowerCase() || 'biography'}/facts/`;
+
     return (
         <PageLayout>
             <div className="container mx-auto px-4 py-12">
-                <Link to="/laureates" className="mb-8 inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-primary">
-                    <ArrowLeft className="h-4 w-4" /> Back to Directory
-                </Link>
+                <motion.div
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                >
+                    <Link to="/laureates" className="mb-8 inline-flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-muted-foreground transition-all hover:text-primary">
+                        <ArrowLeft className="h-4 w-4" /> Directory
+                    </Link>
+                </motion.div>
 
                 <div className="grid gap-12 lg:grid-cols-3">
                     {/* Sidebar - Profile Info */}
                     <div className="lg:col-span-1">
                         <motion.div
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            className="relative aspect-[4/5] overflow-hidden rounded-2xl border border-border shadow-2xl"
+                            initial={{ opacity: 0, y: 30 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="relative aspect-[4/5] overflow-hidden rounded-3xl border border-border bg-card shadow-2xl"
                         >
                             <img
                                 src={laureate.photo || `https://www.nobelprize.org/images/laureates/${laureate.id}-portrait-mini-2x.jpg`}
                                 alt={`${laureate.first_name} ${laureate.last_name}`}
-                                className="h-full w-full object-cover grayscale-[0.2] hover:grayscale-0 transition-all duration-700"
+                                className="h-full w-full object-cover grayscale-[0.1] hover:grayscale-0 transition-all duration-1000 scale-105 hover:scale-100"
                                 onError={(e) => {
                                     e.currentTarget.src = `https://ui-avatars.com/api/?name=${laureate.first_name}+${laureate.last_name}&background=random&size=512`;
-                                    e.currentTarget.className = "h-full w-full object-cover grayscale-[0.2] hover:grayscale-0 transition-all duration-700 opacity-80";
                                 }}
                             />
-                            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-6 pt-12">
-                                <div className="inline-flex items-center gap-2 rounded-full bg-amber-500/20 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-amber-500 backdrop-blur-md">
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent" />
+                            <div className="absolute inset-x-0 bottom-0 p-8">
+                                <motion.div
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.3 }}
+                                    className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-1.5 text-[10px] font-black uppercase tracking-widest text-primary-foreground shadow-lg"
+                                >
                                     <Award className="h-3 w-3" /> Nobel Laureate
-                                </div>
+                                </motion.div>
                             </div>
                         </motion.div>
 
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.2 }}
-                            className="mt-6 space-y-4"
+                            transition={{ delay: 0.4 }}
+                            className="mt-8 space-y-4"
                         >
-                            <div className="flex items-center gap-3 text-muted-foreground bg-card/50 p-3 rounded-xl border border-border/50">
-                                <Calendar className="h-4 w-4 text-primary" />
-                                <span className="text-sm font-medium">Born: {laureate.birth_year} {laureate.death_year ? `· Died: ${laureate.death_year}` : ''}</span>
-                            </div>
-                            <div className="flex items-center gap-3 text-muted-foreground bg-card/50 p-3 rounded-xl border border-border/50">
-                                <Globe className="h-4 w-4 text-primary" />
-                                <span className="text-sm font-medium">Nationality: {laureate.nationality}</span>
-                            </div>
-                            <div className="flex items-center gap-3 text-muted-foreground bg-card/50 p-3 rounded-xl border border-border/50">
-                                <GraduationCap className="h-4 w-4 text-primary" />
-                                <span className="text-sm font-medium line-clamp-1">{laureate.institution}</span>
+                            <div className="group flex items-center gap-4 rounded-2xl border border-border bg-card/50 p-4 transition-all hover:border-primary/50">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                                    <Calendar className="h-5 w-5" />
+                                </div>
+                                <div>
+                                    <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Lifespan</p>
+                                    <p className="text-sm font-bold">{laureate.birth_year} {laureate.death_year ? `— ${laureate.death_year}` : ' (Present)'}</p>
+                                </div>
                             </div>
 
-                            <div className="pt-2 flex gap-2">
-                                <Button className="flex-1 gap-2" variant="default" onClick={handleBookmark}>
-                                    <Bookmark className="h-4 w-4" /> Save to Profile
+                            <div className="group flex items-center gap-4 rounded-2xl border border-border bg-card/50 p-4 transition-all hover:border-primary/50">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                                    <Globe className="h-5 w-5" />
+                                </div>
+                                <div>
+                                    <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Nationality</p>
+                                    <p className="text-sm font-bold">{laureate.nationality}</p>
+                                </div>
+                            </div>
+
+                            <div className="group flex items-center gap-4 rounded-2xl border border-border bg-card/50 p-4 transition-all hover:border-primary/50">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                                    <GraduationCap className="h-5 w-5" />
+                                </div>
+                                <div>
+                                    <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Institution</p>
+                                    <p className="text-sm font-bold line-clamp-1">{laureate.institution}</p>
+                                </div>
+                            </div>
+
+                            <div className="pt-4 flex flex-col gap-3">
+                                <Button className="w-full gap-2 py-6 rounded-2xl shadow-xl shadow-primary/10" onClick={handleBookmark}>
+                                    <Bookmark className="h-5 w-5" /> Bookmark to Profile
                                 </Button>
-                                <Button variant="outline" size="icon" className="rounded-xl" onClick={() => toast.success("Share link copied to clipboard!")}>
-                                    <Share2 className="h-4 w-4" />
-                                </Button>
+                                <div className="flex gap-3">
+                                    <Button variant="outline" className="flex-1 rounded-2xl" onClick={() => toast.success("Share link copied to clipboard!")}>
+                                        <Share2 className="h-4 w-4 mr-2" /> Share
+                                    </Button>
+                                    <a href={officialUrl} target="_blank" rel="noopener noreferrer" className="flex-1">
+                                        <Button variant="outline" className="w-full rounded-2xl group">
+                                            Nobel.org <ExternalLink className="h-4 w-4 ml-2 transition-transform group-hover:translate-x-1" />
+                                        </Button>
+                                    </a>
+                                </div>
                             </div>
                         </motion.div>
                     </div>
@@ -111,15 +174,18 @@ const LaureateProfile = () => {
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.2 }}
                         >
-                            <h1 className="font-display text-4xl font-bold tracking-tight text-foreground md:text-6xl">
-                                {laureate.first_name} <span className="text-gradient-gold">{laureate.last_name}</span>
+                            <h1 className="font-display text-5xl font-bold tracking-tight text-foreground md:text-7xl leading-tight">
+                                {laureate.first_name} <br />
+                                <span className="text-gradient-gold">{laureate.last_name}</span>
                             </h1>
-                            <div className="mt-4 flex flex-wrap gap-2">
-                                <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-primary">
+                            <div className="mt-6 flex flex-wrap gap-3">
+                                <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 border border-primary/20 px-4 py-2 text-xs font-black uppercase tracking-widest text-primary">
+                                    <div className="h-1.5 w-1.5 rounded-full bg-primary" />
                                     {laureate.category}
                                 </span>
-                                <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary/50 px-3 py-1 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                                <span className="inline-flex items-center gap-2 rounded-full bg-secondary/80 border border-border px-4 py-2 text-xs font-black uppercase tracking-widest text-muted-foreground">
                                     Class of {laureate.year}
                                 </span>
                             </div>
@@ -128,30 +194,46 @@ const LaureateProfile = () => {
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.1 }}
-                            className="mt-8 relative"
+                            transition={{ delay: 0.4 }}
+                            className="mt-12 relative"
                         >
-                            <div className="absolute -left-4 top-0 h-full w-1 bg-gradient-to-b from-primary/50 to-transparent" />
-                            <h2 className="text-xl font-bold text-foreground font-display flex items-center gap-2">
-                                <Sparkles className="h-5 w-5 text-amber-500" /> Official Motivation
+                            <div className="absolute -left-6 top-0 h-full w-1.5 bg-gradient-to-b from-amber-500 via-primary to-transparent rounded-full shadow-lg shadow-amber-500/20" />
+                            <h2 className="text-lg font-black uppercase tracking-[0.2em] text-muted-foreground flex items-center gap-3">
+                                <Sparkles className="h-5 w-5 text-amber-500 fill-amber-500" /> Official Motivation
                             </h2>
-                            <p className="mt-4 text-xl font-medium leading-relaxed italic text-foreground/80 pl-2">
+                            <blockquote className="mt-6 text-2xl md:text-3xl font-medium leading-relaxed italic text-foreground/90 pl-2">
                                 "{laureate.motivation}"
-                            </p>
+                            </blockquote>
                         </motion.div>
 
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.2 }}
-                            className="mt-12"
+                            transition={{ delay: 0.6 }}
+                            className="mt-16"
                         >
-                            <h2 className="text-xl font-bold text-foreground font-display">Archival Biography</h2>
-                            <div className="mt-4 space-y-4 text-muted-foreground leading-relaxed">
-                                {laureate.biography ? (
-                                    <p>{laureate.biography}</p>
+                            <h2 className="text-lg font-black uppercase tracking-[0.2em] text-muted-foreground">Archival Biography</h2>
+                            <div className="mt-6 space-y-6 text-lg text-muted-foreground/90 leading-relaxed font-light">
+                                {laureate.biography && !laureate.biography.includes("being processed") ? (
+                                    <p className="first-letter:text-4xl first-letter:font-bold first-letter:text-primary first-letter:mr-1">{laureate.biography}</p>
                                 ) : (
-                                    <p>Extended biography from the Nobel Foundation Archives is being processed. This laureate was awarded for their exceptional contributions to human knowledge and peace.</p>
+                                    <div className="rounded-3xl bg-secondary/30 border border-border p-8 border-dashed">
+                                        <p className="italic">
+                                            The extended digital biography for this laureate is currently occupying an unsynchronized state in our local archives.
+                                            To ensure zero informational entropy, we are initializing a redirection protocol to the official NobelPrize.org documentation gateway.
+                                        </p>
+                                        <div className="mt-4 p-2 bg-primary/5 rounded-lg border border-primary/10 mb-4">
+                                            <p className="text-[10px] font-mono text-primary uppercase tracking-widest leading-none">Redirecting for high-fidelity information access...</p>
+                                        </div>
+                                        <a
+                                            href={officialUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="mt-6 inline-flex items-center gap-2 text-primary font-bold hover:underline"
+                                        >
+                                            Read full official biography at Nobel.org <ExternalLink className="h-4 w-4" />
+                                        </a>
+                                    </div>
                                 )}
                             </div>
                         </motion.div>
@@ -159,21 +241,26 @@ const LaureateProfile = () => {
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.3 }}
-                            className="mt-12 grid gap-6 sm:grid-cols-2"
+                            transition={{ delay: 0.8 }}
+                            className="mt-16 grid gap-8 sm:grid-cols-2"
                         >
-                            <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
-                                <h3 className="font-bold text-foreground">Discoveries</h3>
-                                <p className="mt-2 text-sm text-muted-foreground">Detailed publications and datasets related to this laureate's work are available in the research section.</p>
-                                <Link to="/research" className="mt-4 inline-flex items-center gap-1 text-xs font-bold uppercase tracking-widest text-primary hover:underline">
-                                    View Papers <ArrowLeft className="h-3 w-3 rotate-180" />
+                            <div className="group rounded-3xl border border-border bg-card p-8 shadow-sm transition-all hover:border-primary/50 hover:shadow-xl hover:shadow-primary/5">
+                                <h3 className="text-xl font-bold text-foreground">Discoveries</h3>
+                                <p className="mt-3 text-muted-foreground leading-relaxed">
+                                    Explore the scientific breakthroughs and seminal publications that led to this historic Nobel Prize.
+                                </p>
+                                <Link to="/research" className="mt-6 inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-primary group-hover:gap-4 transition-all">
+                                    Analyze Papers <ArrowLeft className="h-4 w-4 rotate-180" />
                                 </Link>
                             </div>
-                            <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
-                                <h3 className="font-bold text-foreground">Lectures</h3>
-                                <p className="mt-2 text-sm text-muted-foreground">Watch original Nobel Prize lectures delivered by this laureate during their award ceremony.</p>
-                                <Link to="/lectures" className="mt-4 inline-flex items-center gap-1 text-xs font-bold uppercase tracking-widest text-primary hover:underline">
-                                    Watch Lectures <ArrowLeft className="h-3 w-3 rotate-180" />
+
+                            <div className="group rounded-3xl border border-border bg-card p-8 shadow-sm transition-all hover:border-primary/50 hover:shadow-xl hover:shadow-primary/5">
+                                <h3 className="text-xl font-bold text-foreground">Nobel Lecture</h3>
+                                <p className="mt-3 text-muted-foreground leading-relaxed">
+                                    Experience the original acceptance speech and visual presentations delivered by the laureate in Stockholm.
+                                </p>
+                                <Link to="/lectures" className="mt-6 inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-primary group-hover:gap-4 transition-all">
+                                    Watch Ceremony <ArrowLeft className="h-4 w-4 rotate-180" />
                                 </Link>
                             </div>
                         </motion.div>
@@ -185,3 +272,4 @@ const LaureateProfile = () => {
 };
 
 export default LaureateProfile;
+

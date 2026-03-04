@@ -53,7 +53,7 @@ const PaperCard = ({ paper, index = 0 }: { paper: ResearchPaper; index?: number 
             {Array.isArray(paper.authors) ? paper.authors.join(', ') : (paper as any).author || "Unknown Author"} · {paper.year}
           </p>
           <p className="mt-2 line-clamp-2 text-sm text-muted-foreground leading-relaxed">
-            {paper.abstract}
+            {paper.abstract || "LOCAL_ABSTRACT_MISSING: Access request pending archival synchronization. Technical redirection to the primary Nobel knowledge bridge is operational for full document retrieval."}
           </p>
           <div className="mt-4 flex flex-wrap items-center gap-4 text-xs font-medium text-muted-foreground">
             <span className="flex items-center gap-1.5 bg-secondary/50 px-2 py-1 rounded-md">
