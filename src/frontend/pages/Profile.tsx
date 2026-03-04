@@ -6,16 +6,26 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "sonner";
+import type { Session } from "@supabase/supabase-js";
 
 const Profile = () => {
-    const [session, setSession] = useState<any>(null);
+    const [session, setSession] = useState<Session | null>(null);
     const navigate = useNavigate();
 
     useEffect(() => {
+        // Set up auth listener BEFORE getting session (correct pattern)
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+            setSession(session);
+            if (!session) navigate("/auth");
+        });
+
         supabase.auth.getSession().then(({ data: { session } }) => {
             setSession(session);
+            if (!session) navigate("/auth");
         });
-    }, []);
+
+        return () => subscription.unsubscribe();
+    }, [navigate]);
 
     const handleSignOut = async () => {
         await supabase.auth.signOut();
@@ -26,7 +36,7 @@ const Profile = () => {
     if (!session) return null;
 
     const user = session.user;
-    const displayName = user.user_metadata?.display_name || user.email?.split("@")[0];
+    const displayName = user.user_metadata?.display_name || user.email?.split("@")[0] || "User";
 
     return (
         <PageLayout>
@@ -171,7 +181,6 @@ const Profile = () => {
                                 </div>
 
                                 <div className="grid gap-4 md:grid-cols-2">
-                                    {/* Mock Bookmarked Items */}
                                     <div className="flex items-center gap-4 rounded-2xl border border-border/50 bg-card p-4 transition-all hover:border-primary/30 cursor-pointer" onClick={() => toast.success("Navigating to archived item...")}>
                                         <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-amber-500/10">
                                             <Award className="h-6 w-6 text-amber-500" />
