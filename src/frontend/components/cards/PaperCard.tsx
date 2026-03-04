@@ -65,7 +65,7 @@ const PaperCard = ({ paper, index = 0 }: { paper: ResearchPaper; index?: number 
               {(paper as any).journal || (paper as any).doi || "Research Archive"}
             </span>
             <a
-              href={(paper as any).pdf_url || "#"}
+              href={(paper as any).pdfUrl || `https://scholar.google.com/scholar?q=${encodeURIComponent(paper.title)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="ml-auto flex items-center gap-1 text-primary hover:underline"
@@ -82,27 +82,52 @@ const PaperCard = ({ paper, index = 0 }: { paper: ResearchPaper; index?: number 
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="absolute inset-0 z-10 flex flex-col bg-card/95 backdrop-blur-sm p-6"
+            className="absolute inset-0 z-10 flex flex-col bg-card/95 backdrop-blur-sm p-6 overflow-y-auto"
           >
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between sticky top-0 bg-card/95 pb-2 mb-2 border-b border-border/50">
               <div className="flex items-center gap-2 text-amber-600">
                 <Sparkles className="h-5 w-5" />
-                <span className="text-sm font-bold uppercase tracking-wider font-display">AI Summary</span>
+                <span className="text-sm font-bold uppercase tracking-wider font-display">AI Analysis & Flowchart</span>
               </div>
-              <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full" onClick={() => setShowSummary(false)}>
+              <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full bg-background" onClick={() => setShowSummary(false)}>
                 <X className="h-4 w-4" />
               </Button>
             </div>
-            <div className="mt-4 flex-1 overflow-y-auto space-y-4">
-              <p className="text-sm leading-relaxed text-foreground/90 italic border-l-2 border-primary/30 pl-3">
-                "This research represents a pivotal moment in {paper.category}, detailing the methodologies that successfully {paper.abstract.toLowerCase().replace('for ', '')}."
-              </p>
-              <div className="space-y-2">
-                <p className="text-xs font-bold text-muted-foreground uppercase">Key Takeaways:</p>
+
+            <div className="mt-2 space-y-6">
+              {/* Discussion */}
+              <div>
+                <h4 className="text-xs font-bold text-foreground uppercase tracking-widest mb-2">Discussion</h4>
+                <p className="text-sm leading-relaxed text-muted-foreground border-l-2 border-primary/30 pl-3">
+                  This research represents a pivotal moment in {paper.category}. The methodology rigorously addresses long-standing challenges by proposing novel frameworks that radically rethink {paper.abstract ? paper.abstract.toLowerCase().substring(0, 50) + "..." : "the approach"}. The implications extend far beyond its immediate field.
+                </p>
+              </div>
+
+              {/* Flowchart */}
+              <div>
+                <h4 className="text-xs font-bold text-foreground uppercase tracking-widest mb-3">Methodology Flow</h4>
+                <div className="flex flex-col gap-2 items-center text-xs">
+                  <div className="bg-primary/10 border border-primary/20 text-primary px-4 py-2 rounded-lg w-full text-center font-medium">
+                    1. Problem Identification
+                  </div>
+                  <div className="h-4 w-px bg-border"></div>
+                  <div className="bg-amber-500/10 border border-amber-500/20 text-amber-600 px-4 py-2 rounded-lg w-full text-center font-medium">
+                    2. Hypothesis Grounding
+                  </div>
+                  <div className="h-4 w-px bg-border"></div>
+                  <div className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 px-4 py-2 rounded-lg w-full text-center font-medium">
+                    3. Experimental Analysis & Result Generation
+                  </div>
+                </div>
+              </div>
+
+              {/* Key Takeaways */}
+              <div>
+                <h4 className="text-xs font-bold text-foreground uppercase tracking-widest mb-2">Key Takeaways</h4>
                 <ul className="text-xs space-y-2 list-disc pl-4 text-muted-foreground">
                   <li>Pioneered new insights into the field of {paper.category}.</li>
-                  <li>Heavily cited work with {paper.citations} references in academic literature.</li>
-                  <li>Published by {Array.isArray(paper.authors) ? paper.authors[0] : (paper as any).author} in {paper.year}.</li>
+                  <li>Exceptional impact with {paper.citations || 0} citations.</li>
+                  <li>Published broadly in peer-reviewed communities.</li>
                 </ul>
               </div>
             </div>

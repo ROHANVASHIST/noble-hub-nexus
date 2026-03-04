@@ -64,6 +64,10 @@ const LaureateProfile = () => {
                                 src={laureate.photo || `https://www.nobelprize.org/images/laureates/${laureate.id}-portrait-mini-2x.jpg`}
                                 alt={`${laureate.first_name} ${laureate.last_name}`}
                                 className="h-full w-full object-cover grayscale-[0.2] hover:grayscale-0 transition-all duration-700"
+                                onError={(e) => {
+                                    e.currentTarget.src = `https://ui-avatars.com/api/?name=${laureate.first_name}+${laureate.last_name}&background=random&size=512`;
+                                    e.currentTarget.className = "h-full w-full object-cover grayscale-[0.2] hover:grayscale-0 transition-all duration-700 opacity-80";
+                                }}
                             />
                             <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-6 pt-12">
                                 <div className="inline-flex items-center gap-2 rounded-full bg-amber-500/20 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-amber-500 backdrop-blur-md">

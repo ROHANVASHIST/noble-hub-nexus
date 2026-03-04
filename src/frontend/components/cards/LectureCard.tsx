@@ -28,7 +28,7 @@ const LectureCard = ({ lecture, index = 0 }: { lecture: Lecture; index?: number 
     >
       <div className="relative aspect-video bg-secondary flex items-center justify-center overflow-hidden">
         {lecture.thumbnail ? (
-          <img src={lecture.thumbnail} alt={lecture.title} className="absolute inset-0 h-full w-full object-cover opacity-60 transition-transform duration-500 group-hover:scale-110" />
+          <img src={lecture.thumbnail} alt={lecture.title} className="absolute inset-0 h-full w-full object-cover opacity-60 transition-transform duration-500 group-hover:scale-110" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
         ) : (
           <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary" />
         )}

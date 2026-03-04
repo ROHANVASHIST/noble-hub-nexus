@@ -3,7 +3,7 @@ import PageLayout from "@/frontend/components/layout/PageLayout";
 import StatCard from "@/frontend/components/cards/StatCard";
 import { ANALYTICS_DATA } from "@/backend/data/mock-data";
 import { Award, BookOpen, Video, Globe, Users, TrendingUp } from "lucide-react";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, Treemap } from "recharts";
 
 const stats = [
   { icon: Award, label: "Total Laureates", value: ANALYTICS_DATA.stats.totalLaureates },
@@ -55,24 +55,30 @@ const AnalyticsPage = () => (
           </ResponsiveContainer>
         </motion.div>
 
-        {/* Country Distribution */}
+        {/* Wordmapper: Nobel Prize Worlds (Treemap) */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
           className="rounded-xl border border-border/50 bg-card p-5"
         >
-          <h3 className="font-display text-lg font-semibold text-foreground mb-4">Top Countries</h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-display text-lg font-semibold text-foreground">Nobel Prize Worlds</h3>
+            <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full font-bold uppercase">Wordmapper Mode</span>
+          </div>
+          <p className="text-xs text-muted-foreground mb-4">Countries sized by their number of Nobel Laureates.</p>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={ANALYTICS_DATA.countryDistribution} layout="vertical">
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(220 20% 16%)" />
-              <XAxis type="number" tick={{ fill: 'hsl(220 10% 50%)', fontSize: 11 }} />
-              <YAxis dataKey="country" type="category" width={100} tick={{ fill: 'hsl(220 10% 50%)', fontSize: 11 }} />
+            <Treemap
+              data={ANALYTICS_DATA.countryDistribution.map(d => ({ name: d.country, value: d.count }))}
+              dataKey="value"
+              aspectRatio={4 / 3}
+              stroke="hsl(220 20% 16%)"
+              fill="hsl(220 60% 55%)"
+            >
               <Tooltip
                 contentStyle={{ backgroundColor: 'hsl(220 25% 10%)', border: '1px solid hsl(220 20% 16%)', borderRadius: '8px', color: 'hsl(220 10% 95%)' }}
               />
-              <Bar dataKey="count" fill="hsl(42 65% 58%)" radius={[0, 4, 4, 0]} />
-            </BarChart>
+            </Treemap>
           </ResponsiveContainer>
         </motion.div>
 
@@ -108,29 +114,30 @@ const AnalyticsPage = () => (
           </ResponsiveContainer>
         </motion.div>
 
-        {/* Quick Insights */}
+        {/* RoyalSloth: Nobel Prize in Numbers */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
           className="rounded-xl border border-border/50 bg-card p-5"
         >
-          <h3 className="font-display text-lg font-semibold text-foreground mb-4">Quick Insights</h3>
-          <div className="space-y-4">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-display text-lg font-semibold text-foreground">Nobel Prize in Numbers</h3>
+            <span className="text-xs bg-amber-500/10 text-amber-500 px-2 py-1 rounded-full font-bold uppercase">RoyalSloth Stats</span>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
             {[
-              { label: "Youngest laureate", value: "Malala Yousafzai (17 years old, 2014)" },
-              { label: "Most prizes in one category", value: "Physics (225 laureates)" },
-              { label: "Most common nationality", value: "United States (400+ laureates)" },
-              { label: "First female laureate", value: "Marie Curie (1903, Physics)" },
-              { label: "Most cited paper", value: "Prospect Theory (65,000 citations)" },
-              { label: "Longest Nobel lecture", value: "55 minutes (R. Feynman, 1965)" },
+              { label: "Youngest laureate", value: "17", sub: "Malala Yousafzai (2014)" },
+              { label: "Oldest laureate", value: "97", sub: "John B. Goodenough (2019)" },
+              { label: "Women Laureates", value: "65", sub: "Since 1901" },
+              { label: "Multiple Prizes", value: "6", sub: "Individuals/Orgs" },
+              { label: "Most cited paper", value: "65K+", sub: "Prospect Theory" },
+              { label: "Shared Prizes", value: "54%", sub: "Of all prizes awarded" },
             ].map((insight, i) => (
-              <div key={i} className="flex items-start gap-3 rounded-lg bg-secondary/50 p-3">
-                <div className="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
-                <div>
-                  <p className="text-xs font-medium text-foreground">{insight.label}</p>
-                  <p className="text-xs text-muted-foreground">{insight.value}</p>
-                </div>
+              <div key={i} className="flex flex-col justify-center rounded-lg bg-secondary/50 p-4 border border-border/30 hover:border-primary/20 transition-all">
+                <p className="text-2xl font-display font-bold text-primary">{insight.value}</p>
+                <h4 className="text-xs font-semibold text-foreground mt-1">{insight.label}</h4>
+                <p className="text-[10px] text-muted-foreground mt-0.5">{insight.sub}</p>
               </div>
             ))}
           </div>
