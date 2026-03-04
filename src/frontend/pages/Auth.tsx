@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/frontend/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { signUpSchema, signInSchema } from "@/backend/services/auth";
 
 const Auth = () => {
     const [isSignUp, setIsSignUp] = useState(false);
@@ -23,13 +24,23 @@ const Auth = () => {
 
         try {
             if (isSignUp) {
+                // Client-side validation
+                const validation = signUpSchema.safeParse({ email, password, displayName });
+                if (!validation.success) {
+                    toast({
+                        variant: "destructive",
+                        title: "Validation Error",
+                        description: validation.error.errors[0]?.message || "Invalid input.",
+                    });
+                    return;
+                }
+
                 const { error } = await supabase.auth.signUp({
-                    email,
-                    password,
+                    email: validation.data.email,
+                    password: validation.data.password,
                     options: {
-                        data: {
-                            display_name: displayName,
-                        },
+                        data: { display_name: validation.data.displayName },
+                        emailRedirectTo: window.location.origin,
                     },
                 });
                 if (error) throw error;
@@ -37,15 +48,22 @@ const Auth = () => {
                     title: "Account created",
                     description: "Check your email for the confirmation link.",
                 });
-                // For demonstration, many Supabase instances permit auto-login after signup
-                // or require email verification. We'll navigate to home after a delay or if session exists.
-                setTimeout(() => navigate("/"), 2000);
             } else {
+                const validation = signInSchema.safeParse({ email, password });
+                if (!validation.success) {
+                    toast({
+                        variant: "destructive",
+                        title: "Validation Error",
+                        description: validation.error.errors[0]?.message || "Invalid input.",
+                    });
+                    return;
+                }
+
                 const { error } = await supabase.auth.signInWithPassword({
-                    email,
-                    password,
+                    email: validation.data.email,
+                    password: validation.data.password,
                 });
-                if (error) throw error;
+                if (error) throw new Error("Invalid email or password.");
                 toast({
                     title: "Welcome back!",
                     description: "You have successfully signed in.",
@@ -53,10 +71,11 @@ const Auth = () => {
                 navigate("/");
             }
         } catch (error: any) {
+            // Generic error message to prevent info leakage
             toast({
                 variant: "destructive",
                 title: "Error",
-                description: error.message,
+                description: error.message || "Something went wrong. Please try again.",
             });
         } finally {
             setLoading(false);
@@ -96,6 +115,8 @@ const Auth = () => {
                                         value={displayName}
                                         onChange={(e) => setDisplayName(e.target.value)}
                                         required
+                                        maxLength={100}
+                                        autoComplete="name"
                                     />
                                 </div>
                             </div>
@@ -112,6 +133,8 @@ const Auth = () => {
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
+                                    maxLength={255}
+                                    autoComplete="email"
                                 />
                             </div>
                         </div>
@@ -127,8 +150,14 @@ const Auth = () => {
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
+                                    minLength={8}
+                                    maxLength={128}
+                                    autoComplete={isSignUp ? "new-password" : "current-password"}
                                 />
                             </div>
+                            {isSignUp && (
+                                <p className="text-xs text-muted-foreground">Minimum 8 characters</p>
+                            )}
                         </div>
 
                         <Button className="w-full h-11 bg-primary text-primary-foreground font-semibold" disabled={loading}>
