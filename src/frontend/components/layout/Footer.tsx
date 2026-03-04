@@ -37,10 +37,10 @@ const Footer = () => (
         <div>
           <h4 className="font-display text-sm font-semibold text-foreground">Platform</h4>
           <div className="mt-3 flex flex-col gap-2">
-            <span className="text-sm text-muted-foreground">About</span>
+            <Link to="/about" className="text-sm text-muted-foreground hover:text-primary transition-colors">About</Link>
             <span className="text-sm text-muted-foreground">API</span>
-            <span className="text-sm text-muted-foreground">Privacy</span>
-            <span className="text-sm text-muted-foreground">Terms</span>
+            <Link to="/privacy" className="text-sm text-muted-foreground hover:text-primary transition-colors">Privacy</Link>
+            <Link to="/terms" className="text-sm text-muted-foreground hover:text-primary transition-colors">Terms</Link>
           </div>
         </div>
       </div>
