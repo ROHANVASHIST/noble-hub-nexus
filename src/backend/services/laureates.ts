@@ -73,10 +73,13 @@ export const fetchLaureateById = async (id: string) => {
 };
 
 export const searchLaureates = async (query: string) => {
+  // Escape special LIKE pattern characters to prevent injection
+  const sanitizedQuery = query.replace(/[%_\\]/g, '\\$&');
+  
   const { data, error } = await supabase
     .from("laureates")
     .select("*")
-    .or(`first_name.ilike.%${query}%,last_name.ilike.%${query}%,motivation.ilike.%${query}%`)
+    .or(`first_name.ilike.%${sanitizedQuery}%,last_name.ilike.%${sanitizedQuery}%,motivation.ilike.%${sanitizedQuery}%`)
     .order("year", { ascending: false });
 
   if (!error && data && data.length > 0) return data;
