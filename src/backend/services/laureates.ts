@@ -85,7 +85,7 @@ export const searchLaureates = async (query: string) => {
   if (!error && data && data.length > 0) return data;
 
   // Basic search fallback to Nobel API
-  const response = await fetch(`https://api.nobelprize.org/2.1/laureates?name=${query}&limit=20`);
+  const response = await fetch(`https://api.nobelprize.org/2.1/laureates?name=${encodeURIComponent(query)}&limit=20`);
   const apiData = await response.json();
   return apiData.laureates.map(mapNobelLaureateToRow);
 };
