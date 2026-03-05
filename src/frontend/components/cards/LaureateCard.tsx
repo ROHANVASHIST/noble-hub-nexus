@@ -79,6 +79,7 @@ const LaureateCard = ({
               {laureate.firstName} {laureate.lastName}
             </h3>
             <p className="mt-0.5 text-[11px] font-medium text-muted-foreground uppercase tracking-wider">{laureate.nationality} · {laureate.year}</p>
+            <p className="text-[10px] font-bold text-primary/70 italic truncate mt-0.5">{laureate.institution}</p>
             <div className="mt-2.5">
               <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-tighter shadow-sm transition-all duration-500 ${CATEGORY_COLORS[laureate.category]} ${isSelected ? 'scale-105' : ''}`}>
                 {laureate.category}

@@ -5,13 +5,14 @@ import PageLayout from "@/frontend/components/layout/PageLayout";
 import PaperCard from "@/frontend/components/cards/PaperCard";
 import { CATEGORIES, NobelCategory } from "@/backend/data/mock-data";
 import { fetchPapers } from "@/backend/services/papers";
-import { Loader2, Search, FileText } from "lucide-react";
+import { Loader2, Search, FileText, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 
 const ResearchPage = () => {
   const [selectedCategory, setSelectedCategory] = useState<NobelCategory | "All">("All");
   const [searchQuery, setSearchQuery] = useState("");
+  const [scholarMode, setScholarMode] = useState(false);
 
   const { data: papers, isLoading } = useQuery({
     queryKey: ["papers", selectedCategory],
@@ -43,6 +44,16 @@ const ResearchPage = () => {
             <span className="text-xs font-bold uppercase tracking-widest text-primary">
               {filteredPapers.length} Papers indexed
             </span>
+          </div>
+          {/* Scholar Mode Toggle */}
+          <div className="flex items-center gap-3 bg-amber-500/10 px-4 py-2 rounded-2xl border border-amber-500/20 ml-4 group cursor-pointer" onClick={() => {
+            setScholarMode(!scholarMode);
+            toast(scholarMode ? "Scholar mode deactivated" : "Scholar mode activated - Highlighted tools available", {
+              icon: <Sparkles className="h-4 w-4 text-amber-500" />
+            });
+          }}>
+            <Sparkles className={`h-4 w-4 transition-all ${scholarMode ? "text-amber-500 scale-125" : "text-muted-foreground group-hover:text-amber-500"}`} />
+            <span className={`text-[10px] font-black uppercase tracking-widest transition-colors ${scholarMode ? "text-amber-600" : "text-muted-foreground"}`}>Scholar Mode</span>
           </div>
         </div>
 
@@ -120,6 +131,15 @@ const ResearchPage = () => {
                     />
                   ))}
                 </AnimatePresence>
+                {scholarMode && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="md:col-span-2 mt-4 p-4 bg-amber-500/5 border border-amber-500/20 border-dashed rounded-2xl text-center text-[10px] font-bold uppercase tracking-[0.2em] text-amber-600"
+                  >
+                    AI Summarization & BibTeX Export Tools are now prioritized in your view.
+                  </motion.div>
+                )}
               </div>
             ) : (
               <div className="mt-20 flex flex-col items-center text-center p-12 rounded-3xl bg-secondary/20 border border-border border-dashed">

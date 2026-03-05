@@ -7,10 +7,12 @@ import { Button } from "@/components/ui/button";
 
 const NAV_LINKS = [
   { to: "/", label: "Home" },
-  { to: "/laureates", label: "Laureates" },
+  { to: "/laureates", label: "Library" },
   { to: "/lectures", label: "Lectures" },
   { to: "/research", label: "Research" },
-  { to: "/analytics", label: "Insights" },
+  { to: "/mentorship", label: "Mentorship" },
+  { to: "/scientific-skills", label: "Lab" },
+  { to: "/analytics", label: "Analytics" },
 ];
 
 const Navbar = () => {
@@ -62,20 +64,20 @@ const Navbar = () => {
       className="fixed top-0 left-0 right-0 z-50 border-b backdrop-blur-xl transition-all duration-300"
     >
       <div className="container mx-auto flex items-center justify-between px-4">
-        <Link to="/" className="flex items-center gap-3 group">
+        <Link to="/" className="flex items-center gap-3 group px-4 py-2 rounded-2xl transition-all hover:bg-white/5">
           <motion.div
             whileHover={{ rotate: 15, scale: 1.1 }}
-            className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-amber-600 shadow-lg shadow-primary/20"
+            className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-amber-600 shadow-lg shadow-primary/20"
           >
-            <Award className="h-6 w-6 text-primary-foreground" />
+            <Award className="h-7 w-7 text-primary-foreground" />
           </motion.div>
           <div className="flex flex-col">
-            <span className="font-display text-xl font-black tracking-tight text-foreground transition-colors group-hover:text-primary">
+            <span className="font-display text-2xl font-black tracking-tight text-foreground transition-colors group-hover:text-primary leading-none">
               NOBEL<span className="text-primary group-hover:text-foreground">HUB</span>
             </span>
-            <div className="flex items-center gap-1 -mt-1">
-              <Sparkles className="h-2 w-2 text-amber-500" />
-              <span className="text-[8px] font-black uppercase tracking-[0.2em] text-muted-foreground">Archive Node 2.1</span>
+            <div className="flex items-center gap-1 mt-0.5">
+              <Sparkles className="h-2.5 w-2.5 text-amber-500 animate-pulse" />
+              <span className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground/80">Scientific Archive v2.5</span>
             </div>
           </div>
         </Link>

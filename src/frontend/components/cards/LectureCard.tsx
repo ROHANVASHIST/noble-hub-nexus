@@ -4,9 +4,24 @@ import { Play, Clock, Eye, Sparkles, X, ExternalLink, Download, Bookmark } from 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { useScholarData } from "@/frontend/hooks/useScholarData";
 
 const LectureCard = ({ lecture, index = 0 }: { lecture: Lecture; index?: number }) => {
   const [showSummary, setShowSummary] = useState(false);
+  const { addBookmark } = useScholarData();
+
+  const handleBookmark = () => {
+    const success = addBookmark({
+      itemId: lecture.id,
+      itemType: 'lecture',
+      title: lecture.title
+    });
+    if (success) {
+      toast.success("Saved to your watch list");
+    } else {
+      toast.info("Already in your watch list");
+    }
+  };
 
   const exportData = () => {
     const data = JSON.stringify(lecture, null, 2);
@@ -49,9 +64,7 @@ const LectureCard = ({ lecture, index = 0 }: { lecture: Lecture; index?: number 
             {lecture.title}
           </h3>
           <div className="flex gap-1 shrink-0">
-            <Button variant="ghost" size="icon" className="h-7 w-7 rounded-md" onClick={() => {
-              toast.success("Saved to your watch list");
-            }}>
+            <Button variant="ghost" size="icon" className="h-7 w-7 rounded-md" onClick={handleBookmark}>
               <Bookmark className="h-3.5 w-3.5 text-primary" />
             </Button>
             <Button variant="ghost" size="icon" className="h-7 w-7 rounded-md" onClick={() => setShowSummary(true)}>
@@ -65,9 +78,12 @@ const LectureCard = ({ lecture, index = 0 }: { lecture: Lecture; index?: number 
         <p className="mt-1 text-xs font-medium text-muted-foreground">{lecture.speakerName}</p>
 
         <div className="mt-4 flex items-center justify-between border-t border-border/50 pt-4">
-          <div className="flex items-center gap-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
-            <span className="flex items-center gap-1"><Eye className="h-3 w-3" />{(lecture.views / 1000).toFixed(1)}K</span>
-            <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{lecture.year}</span>
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center gap-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+              <span className="flex items-center gap-1"><Eye className="h-3 w-3" />{(lecture.views / 1000).toFixed(1)}K</span>
+              <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{lecture.year}</span>
+              <span className="px-1.5 py-0.5 bg-primary/10 text-primary rounded text-[9px]">{lecture.category}</span>
+            </div>
           </div>
           <a
             href={(lecture as any).video_url || "https://www.nobelprize.org"}

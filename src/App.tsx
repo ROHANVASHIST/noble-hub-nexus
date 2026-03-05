@@ -15,6 +15,9 @@ import LaureateProfile from "./frontend/pages/LaureateProfile";
 import AboutPage from "./frontend/pages/AboutPage";
 import PrivacyPage from "./frontend/pages/PrivacyPage";
 import TermsPage from "./frontend/pages/TermsPage";
+import ScholarDashboard from "./frontend/pages/ScholarDashboard";
+import ScientificSkills from "./frontend/pages/ScientificSkills";
+import MentorshipPage from "./frontend/pages/MentorshipPage";
 import NotFound from "./frontend/pages/NotFound";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -63,6 +66,9 @@ const App = () => (
           <Route path="/about" element={<ProtectedRoute><AboutPage /></ProtectedRoute>} />
           <Route path="/privacy" element={<ProtectedRoute><PrivacyPage /></ProtectedRoute>} />
           <Route path="/terms" element={<ProtectedRoute><TermsPage /></ProtectedRoute>} />
+          <Route path="/scholar-dashboard" element={<ProtectedRoute><ScholarDashboard /></ProtectedRoute>} />
+          <Route path="/scientific-skills" element={<ProtectedRoute><ScientificSkills /></ProtectedRoute>} />
+          <Route path="/mentorship" element={<ProtectedRoute><MentorshipPage /></ProtectedRoute>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

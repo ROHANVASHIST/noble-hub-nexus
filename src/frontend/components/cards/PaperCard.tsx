@@ -4,10 +4,26 @@ import { FileText, Quote, ExternalLink, Download, FileJson, Sparkles, X, Bookmar
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { useScholarData } from "@/frontend/hooks/useScholarData";
 
 const PaperCard = ({ paper, index = 0 }: { paper: ResearchPaper; index?: number }) => {
   const [showSummary, setShowSummary] = useState(false);
+  const { addBookmark } = useScholarData();
 
+  const handleBookmark = () => {
+    const success = addBookmark({
+      itemId: paper.id,
+      itemType: 'paper',
+      title: paper.title
+    });
+    if (success) {
+      toast.success("Saved to your research collection");
+    } else {
+      toast.info("Already in your collection");
+    }
+  };
+
+  // Export paper metadata as JSON
   const exportData = () => {
     const data = JSON.stringify(paper, null, 2);
     const blob = new Blob([data], { type: "application/json" });
@@ -17,6 +33,18 @@ const PaperCard = ({ paper, index = 0 }: { paper: ResearchPaper; index?: number 
     link.download = `research-${paper.id}.json`;
     link.click();
     toast.success("Metadata exported successfully");
+  };
+
+  // Export paper as BibTeX entry
+  const exportBibtex = () => {
+    const bib = `@article{${paper.id},\n  title = {${paper.title.replace(/\{/g, "{{").replace(/\}/g, "}}")}},\n  author = {${paper.authors.join(" and ")}},\n  year = {${paper.year}},\n  journal = {${paper.journal || "Nobel Archive"}},\n  doi = {${paper.doi}}\n}`;
+    const blob = new Blob([bib], { type: "application/x-bibtex" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `research-${paper.id}.bib`;
+    link.click();
+    toast.success("BibTeX exported successfully");
   };
 
   return (
@@ -36,9 +64,7 @@ const PaperCard = ({ paper, index = 0 }: { paper: ResearchPaper; index?: number 
               {paper.title}
             </h3>
             <div className="flex gap-1 shrink-0">
-              <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg" onClick={() => {
-                toast.success("Saved to your research collection");
-              }}>
+              <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg" onClick={handleBookmark}>
                 <Bookmark className="h-4 w-4 text-primary" />
               </Button>
               <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg" onClick={() => setShowSummary(true)}>
@@ -47,25 +73,34 @@ const PaperCard = ({ paper, index = 0 }: { paper: ResearchPaper; index?: number 
               <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg" onClick={exportData}>
                 <Download className="h-4 w-4 text-muted-foreground" />
               </Button>
+              <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg" onClick={exportBibtex}>
+                <FileJson className="h-4 w-4 text-muted-foreground" />
+              </Button>
             </div>
           </div>
           <p className="mt-1 text-xs font-medium text-muted-foreground">
             {Array.isArray(paper.authors) ? paper.authors.join(', ') : (paper as any).author || "Unknown Author"} · {paper.year}
           </p>
-          <p className="mt-2 line-clamp-2 text-sm text-muted-foreground leading-relaxed">
-            {paper.abstract || "LOCAL_ABSTRACT_MISSING: Access request pending archival synchronization. Technical redirection to the primary Nobel knowledge bridge is operational for full document retrieval."}
+          <div className="mt-2 flex flex-wrap gap-2">
+            <span className="px-2 py-0.5 bg-primary/5 text-primary text-[10px] font-bold uppercase rounded-md">{paper.category}</span>
+            <span className="px-2 py-0.5 bg-secondary text-muted-foreground text-[10px] font-bold uppercase rounded-md">{paper.journal}</span>
+          </div>
+          <p className="mt-3 line-clamp-2 text-sm text-muted-foreground leading-relaxed">
+            {paper.abstract || "LOCAL_ABSTRACT_MISSING: Access request pending archival synchronization."}
           </p>
           <div className="mt-4 flex flex-wrap items-center gap-4 text-xs font-medium text-muted-foreground">
-            <span className="flex items-center gap-1.5 bg-secondary/50 px-2 py-1 rounded-md">
+            <div className="flex items-center gap-1.5 bg-secondary/50 px-2 py-1 rounded-md">
               <Quote className="h-3 w-3" />
               {paper.citations?.toLocaleString() || "0"} Citations
-            </span>
-            <span className="flex items-center gap-1.5 bg-secondary/50 px-2 py-1 rounded-md">
-              <ExternalLink className="h-3 w-3" />
-              {(paper as any).journal || (paper as any).doi || "Research Archive"}
-            </span>
+            </div>
+            {paper.doi && (
+              <span className="flex items-center gap-1.5 bg-secondary/50 px-2 py-1 rounded-md">
+                <ExternalLink className="h-3 w-3" />
+                {paper.doi}
+              </span>
+            )}
             <a
-              href={(paper as any).pdfUrl || `https://scholar.google.com/scholar?q=${encodeURIComponent(paper.title)}`}
+              href={`https://scholar.google.com/scholar?q=${encodeURIComponent(paper.title)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="ml-auto flex items-center gap-1 text-primary hover:underline"
