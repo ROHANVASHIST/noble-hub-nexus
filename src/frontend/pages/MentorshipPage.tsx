@@ -158,7 +158,7 @@ const MentorshipPage = () => {
 
         // Fetch existing messages
         const fetchMessages = async () => {
-            const { data } = await supabase
+            const { data } = await (supabase as any)
                 .from('study_room_messages')
                 .select('*')
                 .eq('room_name', activeRoom)
@@ -205,7 +205,7 @@ const MentorshipPage = () => {
     const handleSendRoomMessage = async () => {
         if (!roomInput.trim() || !activeRoom || !currentUser) return;
         const displayName = currentUser.user_metadata?.display_name || currentUser.email?.split('@')[0] || 'Anonymous';
-        await supabase.from('study_room_messages').insert({
+        await (supabase as any).from('study_room_messages').insert({
             room_name: activeRoom,
             user_id: currentUser.id,
             display_name: displayName,
