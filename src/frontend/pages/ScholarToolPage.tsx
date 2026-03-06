@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import ReactMarkdown from "react-markdown";
 import PageLayout from "@/frontend/components/layout/PageLayout";
 import { Button } from "@/components/ui/button";
 import {
@@ -179,53 +179,81 @@ const ScholarToolPage = () => {
         setIsEditing(false);
         setEditedResult("");
 
-        // Simulating AI processing
-        setTimeout(async () => {
-            let output = "";
-            switch (toolId) {
-                case 'semantic-search':
-                    output = `### Search Results for "${prompt}"\n\n1. **Arxiv:2403.120**: "Advanced Neural Mapping in ${prompt}" - Relevance Score: 0.98\n2. **Nature Commun**: "The Role of Entropy in ${prompt}" - Relevance Score: 0.94\n3. **Science**: "${prompt}: A Multi-Decadal Review" - Relevance Score: 0.89\n\nRecommended Action: Investigate the overlap between Citation 1 and Citation 3.`;
-                    break;
-                case 'gap-analysis':
-                    output = `### Discovery Vector: ${prompt}\n\nOur models have identified a significant "data void" in the intersection of ${prompt} and long-term sustainability metrics. \n\n**Proposed Research Question:** "How does ${prompt} scale when constrained by localized resource scarcity?"\n\n**Uniqueness Score:** 92% (High Novelty)`;
-                    break;
-                case 'pdf-parser':
-                    output = `### Structural Extraction Complete\n\n**Extracted from your request: "${prompt}"**\n\n- **Methodology:** 4-stage iterative loop with Bayesian priors.\n- **Constraints:** Sample size N=450 limits generalizability to urban contexts.\n- **Metadata:** Found hidden author annotations in PDF version 1.4 suggesting original results were 12% higher.`;
-                    break;
-                case 'equation-explainer':
-                    output = `### Conceptual Breakdown\n\nYour formula regarding ${prompt} represents the conservation of momentum in high-entropy states.\n\n- **Term 1 (φ):** Represents the potential field variance.\n- **Term 2 (λ):** The decay constant relative to observer bias.\n\n**Intuition:** Think of this as water flowing through a porous membrane where the membrane itself is constantly shifting.`;
-                    break;
-                case 'limitation-extractor':
-                    output = `### Critical Appraisal: "${prompt}"\n\n**Identified Constraints:**\n1. **Sample Bias:** The study relies heavily on Western, Educated individuals (WEIRD samples).\n2. **Temporal Limits:** Data collection ended in 2021, missing post-pandemic shifts.\n3. **Hardware Dependence:** Results are specific to H100 GPU clusters and may not generalize.\n\n**Counter-Research Prompt:** "How do these results shift when applied to low-compute environments?"`;
-                    break;
-                case 'compare-papers':
-                    output = `### Comparative Matrix\n\n**Point of Divergence:** Methodology\n- **Paper A:** Utilizes frequentist statistics (N=150).\n- **Paper B:** Adopts a Bayesian approach with weak priors.\n\n**Synthesis:** Paper B shows 14% more resilience to outliers but Paper A is more easily replicated in standard labs.`;
-                    break;
-                case 'tone-checker':
-                    output = `### Academic Tone Analysis\n\n**Current Score:** 68/100 (Slightly Informal)\n\n**Suggested Edits:**\n- Change "really cool results" to "computationally significant outcomes".\n- Replace first-person "I found" with passive "It was observed that".\n- Avoid exclamation marks in the results section.`;
-                    break;
-                case 'scholar-ai':
-                    output = `### Scholar AI Assistant Response for "${prompt}"\n\n**Analysis:** Your query touches upon a critical aspect of academic communication. Structuring a Nature paper effectively involves a concise abstract, a compelling introduction, detailed methods, clear results, and a discussion that places findings in a broader context.\n\n**Key Tip:** Focus on a single, significant finding and present it with impact. Visuals are paramount.`;
-                    break;
-                case 'influence-explorer':
-                    output = `### Influence Matrix for ${prompt}\n\n**Top Influencer:** Prof. X (12,400 citations in ${prompt}).\n**Emerging Node:** Dr. Y (342% growth in citations last year).\n\n**Hidden Gem:** A 1998 paper titled "The ${prompt} Paradox" has recently gained traction in secondary literature.`;
-                    break;
-                default:
-                    output = `### Analysis Result for ${config.title}\n\nBased on your prompt: "${prompt}", the Scholar OS has synthesized a response.\n\n**Recommendation:** Cross-reference this with your existing dataset in the Lab Notes for maximum accuracy.`;
+        const TOOL_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/scholar-tool`;
+        let fullText = "";
+
+        try {
+            const resp = await fetch(TOOL_URL, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+                },
+                body: JSON.stringify({
+                    prompt: prompt,
+                    toolId: toolId || 'semantic-search',
+                    toolTitle: config.title,
+                    toolCategory: config.category,
+                }),
+            });
+
+            if (!resp.ok) {
+                const errData = await resp.json().catch(() => ({}));
+                throw new Error(errData.error || `Error ${resp.status}`);
             }
 
-            setResult(output);
-            setIsProcessing(false);
-            const newHistory = { prompt, result: output, timestamp: new Date().toLocaleTimeString() };
+            if (!resp.body) throw new Error("No response body");
+
+            const reader = resp.body.getReader();
+            const decoder = new TextDecoder();
+            let textBuffer = "";
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                textBuffer += decoder.decode(value, { stream: true });
+
+                let newlineIndex: number;
+                while ((newlineIndex = textBuffer.indexOf("\n")) !== -1) {
+                    let line = textBuffer.slice(0, newlineIndex);
+                    textBuffer = textBuffer.slice(newlineIndex + 1);
+                    if (line.endsWith("\r")) line = line.slice(0, -1);
+                    if (line.startsWith(":") || line.trim() === "") continue;
+                    if (!line.startsWith("data: ")) continue;
+                    const jsonStr = line.slice(6).trim();
+                    if (jsonStr === "[DONE]") break;
+                    try {
+                        const parsed = JSON.parse(jsonStr);
+                        const content = parsed.choices?.[0]?.delta?.content;
+                        if (content) {
+                            fullText += content;
+                            setResult(fullText);
+                        }
+                    } catch {
+                        textBuffer = line + "\n" + textBuffer;
+                        break;
+                    }
+                }
+            }
+
+            if (!fullText) fullText = "No response generated. Please try again.";
+            setResult(fullText);
+            const newHistory = { prompt, result: fullText, timestamp: new Date().toLocaleTimeString() };
             setHistory(prev => [newHistory, ...prev]);
 
             await addNote({
                 title: `${config.title} Fragment`,
-                content: `Prompt: ${prompt}\n\nResult:\n${output}`,
+                content: `Prompt: ${prompt}\n\nResult:\n${fullText}`,
                 type: 'insight'
             });
             toast.success("Result saved to Lab Notes");
-        }, 2000);
+        } catch (error: any) {
+            console.error("Scholar tool error:", error);
+            toast.error(error.message || "Failed to get AI response. Please try again.");
+            setResult("An error occurred while processing your request. Please try again.");
+        } finally {
+            setIsProcessing(false);
+        }
     };
 
     return (
