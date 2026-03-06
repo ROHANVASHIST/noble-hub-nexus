@@ -410,8 +410,8 @@ const ScholarToolPage = () => {
                                                 className="w-full h-80 bg-white/5 border border-white/10 rounded-2xl p-6 text-white font-serif text-lg focus:outline-none focus:ring-1 focus:ring-primary/40 leading-relaxed resize-none"
                                             />
                                         ) : (
-                                            <div className="whitespace-pre-wrap font-serif text-lg text-white bg-secondary/20 p-8 rounded-[2rem] border border-border/30">
-                                                {editedResult || result}
+                                            <div className="font-serif text-lg bg-secondary/20 p-8 rounded-[2rem] border border-border/30 prose prose-sm max-w-none">
+                                                <ReactMarkdown>{editedResult || result}</ReactMarkdown>
                                             </div>
                                         )}
                                     </div>
