@@ -10,16 +10,16 @@ const LectureCard = ({ lecture, index = 0 }: { lecture: Lecture; index?: number 
   const [showSummary, setShowSummary] = useState(false);
   const { addBookmark } = useScholarData();
 
-  const handleBookmark = () => {
-    const success = addBookmark({
+  const handleBookmark = async () => {
+    const success = await addBookmark({
       itemId: lecture.id,
       itemType: 'lecture',
       title: lecture.title
     });
     if (success) {
-      toast.success("Saved to your watch list");
+      toast.success("Saved to your research collection");
     } else {
-      toast.info("Already in your watch list");
+      toast.info("Already in your collection");
     }
   };
 

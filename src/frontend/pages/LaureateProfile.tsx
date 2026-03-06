@@ -19,9 +19,9 @@ const LaureateProfile = () => {
         enabled: !!id,
     });
 
-    const handleBookmark = () => {
+    const handleBookmark = async () => {
         if (!laureate) return;
-        const success = addBookmark({
+        const success = await addBookmark({
             itemId: laureate.id,
             itemType: 'laureate',
             title: `${laureate.first_name} ${laureate.last_name}`
@@ -31,6 +31,30 @@ const LaureateProfile = () => {
         } else {
             toast.info("Already in your collection");
         }
+    };
+
+    const handleDatasetExport = () => {
+        if (!laureate) return;
+        const data = `Mock Dataset covering publications and citations for ${laureate.first_name} ${laureate.last_name}`;
+        const blob = new Blob([data], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `dataset_${laureate.id}.csv`;
+        link.click();
+        toast.success(`Dataset exported successfully`);
+    };
+
+    const handleCitationExport = (format: string) => {
+        if (!laureate) return;
+        const data = `Mock ${format} Export Data for seminal papers by ${laureate.last_name}`;
+        const blob = new Blob([data], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `cit_export_${laureate.id}.${format.toLowerCase()}`;
+        link.click();
+        toast.success(`Exported citations to ${format} format`);
     };
 
     if (isLoading) {
@@ -308,7 +332,7 @@ const LaureateProfile = () => {
                                 </div>
                                 <div className="mt-4 flex items-center justify-between text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
                                     <p>Analysis identifies 12% output drop post-{winYear} Nobel win (Typical laureate pattern).</p>
-                                    <Button variant="ghost" size="sm" className="h-6 px-2 text-[8px] hover:text-primary">Download Dataset</Button>
+                                    <Button variant="ghost" size="sm" className="h-6 px-2 text-[8px] hover:text-primary" onClick={handleDatasetExport}>Download Dataset</Button>
                                 </div>
                             </div>
                         </motion.div>
@@ -338,9 +362,9 @@ const LaureateProfile = () => {
                                     Bulk export all seminal papers to BibTeX, EndNote, or Mendeley for your literature review.
                                 </p>
                                 <div className="mt-6 flex gap-2">
-                                    <Button variant="outline" size="sm" className="rounded-xl border-dashed h-8 text-[10px] uppercase font-bold tracking-widest">BibTeX</Button>
-                                    <Button variant="outline" size="sm" className="rounded-xl border-dashed h-8 text-[10px] uppercase font-bold tracking-widest">Mendeley</Button>
-                                    <Button variant="outline" size="sm" className="rounded-xl border-dashed h-8 text-[10px] uppercase font-bold tracking-widest">Zotero</Button>
+                                    <Button variant="outline" size="sm" className="rounded-xl border-dashed h-8 text-[10px] uppercase font-bold tracking-widest" onClick={() => handleCitationExport('BibTeX')}>BibTeX</Button>
+                                    <Button variant="outline" size="sm" className="rounded-xl border-dashed h-8 text-[10px] uppercase font-bold tracking-widest" onClick={() => handleCitationExport('Mendeley')}>Mendeley</Button>
+                                    <Button variant="outline" size="sm" className="rounded-xl border-dashed h-8 text-[10px] uppercase font-bold tracking-widest" onClick={() => handleCitationExport('Zotero')}>Zotero</Button>
                                 </div>
                             </div>
                         </motion.div>

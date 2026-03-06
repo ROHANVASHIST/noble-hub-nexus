@@ -1,18 +1,22 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import PageLayout from "@/frontend/components/layout/PageLayout";
 import PaperCard from "@/frontend/components/cards/PaperCard";
 import { CATEGORIES, NobelCategory } from "@/backend/data/mock-data";
 import { fetchPapers } from "@/backend/services/papers";
-import { Loader2, Search, FileText, Sparkles } from "lucide-react";
+import { Loader2, Search, FileText, Sparkles, Download } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { useScholarData } from "@/frontend/hooks/useScholarData";
 
 const ResearchPage = () => {
+  const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState<NobelCategory | "All">("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [scholarMode, setScholarMode] = useState(false);
+  const { addNote } = useScholarData();
 
   const { data: papers, isLoading } = useQuery({
     queryKey: ["papers", selectedCategory],
@@ -46,15 +50,19 @@ const ResearchPage = () => {
             </span>
           </div>
           {/* Scholar Mode Toggle */}
-          <div className="flex items-center gap-3 bg-amber-500/10 px-4 py-2 rounded-2xl border border-amber-500/20 ml-4 group cursor-pointer" onClick={() => {
-            setScholarMode(!scholarMode);
-            toast(scholarMode ? "Scholar mode deactivated" : "Scholar mode activated - Highlighted tools available", {
-              icon: <Sparkles className="h-4 w-4 text-amber-500" />
-            });
-          }}>
+          <Button
+            variant="outline"
+            className={`flex items-center gap-3 px-4 py-2 rounded-2xl border transition-all ${scholarMode ? "bg-amber-500/10 border-amber-500/50 shadow-lg shadow-amber-500/20" : "bg-card border-border hover:border-amber-500/30"} ml-4 group`}
+            onClick={() => {
+              setScholarMode(!scholarMode);
+              toast(scholarMode ? "Scholar mode deactivated" : "Scholar mode activated - PhD Research OS Tools Available", {
+                icon: <Sparkles className="h-4 w-4 text-amber-500" />
+              });
+            }}
+          >
             <Sparkles className={`h-4 w-4 transition-all ${scholarMode ? "text-amber-500 scale-125" : "text-muted-foreground group-hover:text-amber-500"}`} />
             <span className={`text-[10px] font-black uppercase tracking-widest transition-colors ${scholarMode ? "text-amber-600" : "text-muted-foreground"}`}>Scholar Mode</span>
-          </div>
+          </Button>
         </div>
 
         <div className="mt-10 flex flex-col gap-6">
@@ -95,6 +103,44 @@ const ResearchPage = () => {
             ))}
           </div>
         </div>
+
+        <AnimatePresence>
+          {scholarMode && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="overflow-hidden"
+            >
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 bg-amber-500/5 border border-amber-500/20 rounded-[2rem] mt-8 mb-4 shadow-inner">
+                <div className="space-y-2">
+                  <h4 className="text-[10px] font-black uppercase text-amber-600 tracking-widest mb-4">Discovery</h4>
+                  <Button variant="ghost" size="sm" className="w-full justify-start text-xs border border-transparent hover:border-amber-500/20 hover:bg-amber-500/10" onClick={() => navigate('/scholar-os/semantic-search')}>Semantic Search</Button>
+                  <Button variant="ghost" size="sm" className="w-full justify-start text-xs border border-transparent hover:border-amber-500/20 hover:bg-amber-500/10" onClick={() => navigate('/scholar-os/pdf-parser')}>Upload & Parse PDF</Button>
+                  <Button variant="ghost" size="sm" className="w-full justify-start text-xs border border-transparent hover:border-amber-500/20 hover:bg-amber-500/10" onClick={() => navigate('/scholar-os/gap-analysis')}>Find Research Gaps</Button>
+                </div>
+                <div className="space-y-2">
+                  <h4 className="text-[10px] font-black uppercase text-amber-600 tracking-widest mb-4">Understanding</h4>
+                  <Button variant="ghost" size="sm" className="w-full justify-start text-xs border border-transparent hover:border-amber-500/20 hover:bg-amber-500/10" onClick={() => navigate('/scholar-os/limitation-extractor')}>Extract Limitations</Button>
+                  <Button variant="ghost" size="sm" className="w-full justify-start text-xs border border-transparent hover:border-amber-500/20 hover:bg-amber-500/10" onClick={() => navigate('/scholar-os/equation-explainer')}>Explain Equations</Button>
+                  <Button variant="ghost" size="sm" className="w-full justify-start text-xs border border-transparent hover:border-amber-500/20 hover:bg-amber-500/10" onClick={() => navigate('/scholar-os/compare-papers')}>Compare Papers</Button>
+                </div>
+                <div className="space-y-2">
+                  <h4 className="text-[10px] font-black uppercase text-amber-600 tracking-widest mb-4">Writing Assistant</h4>
+                  <Button variant="ghost" size="sm" className="w-full justify-start text-xs border border-transparent hover:border-amber-500/20 hover:bg-amber-500/10" onClick={() => navigate('/scholar-os/tone-checker')}>Academic Tone Check</Button>
+                  <Button variant="ghost" size="sm" className="w-full justify-start text-xs border border-transparent hover:border-amber-500/20 hover:bg-amber-500/10" onClick={() => navigate('/scholar-os/lit-review')}>Auto-Literature Review</Button>
+                  <Button variant="ghost" size="sm" className="w-full justify-start text-xs border border-transparent hover:border-amber-500/20 hover:bg-amber-500/10" onClick={() => navigate('/scholar-os/scholar-ai')}>Scholar AI Assistant</Button>
+                </div>
+                <div className="space-y-2">
+                  <h4 className="text-[10px] font-black uppercase text-amber-600 tracking-widest mb-4">Knowledge Base</h4>
+                  <Button variant="ghost" size="sm" className="w-full justify-start text-xs border border-transparent hover:border-amber-500/20 hover:bg-amber-500/10" onClick={() => navigate('/scholar-os/highlight-sync')}>Highlight Syncing</Button>
+                  <Button variant="ghost" size="sm" className="w-full justify-start text-xs border border-transparent hover:border-amber-500/20 hover:bg-amber-500/10" onClick={() => navigate('/scholar-os/citation-graph')}>Citation Network Graph</Button>
+                  <Button variant="ghost" size="sm" className="w-full justify-start text-xs border border-transparent hover:border-amber-500/20 hover:bg-amber-500/10" onClick={() => navigate('/scholar-os/influence-explorer')}>Influence Explorer</Button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {isLoading ? (
           <div className="mt-32 flex flex-col items-center justify-center gap-6">
@@ -148,6 +194,23 @@ const ResearchPage = () => {
                 <p className="mt-2 text-muted-foreground">
                   No publications match your filter criteria in the field of {selectedCategory}.
                 </p>
+                <div className="flex gap-4 mb-2">
+                  <Button className="flex-1 bg-amber-600 hover:bg-amber-700 text-white rounded-xl h-12 font-bold shadow-lg shadow-amber-900/40" onClick={() => toast.success("Scholar OS Virtualized Environment active.")}>
+                    Launch Scholar OS
+                  </Button>
+                  <Button variant="outline" className="h-12 w-12 rounded-xl p-0 border-amber-600/30 text-amber-600" onClick={() => {
+                    toast.success("Downloading Research Repository (JSON/BibTeX)...");
+                    const data = { research: "PhD Research Archive Export", timestamp: new Date(), version: "1.0.4" };
+                    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = "noble_hub_research_archive.json";
+                    a.click();
+                  }}>
+                    <Download className="h-5 w-5" />
+                  </Button>
+                </div>
                 <Button
                   variant="outline"
                   className="mt-6"
@@ -163,7 +226,7 @@ const ResearchPage = () => {
           </motion.div>
         )}
       </div>
-    </PageLayout>
+    </PageLayout >
   );
 };
 

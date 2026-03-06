@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { Award, Mail, Lock, User, ArrowRight, Loader2 } from "lucide-react";
+import { Award, Mail, Lock, User, ArrowRight, Loader2, Chrome } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,6 +15,7 @@ const Auth = () => {
     const [password, setPassword] = useState("");
     const [displayName, setDisplayName] = useState("");
     const [loading, setLoading] = useState(false);
+    const [googleLoading, setGoogleLoading] = useState(false);
     const navigate = useNavigate();
     const { toast } = useToast();
 
@@ -79,6 +80,27 @@ const Auth = () => {
             });
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleGoogleAuth = async () => {
+        try {
+            setGoogleLoading(true);
+            const { error } = await supabase.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                    redirectTo: window.location.origin
+                }
+            });
+            if (error) throw error;
+        } catch (error: any) {
+            toast({
+                variant: "destructive",
+                title: "Error connecting to Google",
+                description: error.message,
+            });
+        } finally {
+            setGoogleLoading(false);
         }
     };
 
@@ -160,7 +182,7 @@ const Auth = () => {
                             )}
                         </div>
 
-                        <Button className="w-full h-11 bg-primary text-primary-foreground font-semibold" disabled={loading}>
+                        <Button className="w-full h-11 bg-primary text-primary-foreground font-semibold" disabled={loading || googleLoading}>
                             {loading ? (
                                 <Loader2 className="h-4 w-4 animate-spin" />
                             ) : (
@@ -170,6 +192,29 @@ const Auth = () => {
                             )}
                         </Button>
                     </form>
+
+                    <div className="mt-6 flex items-center justify-between">
+                        <span className="w-1/5 border-b border-border/50 lg:w-1/4"></span>
+                        <span className="text-xs text-center text-muted-foreground uppercase tracking-widest font-bold">or continue with</span>
+                        <span className="w-1/5 border-b border-border/50 lg:w-1/4"></span>
+                    </div>
+
+                    <div className="mt-6">
+                        <Button
+                            variant="outline"
+                            className="w-full h-11 border-border/50 font-semibold"
+                            disabled={loading || googleLoading}
+                            onClick={handleGoogleAuth}
+                            type="button"
+                        >
+                            {googleLoading ? (
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            ) : (
+                                <Chrome className="mr-2 h-4 w-4" />
+                            )}
+                            Google
+                        </Button>
+                    </div>
 
                     <div className="mt-6 text-center">
                         <p className="text-sm text-muted-foreground">

@@ -197,6 +197,21 @@ const ScientificSkills = () => {
         if (researchTopic.trim()) { setSimulationStep(1); addLog(`Topic Selected: ${researchTopic}`, 'success'); }
     };
 
+    const handleExportLogs = () => {
+        if (researchLogs.length === 0) {
+            toast.error("No logs to export.");
+            return;
+        }
+
+        const logContent = researchLogs.map(l => `[${l.timestamp}] ${l.message}`).join('\n');
+        addNote({
+            title: `Lab Console Execution Logs`,
+            content: `Execution Logs for topic: ${researchTopic || "General"}\n\n${logContent}`,
+            type: 'note'
+        });
+        toast.success("Lab logs saved to your Lab Notes!");
+    };
+
     return (
         <PageLayout>
             <div className="container mx-auto px-4 py-12">
@@ -332,7 +347,16 @@ const ScientificSkills = () => {
                                                 <motion.div key="clog" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="h-full flex flex-col">
                                                     <div className="flex justify-between items-center mb-6 text-[10px] font-mono text-muted-foreground bg-secondary/50 p-3 rounded-xl border border-border/50">
                                                         <span className="flex items-center gap-2"><div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" /> SYSTEM_STATUS: NOMINAL</span>
-                                                        <span>{new Date().toLocaleDateString()}</span>
+                                                        <div className="flex items-center gap-3">
+                                                            <button
+                                                                onClick={handleExportLogs}
+                                                                className="flex items-center gap-1 hover:text-primary transition-colors cursor-pointer"
+                                                                title="Export Logs to Notes"
+                                                            >
+                                                                <Save className="h-3 w-3" /> <span className="uppercase font-bold tracking-widest text-[8px]">Export</span>
+                                                            </button>
+                                                            <span>{new Date().toLocaleDateString()}</span>
+                                                        </div>
                                                     </div>
                                                     <div className="flex-1 overflow-y-auto font-mono text-[11px] space-y-3 pr-4">
                                                         {researchLogs.map((log, i) => (

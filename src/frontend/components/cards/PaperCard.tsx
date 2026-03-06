@@ -10,8 +10,8 @@ const PaperCard = ({ paper, index = 0 }: { paper: ResearchPaper; index?: number 
   const [showSummary, setShowSummary] = useState(false);
   const { addBookmark } = useScholarData();
 
-  const handleBookmark = () => {
-    const success = addBookmark({
+  const handleBookmark = async () => {
+    const success = await addBookmark({
       itemId: paper.id,
       itemType: 'paper',
       title: paper.title
