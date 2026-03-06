@@ -37,7 +37,7 @@ export const useScholarData = () => {
     const fetchNotes = useCallback(async () => {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
-        const { data, error } = await supabase
+        const { data, error } = await (supabase as any)
             .from('scholar_notes')
             .select('*')
             .eq('user_id', user.id)
@@ -56,7 +56,7 @@ export const useScholarData = () => {
     const fetchProjects = useCallback(async () => {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
-        const { data, error } = await supabase
+        const { data, error } = await (supabase as any)
             .from('research_projects')
             .select('*')
             .eq('user_id', user.id)
@@ -105,7 +105,7 @@ export const useScholarData = () => {
     const addNote = async (note: Omit<LabNote, 'id' | 'date'>) => {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return null;
-        const { data, error } = await supabase
+        const { data, error } = await (supabase as any)
             .from('scholar_notes')
             .insert({ user_id: user.id, title: note.title, content: note.content, type: note.type })
             .select()
@@ -118,7 +118,7 @@ export const useScholarData = () => {
     const addProject = async (project: Omit<ResearchProject, 'id' | 'date' | 'progress' | 'status'>) => {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return null;
-        const { data, error } = await supabase
+        const { data, error } = await (supabase as any)
             .from('research_projects')
             .insert({ user_id: user.id, name: project.name, topic: project.topic, discovery: project.discovery })
             .select()
@@ -145,7 +145,7 @@ export const useScholarData = () => {
     };
 
     const deleteNote = async (id: string) => {
-        const { error } = await supabase.from('scholar_notes').delete().eq('id', id);
+        const { error } = await (supabase as any).from('scholar_notes').delete().eq('id', id);
         if (error) { toast.error('Failed to delete note'); return; }
         setNotes(prev => prev.filter(n => n.id !== id));
     };
@@ -153,13 +153,13 @@ export const useScholarData = () => {
     const updateProjectProgress = async (id: string, progress: number, status?: string) => {
         const updates: any = { progress };
         if (status) updates.status = status;
-        const { error } = await supabase.from('research_projects').update(updates).eq('id', id);
+        const { error } = await (supabase as any).from('research_projects').update(updates).eq('id', id);
         if (error) { toast.error('Failed to update project'); return; }
         await fetchProjects();
     };
 
     const updateNote = async (id: string, updates: { title?: string; content?: string }) => {
-        const { error } = await supabase.from('scholar_notes').update(updates).eq('id', id);
+        const { error } = await (supabase as any).from('scholar_notes').update(updates).eq('id', id);
         if (error) { toast.error('Failed to update note'); return; }
         await fetchNotes();
     };
