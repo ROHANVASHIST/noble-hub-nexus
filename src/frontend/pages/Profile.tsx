@@ -1,13 +1,13 @@
 import { motion } from "framer-motion";
 import { User, Bookmark, Heart, Clock, Settings, LogOut, ChevronRight, Award, BookOpen, Video, Sparkles, FolderKanban, FileEdit, Plus, Trash2, ExternalLink, Share2, Download } from "lucide-react";
 import PageLayout from "@/frontend/components/layout/PageLayout";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "sonner";
-import type { Session } from "@supabase/supabase-js";
+import { useAuth } from "@/App";
 import { useScholarData, LabNote } from "@/frontend/hooks/useScholarData";
 import {
     Dialog,
@@ -20,14 +20,13 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 
 const Profile = () => {
-    const [session, setSession] = useState<Session | null>(null);
+    const { session } = useAuth();
     const [activeTab, setActiveTab] = useState<"library" | "projects" | "notes">("library");
     const navigate = useNavigate();
 
     const { notes, projects, bookmarks, addNote: addNoteHook, deleteNote, addBookmark, updateNote } = useScholarData();
     const [newNoteTitle, setNewNoteTitle] = useState("");
 
-    // Modal state
     const [editingNote, setEditingNote] = useState<LabNote | null>(null);
     const [viewingNote, setViewingNote] = useState<LabNote | null>(null);
     const [editContent, setEditContent] = useState("");
@@ -80,15 +79,6 @@ const Profile = () => {
         setEditingNote(null);
         toast.success("Note updated successfully");
     };
-
-    useEffect(() => {
-        const checkSession = async () => {
-            const { data: { session } } = await supabase.auth.getSession();
-            setSession(session);
-            if (!session) navigate("/auth");
-        };
-        checkSession();
-    }, [navigate]);
 
     const handleSignOut = async () => {
         await supabase.auth.signOut();

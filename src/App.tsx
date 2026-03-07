@@ -20,59 +20,58 @@ import ScientificSkills from "./frontend/pages/ScientificSkills";
 import MentorshipPage from "./frontend/pages/MentorshipPage";
 import ScholarToolPage from "./frontend/pages/ScholarToolPage";
 import NotFound from "./frontend/pages/NotFound";
-import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { useAuthReady } from "@/frontend/hooks/useAuthReady";
+import React, { createContext, useContext } from "react";
+import type { User, Session } from "@supabase/supabase-js";
 
-const ProtectedRoute = ({ children, session }: { children: React.ReactNode, session: any }) => {
-  if (session === undefined) return <div className="flex h-screen w-screen items-center justify-center bg-background"><div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" /></div>;
-  if (!session) return <Navigate to="/auth" />;
+// Auth context so child pages never need their own auth checks
+interface AuthContextType {
+  user: User | null;
+  session: Session | null;
+}
+const AuthContext = createContext<AuthContextType>({ user: null, session: null });
+export const useAuth = () => useContext(AuthContext);
+
+const ProtectedRoute = ({ children, session, isReady }: { children: React.ReactNode; session: Session | null; isReady: boolean }) => {
+  if (!isReady) return <div className="flex h-screen w-screen items-center justify-center bg-background"><div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" /></div>;
+  if (!session) return <Navigate to="/auth" replace />;
   return <>{children}</>;
 };
 
 const queryClient = new QueryClient();
 
 const App = () => {
-  const [session, setSession] = useState<any>(undefined);
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session || null);
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session || null);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
+  const { user, session, isReady } = useAuthReady();
 
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/" element={<ProtectedRoute session={session}><Index /></ProtectedRoute>} />
-            <Route path="/laureates" element={<ProtectedRoute session={session}><LaureatesPage /></ProtectedRoute>} />
-            <Route path="/laureates/:id" element={<ProtectedRoute session={session}><LaureateProfile /></ProtectedRoute>} />
-            <Route path="/lectures" element={<ProtectedRoute session={session}><LecturesPage /></ProtectedRoute>} />
-            <Route path="/research" element={<ProtectedRoute session={session}><ResearchPage /></ProtectedRoute>} />
-            <Route path="/analytics" element={<ProtectedRoute session={session}><AnalyticsPage /></ProtectedRoute>} />
-            <Route path="/search" element={<ProtectedRoute session={session}><SearchPage /></ProtectedRoute>} />
-            <Route path="/profile" element={<ProtectedRoute session={session}><Profile /></ProtectedRoute>} />
-            <Route path="/about" element={<ProtectedRoute session={session}><AboutPage /></ProtectedRoute>} />
-            <Route path="/privacy" element={<ProtectedRoute session={session}><PrivacyPage /></ProtectedRoute>} />
-            <Route path="/terms" element={<ProtectedRoute session={session}><TermsPage /></ProtectedRoute>} />
-            <Route path="/scholar-dashboard" element={<ProtectedRoute session={session}><ScholarDashboard /></ProtectedRoute>} />
-            <Route path="/scientific-skills" element={<ProtectedRoute session={session}><ScientificSkills /></ProtectedRoute>} />
-            <Route path="/mentorship" element={<ProtectedRoute session={session}><MentorshipPage /></ProtectedRoute>} />
-            <Route path="/scholar-os/:toolId" element={<ProtectedRoute session={session}><ScholarToolPage /></ProtectedRoute>} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
+      <AuthContext.Provider value={{ user, session }}>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/auth" element={isReady && session ? <Navigate to="/" replace /> : <Auth />} />
+              <Route path="/" element={<ProtectedRoute session={session} isReady={isReady}><Index /></ProtectedRoute>} />
+              <Route path="/laureates" element={<ProtectedRoute session={session} isReady={isReady}><LaureatesPage /></ProtectedRoute>} />
+              <Route path="/laureates/:id" element={<ProtectedRoute session={session} isReady={isReady}><LaureateProfile /></ProtectedRoute>} />
+              <Route path="/lectures" element={<ProtectedRoute session={session} isReady={isReady}><LecturesPage /></ProtectedRoute>} />
+              <Route path="/research" element={<ProtectedRoute session={session} isReady={isReady}><ResearchPage /></ProtectedRoute>} />
+              <Route path="/analytics" element={<ProtectedRoute session={session} isReady={isReady}><AnalyticsPage /></ProtectedRoute>} />
+              <Route path="/search" element={<ProtectedRoute session={session} isReady={isReady}><SearchPage /></ProtectedRoute>} />
+              <Route path="/profile" element={<ProtectedRoute session={session} isReady={isReady}><Profile /></ProtectedRoute>} />
+              <Route path="/about" element={<ProtectedRoute session={session} isReady={isReady}><AboutPage /></ProtectedRoute>} />
+              <Route path="/privacy" element={<ProtectedRoute session={session} isReady={isReady}><PrivacyPage /></ProtectedRoute>} />
+              <Route path="/terms" element={<ProtectedRoute session={session} isReady={isReady}><TermsPage /></ProtectedRoute>} />
+              <Route path="/scholar-dashboard" element={<ProtectedRoute session={session} isReady={isReady}><ScholarDashboard /></ProtectedRoute>} />
+              <Route path="/scientific-skills" element={<ProtectedRoute session={session} isReady={isReady}><ScientificSkills /></ProtectedRoute>} />
+              <Route path="/mentorship" element={<ProtectedRoute session={session} isReady={isReady}><MentorshipPage /></ProtectedRoute>} />
+              <Route path="/scholar-os/:toolId" element={<ProtectedRoute session={session} isReady={isReady}><ScholarToolPage /></ProtectedRoute>} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </AuthContext.Provider>
     </QueryClientProvider>
   );
 };
