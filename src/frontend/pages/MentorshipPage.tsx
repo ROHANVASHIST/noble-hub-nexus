@@ -2,22 +2,10 @@ import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import PageLayout from "@/frontend/components/layout/PageLayout";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/App";
 import {
-    Users,
-    MessageSquare,
-    FileBox,
-    Bot,
-    Send,
-    UserCircle,
-    Shapes,
-    Download,
-    Share2,
-    Sparkles,
-    Loader2,
-    ArrowLeft,
-    Hash,
+    Users, MessageSquare, FileBox, Bot, Send, Sparkles, Loader2, ArrowLeft, Hash, Save, History, Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
@@ -45,34 +33,86 @@ const STUDY_ROOMS = [
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/mentor-chat`;
 
 const MentorshipPage = () => {
+    const { user } = useAuth();
     const [selectedMentor, setSelectedMentor] = useState(MENTORS[0]);
     const [chatInput, setChatInput] = useState("");
     const [messages, setMessages] = useState<ChatMsg[]>([]);
     const [isTyping, setIsTyping] = useState(false);
     const chatContainerRef = useRef<HTMLDivElement>(null);
+    const [activeChatId, setActiveChatId] = useState<string | null>(null);
+    const [chatHistoryList, setChatHistoryList] = useState<any[]>([]);
+    const [displayName, setDisplayName] = useState("You");
 
     // Study room state
     const [activeRoom, setActiveRoom] = useState<string | null>(null);
     const [roomMessages, setRoomMessages] = useState<any[]>([]);
     const [roomInput, setRoomInput] = useState("");
-    const [currentUser, setCurrentUser] = useState<any>(null);
     const [roomMemberCounts, setRoomMemberCounts] = useState<Record<string, number>>({});
 
+    // Fetch profile display name
     useEffect(() => {
-        supabase.auth.getUser().then(({ data: { user } }) => setCurrentUser(user));
-    }, []);
+        if (!user) return;
+        (supabase as any).from("profiles").select("display_name").eq("user_id", user.id).single()
+            .then(({ data }: any) => {
+                if (data?.display_name) setDisplayName(data.display_name);
+            });
+    }, [user]);
+
+    // Load chat history list for selected mentor
+    useEffect(() => {
+        if (!user) return;
+        (supabase as any).from("mentor_chat_history")
+            .select("id, mentor_name, created_at, updated_at")
+            .eq("user_id", user.id)
+            .eq("mentor_name", selectedMentor.name)
+            .order("updated_at", { ascending: false })
+            .limit(20)
+            .then(({ data }: any) => { if (data) setChatHistoryList(data); });
+    }, [user, selectedMentor.name, activeChatId]);
 
     useEffect(() => {
-        if (chatContainerRef.current) {
-            chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-        }
+        if (chatContainerRef.current) chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }, [messages, isTyping]);
 
     const handleMentorSelect = (mentor: typeof MENTORS[0]) => {
         setSelectedMentor(mentor);
         setMessages([]);
+        setActiveChatId(null);
         toast.info(`Now speaking with ${mentor.name}`);
     };
+
+    const saveChatToDb = async (allMessages: ChatMsg[]) => {
+        if (!user || allMessages.length === 0) return;
+        try {
+            if (activeChatId) {
+                await (supabase as any).from("mentor_chat_history").update({ messages: allMessages, updated_at: new Date().toISOString() }).eq("id", activeChatId);
+            } else {
+                const { data } = await (supabase as any).from("mentor_chat_history").insert({
+                    user_id: user.id,
+                    mentor_name: selectedMentor.name,
+                    messages: allMessages,
+                }).select("id").single();
+                if (data) setActiveChatId(data.id);
+            }
+        } catch (e) { console.error("Failed to save chat:", e); }
+    };
+
+    const loadChat = async (chatId: string) => {
+        const { data } = await (supabase as any).from("mentor_chat_history").select("messages, mentor_name").eq("id", chatId).single();
+        if (data) {
+            setMessages(data.messages || []);
+            setActiveChatId(chatId);
+        }
+    };
+
+    const deleteChat = async (chatId: string) => {
+        await (supabase as any).from("mentor_chat_history").delete().eq("id", chatId);
+        if (activeChatId === chatId) { setMessages([]); setActiveChatId(null); }
+        setChatHistoryList(prev => prev.filter((c: any) => c.id !== chatId));
+        toast.success("Chat deleted");
+    };
+
+    const startNewChat = () => { setMessages([]); setActiveChatId(null); };
 
     const handleSendMessage = async () => {
         if (!chatInput.trim() || isTyping) return;
@@ -87,15 +127,13 @@ const MentorshipPage = () => {
         try {
             const resp = await fetch(CHAT_URL, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-                },
+                headers: { "Content-Type": "application/json", Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}` },
                 body: JSON.stringify({
                     messages: allMessages,
                     mentorName: selectedMentor.name,
                     mentorField: selectedMentor.field,
                     mentorDescription: selectedMentor.description,
+                    userName: displayName,
                 }),
             });
 
@@ -103,7 +141,6 @@ const MentorshipPage = () => {
                 const errData = await resp.json().catch(() => ({}));
                 throw new Error(errData.error || `Error ${resp.status}`);
             }
-
             if (!resp.body) throw new Error("No response body");
 
             const reader = resp.body.getReader();
@@ -131,18 +168,18 @@ const MentorshipPage = () => {
                             assistantSoFar += content;
                             setMessages(prev => {
                                 const last = prev[prev.length - 1];
-                                if (last?.role === "assistant") {
-                                    return prev.map((m, i) => i === prev.length - 1 ? { ...m, content: assistantSoFar } : m);
-                                }
+                                if (last?.role === "assistant") return prev.map((m, i) => i === prev.length - 1 ? { ...m, content: assistantSoFar } : m);
                                 return [...prev, { role: "assistant", content: assistantSoFar }];
                             });
                         }
-                    } catch {
-                        textBuffer = line + "\n" + textBuffer;
-                        break;
-                    }
+                    } catch { textBuffer = line + "\n" + textBuffer; break; }
                 }
             }
+
+            // Save to DB after response complete
+            const finalMessages = [...allMessages, { role: "assistant" as const, content: assistantSoFar }];
+            setMessages(finalMessages);
+            await saveChatToDb(finalMessages);
         } catch (error: any) {
             console.error("Mentor chat error:", error);
             toast.error(error.message || "Failed to connect to AI Mentor.");
@@ -155,59 +192,43 @@ const MentorshipPage = () => {
     // Study Room Logic
     useEffect(() => {
         if (!activeRoom) return;
-
-        // Fetch existing messages
         const fetchMessages = async () => {
-            const { data } = await (supabase as any)
-                .from('study_room_messages')
-                .select('*')
-                .eq('room_name', activeRoom)
-                .order('created_at', { ascending: true })
-                .limit(100);
+            const { data } = await (supabase as any).from('study_room_messages').select('*').eq('room_name', activeRoom).order('created_at', { ascending: true }).limit(100);
             if (data) setRoomMessages(data);
         };
         fetchMessages();
 
-        // Subscribe to new messages
-        const channel = supabase
-            .channel(`room-${activeRoom}`)
-            .on('postgres_changes', {
-                event: 'INSERT',
-                schema: 'public',
-                table: 'study_room_messages',
-                filter: `room_name=eq.${activeRoom}`,
-            }, (payload) => {
+        const channel = supabase.channel(`room-${activeRoom}`)
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'study_room_messages', filter: `room_name=eq.${activeRoom}` }, (payload) => {
                 setRoomMessages(prev => [...prev, payload.new]);
-            })
-            .subscribe();
+            }).subscribe();
 
         return () => { supabase.removeChannel(channel); };
     }, [activeRoom]);
 
     // Track online users with presence
     useEffect(() => {
+        if (!user) return;
         const channels = STUDY_ROOMS.map(room => {
-            const ch = supabase.channel(`presence-${room.slug}`, { config: { presence: { key: currentUser?.id || 'anon' } } });
+            const ch = supabase.channel(`presence-${room.slug}`, { config: { presence: { key: user.id } } });
             ch.on('presence', { event: 'sync' }, () => {
                 const state = ch.presenceState();
                 setRoomMemberCounts(prev => ({ ...prev, [room.slug]: Object.keys(state).length }));
             }).subscribe(async (status) => {
                 if (status === 'SUBSCRIBED' && activeRoom === room.slug) {
-                    await ch.track({ user_id: currentUser?.id, online_at: new Date().toISOString() });
+                    await ch.track({ user_id: user.id, online_at: new Date().toISOString() });
                 }
             });
             return ch;
         });
-
         return () => { channels.forEach(ch => supabase.removeChannel(ch)); };
-    }, [currentUser, activeRoom]);
+    }, [user, activeRoom]);
 
     const handleSendRoomMessage = async () => {
-        if (!roomInput.trim() || !activeRoom || !currentUser) return;
-        const displayName = currentUser.user_metadata?.display_name || currentUser.email?.split('@')[0] || 'Anonymous';
+        if (!roomInput.trim() || !activeRoom || !user) return;
         await (supabase as any).from('study_room_messages').insert({
             room_name: activeRoom,
-            user_id: currentUser.id,
+            user_id: user.id,
             display_name: displayName,
             message: roomInput.trim(),
         });
@@ -216,9 +237,7 @@ const MentorshipPage = () => {
 
     const roomContainerRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
-        if (roomContainerRef.current) {
-            roomContainerRef.current.scrollTop = roomContainerRef.current.scrollHeight;
-        }
+        if (roomContainerRef.current) roomContainerRef.current.scrollTop = roomContainerRef.current.scrollHeight;
     }, [roomMessages]);
 
     return (
@@ -231,14 +250,14 @@ const MentorshipPage = () => {
                                 <Users className="h-10 w-10 text-primary" /> Mentorship & Collaboration
                             </h1>
                             <p className="mt-2 text-muted-foreground max-w-xl">
-                                Chat with AI-powered Nobel laureate mentors and collaborate in real-time study rooms.
+                                Chat with AI-powered Nobel laureate mentors and collaborate in real-time study rooms. Your chats are saved automatically.
                             </p>
                         </div>
                     </motion.div>
                 </header>
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                    {/* Left: Mentor Selection */}
+                    {/* Left: Mentor Selection + Chat History */}
                     <div className="lg:col-span-3 space-y-4">
                         <div className="bg-card border border-border/50 rounded-3xl p-6 shadow-sm">
                             <h2 className="text-sm font-bold uppercase tracking-widest mb-4 flex items-center gap-2">
@@ -246,15 +265,35 @@ const MentorshipPage = () => {
                             </h2>
                             <div className="space-y-2">
                                 {MENTORS.map(m => (
-                                    <button
-                                        key={m.name}
-                                        onClick={() => handleMentorSelect(m)}
-                                        className={`w-full text-left p-4 rounded-2xl border transition-all ${selectedMentor.name === m.name ? "bg-primary/5 border-primary text-primary shadow-sm" : "border-transparent text-muted-foreground hover:bg-secondary/50"}`}
-                                    >
+                                    <button key={m.name} onClick={() => handleMentorSelect(m)}
+                                        className={`w-full text-left p-4 rounded-2xl border transition-all ${selectedMentor.name === m.name ? "bg-primary/5 border-primary text-primary shadow-sm" : "border-transparent text-muted-foreground hover:bg-secondary/50"}`}>
                                         <div className="text-sm font-bold">{m.name}</div>
                                         <div className="text-[10px] uppercase font-bold tracking-tight opacity-70">{m.field}</div>
                                     </button>
                                 ))}
+                            </div>
+                        </div>
+
+                        {/* Chat History */}
+                        <div className="bg-card border border-border/50 rounded-3xl p-6 shadow-sm">
+                            <div className="flex items-center justify-between mb-4">
+                                <h2 className="text-sm font-bold uppercase tracking-widest flex items-center gap-2">
+                                    <History className="h-4 w-4 text-primary" /> Saved Chats
+                                </h2>
+                                <Button variant="ghost" size="sm" className="h-7 text-[10px] uppercase font-bold" onClick={startNewChat}>New Chat</Button>
+                            </div>
+                            <div className="space-y-2 max-h-48 overflow-y-auto">
+                                {chatHistoryList.map((chat: any) => (
+                                    <div key={chat.id} className={`flex items-center justify-between p-3 rounded-xl border cursor-pointer transition-all ${activeChatId === chat.id ? "bg-primary/5 border-primary" : "border-border/30 hover:bg-secondary/50"}`}>
+                                        <button className="flex-1 text-left" onClick={() => loadChat(chat.id)}>
+                                            <div className="text-[10px] text-muted-foreground">{new Date(chat.updated_at).toLocaleDateString()}</div>
+                                        </button>
+                                        <Button variant="ghost" size="sm" className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive" onClick={(e) => { e.stopPropagation(); deleteChat(chat.id); }}>
+                                            <Trash2 className="h-3 w-3" />
+                                        </Button>
+                                    </div>
+                                ))}
+                                {chatHistoryList.length === 0 && <p className="text-[10px] text-muted-foreground italic text-center py-2">No saved chats yet</p>}
                             </div>
                         </div>
                     </div>
@@ -278,7 +317,6 @@ const MentorshipPage = () => {
                             </div>
 
                             <div ref={chatContainerRef} className="flex-1 p-6 overflow-y-auto space-y-6">
-                                {/* Welcome message */}
                                 <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="flex justify-start">
                                     <div className="max-w-[85%] p-5 rounded-3xl text-sm leading-relaxed bg-primary/10 text-foreground rounded-tl-none border border-primary/20 shadow-inner">
                                         {selectedMentor.welcome}
@@ -290,9 +328,9 @@ const MentorshipPage = () => {
                                         <div className={`max-w-[85%] p-5 rounded-3xl text-sm leading-relaxed ${msg.role === "assistant"
                                             ? "bg-primary/10 text-foreground rounded-tl-none border border-primary/20 shadow-inner prose prose-sm max-w-none"
                                             : "bg-primary text-primary-foreground rounded-tr-none shadow-lg shadow-primary/20"}`}>
-                                            {msg.role === "assistant" ? (
-                                                <ReactMarkdown>{msg.content}</ReactMarkdown>
-                                            ) : msg.content}
+                                            {msg.role === "assistant" ? <ReactMarkdown>{msg.content}</ReactMarkdown> : (
+                                                <div><div className="text-[10px] font-bold opacity-70 mb-1">{displayName}</div>{msg.content}</div>
+                                            )}
                                         </div>
                                     </motion.div>
                                 ))}
@@ -308,15 +346,9 @@ const MentorshipPage = () => {
                             </div>
 
                             <div className="p-4 bg-background/50 border-t border-border/50 flex items-center gap-3">
-                                <input
-                                    type="text"
-                                    value={chatInput}
-                                    onChange={(e) => setChatInput(e.target.value)}
-                                    onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSendMessage()}
+                                <input type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSendMessage()}
                                     placeholder={`Ask ${selectedMentor.name.split(" ").pop()} anything...`}
-                                    className="flex-1 bg-secondary/50 border-none rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                                    disabled={isTyping}
-                                />
+                                    className="flex-1 bg-secondary/50 border-none rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 outline-none transition-all" disabled={isTyping} />
                                 <Button onClick={handleSendMessage} disabled={isTyping} className="rounded-2xl h-10 w-10 p-0 flex items-center justify-center shrink-0">
                                     <Send className="h-4 w-4" />
                                 </Button>
@@ -334,17 +366,11 @@ const MentorshipPage = () => {
                                     </h2>
                                     <div className="space-y-3">
                                         {STUDY_ROOMS.map(room => (
-                                            <button
-                                                key={room.slug}
-                                                onClick={() => setActiveRoom(room.slug)}
-                                                className="w-full flex items-center justify-between p-3 bg-background rounded-2xl border border-border/50 hover:border-violet-300 transition-all cursor-pointer"
-                                            >
-                                                <span className="text-xs font-bold flex items-center gap-2">
-                                                    <Hash className="h-3 w-3 text-violet-500" /> {room.name}
-                                                </span>
+                                            <button key={room.slug} onClick={() => setActiveRoom(room.slug)}
+                                                className="w-full flex items-center justify-between p-3 bg-background rounded-2xl border border-border/50 hover:border-violet-300 transition-all cursor-pointer">
+                                                <span className="text-xs font-bold flex items-center gap-2"><Hash className="h-3 w-3 text-violet-500" /> {room.name}</span>
                                                 <span className="text-[10px] text-muted-foreground flex items-center gap-1">
-                                                    <div className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                                                    {roomMemberCounts[room.slug] || 0} online
+                                                    <div className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />{roomMemberCounts[room.slug] || 0} online
                                                 </span>
                                             </button>
                                         ))}
@@ -359,7 +385,8 @@ const MentorshipPage = () => {
                                     <div className="space-y-3 relative z-10 text-xs text-muted-foreground">
                                         <p>💡 Ask mentors about <strong>any</strong> topic — they stay in character!</p>
                                         <p>💬 Join study rooms to collaborate with peers in real-time.</p>
-                                        <p>📝 Your lab notes and projects are saved to your profile automatically.</p>
+                                        <p>📝 Chats are saved automatically. Use "Saved Chats" to resume.</p>
+                                        <p>👤 Your name from your profile is shown in chats.</p>
                                     </div>
                                 </div>
                             </>
@@ -374,19 +401,14 @@ const MentorshipPage = () => {
                                         <span className="text-sm font-bold">{STUDY_ROOMS.find(r => r.slug === activeRoom)?.name}</span>
                                     </div>
                                     <span className="text-[10px] text-muted-foreground flex items-center gap-1">
-                                        <div className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                                        {roomMemberCounts[activeRoom] || 0} online
+                                        <div className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />{roomMemberCounts[activeRoom] || 0} online
                                     </span>
                                 </div>
 
                                 <div ref={roomContainerRef} className="flex-1 p-4 overflow-y-auto space-y-3">
-                                    {roomMessages.length === 0 && (
-                                        <div className="text-center py-12 text-muted-foreground text-xs italic">
-                                            No messages yet. Be the first to share an idea! 🚀
-                                        </div>
-                                    )}
+                                    {roomMessages.length === 0 && <div className="text-center py-12 text-muted-foreground text-xs italic">No messages yet. Be the first to share an idea! 🚀</div>}
                                     {roomMessages.map((msg, i) => {
-                                        const isOwn = msg.user_id === currentUser?.id;
+                                        const isOwn = msg.user_id === user?.id;
                                         return (
                                             <motion.div key={msg.id || i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
                                                 <div className={`max-w-[85%] ${isOwn ? 'bg-primary text-primary-foreground rounded-tr-none' : 'bg-secondary/50 text-foreground rounded-tl-none border border-border/50'} p-3 rounded-2xl`}>
@@ -400,14 +422,8 @@ const MentorshipPage = () => {
                                 </div>
 
                                 <div className="p-3 border-t border-border/50 flex gap-2">
-                                    <input
-                                        type="text"
-                                        value={roomInput}
-                                        onChange={(e) => setRoomInput(e.target.value)}
-                                        onKeyDown={(e) => e.key === "Enter" && handleSendRoomMessage()}
-                                        placeholder="Share an idea..."
-                                        className="flex-1 bg-secondary/50 border-none rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-violet-500/20 outline-none"
-                                    />
+                                    <input type="text" value={roomInput} onChange={(e) => setRoomInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleSendRoomMessage()}
+                                        placeholder="Share an idea..." className="flex-1 bg-secondary/50 border-none rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-violet-500/20 outline-none" />
                                     <Button onClick={handleSendRoomMessage} size="sm" className="rounded-xl h-9 w-9 p-0 bg-violet-600 hover:bg-violet-700">
                                         <Send className="h-3 w-3" />
                                     </Button>
