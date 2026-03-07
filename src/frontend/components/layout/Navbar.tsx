@@ -1,9 +1,10 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Search, Menu, X, LogOut, User, Sparkles, Award } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/App";
 
 const NAV_LINKS = [
   { to: "/", label: "Home" },
@@ -19,7 +20,7 @@ const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [session, setSession] = useState<any>(null);
+  const { session } = useAuth();
   const { scrollY } = useScroll();
 
   const navBg = useTransform(
@@ -33,21 +34,6 @@ const Navbar = () => {
     ["rgba(255, 255, 255, 0)", "rgba(255, 255, 255, 0.1)"]
   );
   const navPadding = useTransform(scrollY, [0, 50], ["1.5rem", "1rem"]);
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     navigate("/");
