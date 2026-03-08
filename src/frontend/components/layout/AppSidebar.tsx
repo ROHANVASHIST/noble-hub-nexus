@@ -6,7 +6,7 @@ import {
   ChevronDown, ChevronsUpDown, Settings, Bell, Zap, Bot, Target,
   Timer, Layers, Bookmark, ListChecks, MessageSquare, FileText, Kanban,
   Highlighter, PieChart, Mail, CalendarCheck,
-  AlarmClock, GitCompareArrows, Medal,
+  AlarmClock, GitCompareArrows, Medal, Headphones,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/App";
@@ -76,6 +76,7 @@ const RESEARCH_NAV = [
   { to: "/weekly-digest", label: "Weekly Digest", icon: Mail, badge: "New" },
   { to: "/reminders", label: "Reminders", icon: AlarmClock, badge: "New" },
   { to: "/compare", label: "Compare", icon: GitCompareArrows, badge: "New" },
+  { to: "/voice-studio", label: "Voice Studio", icon: Headphones, badge: "New" },
 ];
 
 const ENGAGE_NAV = [
