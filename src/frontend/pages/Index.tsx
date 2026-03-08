@@ -271,6 +271,21 @@ const Index = () => {
           </div>
         )}
       </motion.section>
+
+      {/* Nobel of the Day & Fun Facts */}
+      <motion.section
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.6 }}
+        className="container mx-auto px-4 py-24 border-t border-white/5"
+      >
+        <div className="text-center mb-16">
+          <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-primary mb-4">Daily Spotlight</h4>
+          <h2 className="font-display text-4xl font-bold text-foreground md:text-5xl">Nobel of the Day</h2>
+        </div>
+        <NobelOfTheDay laureates={laureates} />
+      </motion.section>
     </PageLayout>
   );
 };
