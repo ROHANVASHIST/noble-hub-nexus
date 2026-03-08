@@ -6,7 +6,7 @@ import {
   ChevronDown, ChevronsUpDown, Settings, Bell, Zap, Bot, Target,
   Timer, Layers, Bookmark, ListChecks, MessageSquare, FileText, Kanban,
   Highlighter, PieChart, Mail, CalendarCheck,
-  AlarmClock, GitCompareArrows, Medal, Headphones,
+  AlarmClock, GitCompareArrows, Medal, Headphones, Clock, Cpu,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/App";
