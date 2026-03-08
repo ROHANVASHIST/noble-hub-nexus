@@ -20,7 +20,7 @@ const Profile = () => {
     const [activeTab, setActiveTab] = useState<"library" | "projects" | "notes">("library");
     const navigate = useNavigate();
 
-    const { notes, projects, bookmarks, addNote: addNoteHook, deleteNote, deleteProject, deleteBookmark, addBookmark, updateNote, updateProjectProgress } = useScholarData();
+    const { notes, projects, bookmarks, addNote: addNoteHook, deleteNote, deleteProject, deleteBookmark, updateNote, updateProjectProgress } = useScholarData();
     const [newNoteTitle, setNewNoteTitle] = useState("");
 
     const [editingNote, setEditingNote] = useState<LabNote | null>(null);
