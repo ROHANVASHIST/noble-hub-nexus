@@ -118,8 +118,8 @@ const AppSidebar = () => {
   const collapsed = state === "collapsed";
   const navigate = useNavigate();
   const location = useLocation();
+  const scrollRef = useRef<HTMLDivElement>(null);
 
-  const handleSignOut = async () => {
     await supabase.auth.signOut();
     navigate("/");
   };
