@@ -112,6 +112,7 @@ interface NavItem {
   badge: string | null;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const AppSidebar = () => {
   const { session, isReady } = useAuth();
   const { state } = useSidebar();
