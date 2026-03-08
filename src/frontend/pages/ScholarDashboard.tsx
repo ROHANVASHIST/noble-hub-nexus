@@ -250,6 +250,17 @@ const ScholarDashboard = () => {
                             </div>
                         </div>
 
+                        {/* Achievement Badges */}
+                        <div className="bg-card border border-border/50 rounded-3xl p-8 shadow-sm">
+                            <AchievementBadges stats={{
+                                notes: notes.length,
+                                projects: projects.length,
+                                breakthroughs: breakthroughs.length,
+                                bookmarks: bookmarks.length,
+                                mentorChats: 0,
+                            }} />
+                        </div>
+
                         {/* Quick Actions */}
                         <div className="bg-violet-500/5 border border-violet-500/20 rounded-3xl p-8 shadow-sm space-y-3">
                             <h3 className="text-sm font-bold text-violet-600 uppercase tracking-widest mb-4 flex items-center gap-2">
@@ -263,6 +274,9 @@ const ScholarDashboard = () => {
                             </Button>
                             <Button variant="outline" size="sm" className="w-full rounded-xl border-violet-500/30 text-violet-600 hover:bg-violet-500/10 justify-start" onClick={() => navigate("/scientific-skills")}>
                                 <Target className="h-4 w-4 mr-2" /> Scientific Mastery Lab
+                            </Button>
+                            <Button variant="outline" size="sm" className="w-full rounded-xl border-violet-500/30 text-violet-600 hover:bg-violet-500/10 justify-start" onClick={() => navigate("/quiz")}>
+                                <Brain className="h-4 w-4 mr-2" /> Take Nobel Quiz
                             </Button>
                         </div>
                     </div>
