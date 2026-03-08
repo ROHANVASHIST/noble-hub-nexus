@@ -110,6 +110,10 @@ const App = () => {
               <Route path="/progress" element={<ProtectedRoute session={session} isReady={isReady}><ProgressReportsPage /></ProtectedRoute>} />
               <Route path="/citations" element={<ProtectedRoute session={session} isReady={isReady}><CitationGeneratorPage /></ProtectedRoute>} />
               <Route path="/planner" element={<ProtectedRoute session={session} isReady={isReady}><ResearchPlannerPage /></ProtectedRoute>} />
+              <Route path="/study-plan" element={<ProtectedRoute session={session} isReady={isReady}><StudyPlanPage /></ProtectedRoute>} />
+              <Route path="/focus-stats" element={<ProtectedRoute session={session} isReady={isReady}><PomodoroStatsPage /></ProtectedRoute>} />
+              <Route path="/annotations" element={<ProtectedRoute session={session} isReady={isReady}><AnnotationsPage /></ProtectedRoute>} />
+              <Route path="/weekly-digest" element={<ProtectedRoute session={session} isReady={isReady}><WeeklyDigestPage /></ProtectedRoute>} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

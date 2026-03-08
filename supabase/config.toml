@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.scholar-tool]
 verify_jwt = false
+
+[functions.study-plan]
+verify_jwt = false

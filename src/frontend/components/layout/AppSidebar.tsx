@@ -69,6 +69,10 @@ const RESEARCH_NAV = [
   { to: "/planner", label: "Planner", icon: Kanban, badge: "New" },
   { to: "/citations", label: "Citations", icon: FileText, badge: "New" },
   { to: "/progress", label: "Reports", icon: BarChart3, badge: null },
+  { to: "/study-plan", label: "Study Plan", icon: CalendarCheck, badge: "AI" },
+  { to: "/focus-stats", label: "Focus Stats", icon: PieChart, badge: "New" },
+  { to: "/annotations", label: "Annotations", icon: Highlighter, badge: "New" },
+  { to: "/weekly-digest", label: "Weekly Digest", icon: Mail, badge: "New" },
 ];
 
 const ENGAGE_NAV = [
