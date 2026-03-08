@@ -13,7 +13,7 @@ import {
   Home, BookOpen, Compass, Network, FlaskConical, GraduationCap,
   BarChart3, HelpCircle, TrendingUp, Search, User, Award,
   Brain, Trophy, Video, Bot, Target, Bell, Globe, Info,
-  Timer, Layers, Bookmark, ListChecks,
+  Timer, Layers, Bookmark, ListChecks, MessageSquare, FileText, Kanban,
 } from "lucide-react";
 
 const PAGES = [
