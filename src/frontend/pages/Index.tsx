@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Search, ArrowRight, Award, BookOpen, Video, Globe, Loader2, Sparkles } from "lucide-react";
+import { Search, ArrowRight, Award, BookOpen, Video, Globe, Loader2, Sparkles, Brain, Trophy, Target, Bot, BarChart3, HelpCircle, TrendingUp, GraduationCap, Network } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import PageLayout from "@/frontend/components/layout/PageLayout";
 import { Button } from "@/components/ui/button";
@@ -308,13 +308,60 @@ const Index = () => {
         )}
       </motion.section>
 
+      {/* Quick Actions Hub */}
+      <motion.section
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.6 }}
+        className="container mx-auto px-4 py-24 border-t border-border/10"
+      >
+        <div className="text-center mb-12">
+          <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-primary mb-4">Quick Actions</h4>
+          <h2 className="font-display text-4xl font-bold text-foreground md:text-5xl">Explore Everything</h2>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {[
+            { to: "/nobel-ai", label: "Nobel Oracle", desc: "AI-powered Q&A", icon: Bot, accent: "from-primary/10 to-accent/5" },
+            { to: "/world-map", label: "World Map", desc: "Laureates by country", icon: Globe, accent: "from-blue-500/10 to-cyan-500/5" },
+            { to: "/leaderboard", label: "Leaderboard", desc: "XP & achievements", icon: Trophy, accent: "from-amber-500/10 to-yellow-500/5" },
+            { to: "/mentorship", label: "AI Mentorship", desc: "Chat with Nobel minds", icon: GraduationCap, accent: "from-emerald-500/10 to-green-500/5" },
+            { to: "/quiz", label: "Nobel Quiz", desc: "Test your knowledge", icon: HelpCircle, accent: "from-violet-500/10 to-purple-500/5" },
+            { to: "/tracker", label: "Progress Tracker", desc: "Track your goals", icon: Target, accent: "from-rose-500/10 to-pink-500/5" },
+            { to: "/analytics", label: "Analytics", desc: "Charts & insights", icon: BarChart3, accent: "from-sky-500/10 to-blue-500/5" },
+            { to: "/connections", label: "Connections", desc: "Find laureate links", icon: Network, accent: "from-orange-500/10 to-amber-500/5" },
+            { to: "/predictions", label: "Predictions", desc: "Predict next winners", icon: TrendingUp, accent: "from-teal-500/10 to-emerald-500/5" },
+            { to: "/passport", label: "Nobel Passport", desc: "Your journey tracker", icon: Award, accent: "from-indigo-500/10 to-violet-500/5" },
+            { to: "/scientific-skills", label: "Skills Lab", desc: "Research skills", icon: Brain, accent: "from-fuchsia-500/10 to-pink-500/5" },
+            { to: "/discovery", label: "Discovery Engine", desc: "Advanced filters", icon: Search, accent: "from-lime-500/10 to-green-500/5" },
+          ].map((item, i) => (
+            <motion.div
+              key={item.to}
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.03 }}
+            >
+              <Link
+                to={item.to}
+                className={`group block p-5 rounded-2xl border border-border/50 bg-gradient-to-br ${item.accent} hover:border-primary/30 hover:shadow-lg transition-all`}
+              >
+                <item.icon className="h-6 w-6 text-primary mb-3 group-hover:scale-110 transition-transform" />
+                <h3 className="font-bold text-sm text-foreground">{item.label}</h3>
+                <p className="text-[10px] text-muted-foreground mt-1">{item.desc}</p>
+              </Link>
+            </motion.div>
+          ))}
+        </div>
+      </motion.section>
+
       {/* Nobel of the Day & Fun Facts */}
       <motion.section
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-100px" }}
         transition={{ duration: 0.6 }}
-        className="container mx-auto px-4 py-24 border-t border-white/5"
+        className="container mx-auto px-4 py-24 border-t border-border/10"
       >
         <div className="text-center mb-16">
           <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-primary mb-4">Daily Spotlight</h4>

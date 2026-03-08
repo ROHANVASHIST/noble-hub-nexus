@@ -30,6 +30,7 @@ import TrackerPage from "./frontend/pages/TrackerPage";
 import WorldMapPage from "./frontend/pages/WorldMapPage";
 import LeaderboardPage from "./frontend/pages/LeaderboardPage";
 import CommandPalette from "./frontend/components/CommandPalette";
+import PassportPage from "./frontend/pages/PassportPage";
 import { useAuthReady } from "@/frontend/hooks/useAuthReady";
 import React, { createContext, useContext } from "react";
 import type { User, Session } from "@supabase/supabase-js";
@@ -88,6 +89,7 @@ const App = () => {
               <Route path="/tracker" element={<ProtectedRoute session={session} isReady={isReady}><TrackerPage /></ProtectedRoute>} />
               <Route path="/world-map" element={<ProtectedRoute session={session} isReady={isReady}><WorldMapPage /></ProtectedRoute>} />
               <Route path="/leaderboard" element={<ProtectedRoute session={session} isReady={isReady}><LeaderboardPage /></ProtectedRoute>} />
+              <Route path="/passport" element={<ProtectedRoute session={session} isReady={isReady}><PassportPage /></ProtectedRoute>} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
