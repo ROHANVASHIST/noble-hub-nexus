@@ -1,7 +1,6 @@
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell, ScatterChart, Scatter, ZAxis } from "recharts";
-import { ANALYTICS_DATA } from "@/backend/data/mock-data";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
 
 const DECADE_DETAILS = [
   { decade: "1900s", highlight: "First Nobel Prizes awarded in 1901. Röntgen wins Physics for X-rays.", count: 41 },
