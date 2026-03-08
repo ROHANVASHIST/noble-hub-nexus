@@ -21,7 +21,6 @@ import {
     FileText,
     Users,
     Save,
-    Loader2,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
