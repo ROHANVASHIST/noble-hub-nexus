@@ -40,21 +40,6 @@ const PageLayout = ({ children }: { children: React.ReactNode }) => {
   const { user, session } = useAuth();
   const [showScrollTop, setShowScrollTop] = useState(false);
 
-  const { data: unreadCount = 0 } = useQuery({
-    queryKey: ["unread-notif-count", user?.id],
-    queryFn: async () => {
-      if (!user) return 0;
-      const { count } = await supabase
-        .from("notifications")
-        .select("*", { count: "exact", head: true })
-        .eq("user_id", user.id)
-        .eq("is_read", false);
-      return count || 0;
-    },
-    enabled: !!user,
-    refetchInterval: 30000,
-  });
-
   const pageTitle = PAGE_TITLES[pathname] || (pathname.startsWith("/laureates/") ? "Laureate Profile" : "");
 
   const userInitials = session
