@@ -13,6 +13,7 @@ import {
   Home, BookOpen, Compass, Network, FlaskConical, GraduationCap,
   BarChart3, HelpCircle, TrendingUp, Search, User, Award,
   Brain, Trophy, Video, Bot, Target, Bell, Globe, Info,
+  Timer, Layers, Bookmark, ListChecks,
 } from "lucide-react";
 
 const PAGES = [
@@ -34,6 +35,11 @@ const PAGES = [
   { label: "Tracker", path: "/tracker", icon: Target, group: "Engage" },
   { label: "Leaderboard", path: "/leaderboard", icon: Trophy, group: "Engage" },
   { label: "World Map", path: "/world-map", icon: Globe, group: "Engage" },
+  { label: "Focus Timer", path: "/focus", icon: Timer, group: "Research" },
+  { label: "Flashcards", path: "/flashcards", icon: Layers, group: "Research" },
+  { label: "Bookmarks", path: "/bookmarks", icon: Bookmark, group: "Research" },
+  { label: "Daily Goals", path: "/daily-goals", icon: ListChecks, group: "Research" },
+  { label: "Passport", path: "/passport", icon: Award, group: "Engage" },
   { label: "Profile", path: "/profile", icon: User, group: "Account" },
   { label: "About", path: "/about", icon: Info, group: "Info" },
 ];

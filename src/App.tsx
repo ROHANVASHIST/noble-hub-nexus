@@ -31,6 +31,10 @@ import WorldMapPage from "./frontend/pages/WorldMapPage";
 import LeaderboardPage from "./frontend/pages/LeaderboardPage";
 import CommandPalette from "./frontend/components/CommandPalette";
 import PassportPage from "./frontend/pages/PassportPage";
+import FocusTimerPage from "./frontend/pages/FocusTimerPage";
+import FlashcardsPage from "./frontend/pages/FlashcardsPage";
+import BookmarksPage from "./frontend/pages/BookmarksPage";
+import ReadingListPage from "./frontend/pages/ReadingListPage";
 import { useAuthReady } from "@/frontend/hooks/useAuthReady";
 import React, { createContext, useContext } from "react";
 import type { User, Session } from "@supabase/supabase-js";
@@ -90,6 +94,10 @@ const App = () => {
               <Route path="/world-map" element={<ProtectedRoute session={session} isReady={isReady}><WorldMapPage /></ProtectedRoute>} />
               <Route path="/leaderboard" element={<ProtectedRoute session={session} isReady={isReady}><LeaderboardPage /></ProtectedRoute>} />
               <Route path="/passport" element={<ProtectedRoute session={session} isReady={isReady}><PassportPage /></ProtectedRoute>} />
+              <Route path="/focus" element={<ProtectedRoute session={session} isReady={isReady}><FocusTimerPage /></ProtectedRoute>} />
+              <Route path="/flashcards" element={<ProtectedRoute session={session} isReady={isReady}><FlashcardsPage /></ProtectedRoute>} />
+              <Route path="/bookmarks" element={<ProtectedRoute session={session} isReady={isReady}><BookmarksPage /></ProtectedRoute>} />
+              <Route path="/daily-goals" element={<ProtectedRoute session={session} isReady={isReady}><ReadingListPage /></ProtectedRoute>} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

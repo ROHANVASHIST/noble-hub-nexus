@@ -3,7 +3,8 @@ import {
   Home, BookOpen, Compass, Network, FlaskConical, GraduationCap, Globe,
   BarChart3, HelpCircle, TrendingUp, Search, User, LogOut,
   Award, Sparkles, Brain, Trophy, Video, Info, Shield, Scale,
-  ChevronDown, ChevronsUpDown, Settings, Bell, Zap, Bot, Target
+  ChevronDown, ChevronsUpDown, Settings, Bell, Zap, Bot, Target,
+  Timer, Layers, Bookmark, ListChecks
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/App";
@@ -59,6 +60,10 @@ const RESEARCH_NAV = [
   { to: "/mentorship", label: "Mentorship", icon: GraduationCap, badge: "AI" },
   { to: "/scholar-dashboard", label: "Dashboard", icon: Brain, badge: null },
   { to: "/scientific-skills", label: "Skills", icon: Trophy, badge: null },
+  { to: "/focus", label: "Focus Timer", icon: Timer, badge: "New" },
+  { to: "/flashcards", label: "Flashcards", icon: Layers, badge: "New" },
+  { to: "/bookmarks", label: "Bookmarks", icon: Bookmark, badge: null },
+  { to: "/daily-goals", label: "Daily Goals", icon: ListChecks, badge: "New" },
 ];
 
 const ENGAGE_NAV = [
