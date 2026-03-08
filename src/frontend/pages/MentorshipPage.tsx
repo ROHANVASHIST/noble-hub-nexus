@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/App";
 import {
-    Users, MessageSquare, FileBox, Bot, Send, Sparkles, Loader2, ArrowLeft, Hash, Save, History, Trash2, Copy, Download, RefreshCw,
+    Users, MessageSquare, FileBox, Bot, Send, Sparkles, Loader2, ArrowLeft, Hash, History, Trash2, Copy, Download, RefreshCw,
 } from "lucide-react";
 import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
