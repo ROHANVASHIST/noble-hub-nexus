@@ -30,6 +30,7 @@ import TrackerPage from "./frontend/pages/TrackerPage";
 import WorldMapPage from "./frontend/pages/WorldMapPage";
 import LeaderboardPage from "./frontend/pages/LeaderboardPage";
 import CommandPalette from "./frontend/components/CommandPalette";
+import PassportPage from "./frontend/pages/PassportPage";
 import { useAuthReady } from "@/frontend/hooks/useAuthReady";
 import React, { createContext, useContext } from "react";
 import type { User, Session } from "@supabase/supabase-js";
