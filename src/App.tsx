@@ -43,6 +43,10 @@ import StudyPlanPage from "./frontend/pages/StudyPlanPage";
 import PomodoroStatsPage from "./frontend/pages/PomodoroStatsPage";
 import AnnotationsPage from "./frontend/pages/AnnotationsPage";
 import WeeklyDigestPage from "./frontend/pages/WeeklyDigestPage";
+import RemindersPage from "./frontend/pages/RemindersPage";
+import ComparePage from "./frontend/pages/ComparePage";
+import AchievementsPage from "./frontend/pages/AchievementsPage";
+import QuickCapture from "./frontend/components/QuickCapture";
 import { useAuthReady } from "@/frontend/hooks/useAuthReady";
 import React, { createContext, useContext } from "react";
 import type { User, Session } from "@supabase/supabase-js";
@@ -114,8 +118,12 @@ const App = () => {
               <Route path="/focus-stats" element={<ProtectedRoute session={session} isReady={isReady}><PomodoroStatsPage /></ProtectedRoute>} />
               <Route path="/annotations" element={<ProtectedRoute session={session} isReady={isReady}><AnnotationsPage /></ProtectedRoute>} />
               <Route path="/weekly-digest" element={<ProtectedRoute session={session} isReady={isReady}><WeeklyDigestPage /></ProtectedRoute>} />
+              <Route path="/reminders" element={<ProtectedRoute session={session} isReady={isReady}><RemindersPage /></ProtectedRoute>} />
+              <Route path="/compare" element={<ProtectedRoute session={session} isReady={isReady}><ComparePage /></ProtectedRoute>} />
+              <Route path="/achievements" element={<ProtectedRoute session={session} isReady={isReady}><AchievementsPage /></ProtectedRoute>} />
               <Route path="*" element={<NotFound />} />
             </Routes>
+            {session && <QuickCapture />}
           </BrowserRouter>
         </TooltipProvider>
       </AuthContext.Provider>

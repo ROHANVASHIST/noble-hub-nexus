@@ -6,6 +6,7 @@ import {
   ChevronDown, ChevronsUpDown, Settings, Bell, Zap, Bot, Target,
   Timer, Layers, Bookmark, ListChecks, MessageSquare, FileText, Kanban,
   Highlighter, PieChart, Mail, CalendarCheck,
+  AlarmClock, GitCompareArrows, Medal,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/App";
@@ -73,6 +74,8 @@ const RESEARCH_NAV = [
   { to: "/focus-stats", label: "Focus Stats", icon: PieChart, badge: "New" },
   { to: "/annotations", label: "Annotations", icon: Highlighter, badge: "New" },
   { to: "/weekly-digest", label: "Weekly Digest", icon: Mail, badge: "New" },
+  { to: "/reminders", label: "Reminders", icon: AlarmClock, badge: "New" },
+  { to: "/compare", label: "Compare", icon: GitCompareArrows, badge: "New" },
 ];
 
 const ENGAGE_NAV = [
@@ -85,6 +88,7 @@ const ENGAGE_NAV = [
   { to: "/world-map", label: "World Map", icon: Globe, badge: "New" },
   { to: "/leaderboard", label: "Leaderboard", icon: Trophy, badge: null },
   { to: "/passport", label: "Passport", icon: Award, badge: null },
+  { to: "/achievements", label: "Achievements", icon: Medal, badge: "New" },
 ];
 
 const INFO_NAV = [

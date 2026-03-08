@@ -15,6 +15,7 @@ import {
   Brain, Trophy, Video, Bot, Target, Bell, Globe, Info,
   Timer, Layers, Bookmark, ListChecks, MessageSquare, FileText, Kanban,
   Highlighter, PieChart, Mail, CalendarCheck,
+  AlarmClock, GitCompareArrows, Medal,
 } from "lucide-react";
 
 const PAGES = [
@@ -48,6 +49,9 @@ const PAGES = [
   { label: "Focus Statistics", path: "/focus-stats", icon: PieChart, group: "Research" },
   { label: "Annotations", path: "/annotations", icon: Highlighter, group: "Research" },
   { label: "Weekly Digest", path: "/weekly-digest", icon: Mail, group: "Research" },
+  { label: "Reminders", path: "/reminders", icon: AlarmClock, group: "Research" },
+  { label: "Compare Laureates", path: "/compare", icon: GitCompareArrows, group: "Research" },
+  { label: "Achievements", path: "/achievements", icon: Medal, group: "Engage" },
   { label: "Passport", path: "/passport", icon: Award, group: "Engage" },
   { label: "Profile", path: "/profile", icon: User, group: "Account" },
   { label: "About", path: "/about", icon: Info, group: "Info" },
