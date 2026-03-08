@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { motion, useScroll, useTransform, useSpring } from "framer-motion";
+import { motion } from "framer-motion";
 import { Search, ArrowRight, Award, BookOpen, Video, Globe, Loader2, Sparkles } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import PageLayout from "@/frontend/components/layout/PageLayout";
@@ -8,11 +8,12 @@ import { toast } from "sonner";
 import LaureateCard from "@/frontend/components/cards/LaureateCard";
 import LectureCard from "@/frontend/components/cards/LectureCard";
 import StatCard from "@/frontend/components/cards/StatCard";
-import { CATEGORIES, ANALYTICS_DATA, NobelCategory } from "@/backend/data/mock-data";
+import NobelOfTheDay from "@/frontend/components/NobelOfTheDay";
+import { CATEGORIES, NobelCategory } from "@/backend/data/mock-data";
 import { fetchLaureates } from "@/backend/services/laureates";
 import { fetchLectures } from "@/backend/services/lectures";
 import heroBg from "@/frontend/assets/hero-bg.jpg";
-import { useState, useRef } from "react";
+import { useState } from "react";
 
 const Index = () => {
   const { data: laureates, isLoading: loadingLaureates } = useQuery({
@@ -269,6 +270,21 @@ const Index = () => {
             ))}
           </div>
         )}
+      </motion.section>
+
+      {/* Nobel of the Day & Fun Facts */}
+      <motion.section
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.6 }}
+        className="container mx-auto px-4 py-24 border-t border-white/5"
+      >
+        <div className="text-center mb-16">
+          <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-primary mb-4">Daily Spotlight</h4>
+          <h2 className="font-display text-4xl font-bold text-foreground md:text-5xl">Nobel of the Day</h2>
+        </div>
+        <NobelOfTheDay laureates={laureates} />
       </motion.section>
     </PageLayout>
   );

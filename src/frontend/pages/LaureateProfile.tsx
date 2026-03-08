@@ -1,7 +1,8 @@
+import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { ArrowLeft, Award, Globe, GraduationCap, Calendar, MapPin, Sparkles, Share2, Bookmark, ExternalLink, Info, TrendingUp } from "lucide-react";
+import { ArrowLeft, Award, Globe, GraduationCap, Calendar, MapPin, Sparkles, Share2, Bookmark, ExternalLink, Info, TrendingUp, Lightbulb, Loader2 } from "lucide-react";
 import PageLayout from "@/frontend/components/layout/PageLayout";
 import { fetchLaureateById } from "@/backend/services/laureates";
 import { Button } from "@/components/ui/button";
@@ -12,6 +13,8 @@ import { useScholarData } from "@/frontend/hooks/useScholarData";
 const LaureateProfile = () => {
     const { id } = useParams<{ id: string }>();
     const { addBookmark } = useScholarData();
+    const [eli5Text, setEli5Text] = useState("");
+    const [eli5Loading, setEli5Loading] = useState(false);
 
     const { data: laureate, isLoading, error } = useQuery({
         queryKey: ["laureate", id],
@@ -282,6 +285,60 @@ const LaureateProfile = () => {
                                             Read full official biography at Nobel.org <ExternalLink className="h-4 w-4" />
                                         </a>
                                     </div>
+                                )}
+                            </div>
+                        </motion.div>
+
+                        {/* ELI5 Section */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.7 }}
+                            className="mt-12"
+                        >
+                            <div className="rounded-3xl border border-amber-500/20 bg-amber-500/5 p-8">
+                                <div className="flex items-center justify-between mb-4">
+                                    <h2 className="text-lg font-black uppercase tracking-[0.2em] text-amber-500 flex items-center gap-2">
+                                        <Lightbulb className="h-5 w-5" /> Explain Like I'm 5
+                                    </h2>
+                                    {!eli5Text && (
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            disabled={eli5Loading}
+                                            onClick={async () => {
+                                                setEli5Loading(true);
+                                                try {
+                                                    const { supabase } = await import("@/integrations/supabase/client");
+                                                    const { data, error } = await supabase.functions.invoke("mentor-chat", {
+                                                        body: {
+                                                            messages: [{
+                                                                role: "user",
+                                                                content: `Explain the Nobel Prize-winning work of ${laureate.first_name} ${laureate.last_name} (${laureate.category}, ${laureate.year}) as if you were explaining it to a 5-year-old child. Their work was: "${laureate.motivation}". Use simple analogies, everyday objects, and fun comparisons. Keep it under 200 words. Make it engaging and fun!`
+                                                            }],
+                                                            mentorName: "Science Explainer",
+                                                            systemPrompt: "You are a friendly science communicator who explains complex Nobel Prize-winning discoveries to young children. Use simple words, fun analogies with toys/animals/food, and short sentences. Be enthusiastic and use emojis sparingly."
+                                                        }
+                                                    });
+                                                    if (data?.text) setEli5Text(data.text);
+                                                    else if (data?.message) setEli5Text(data.message);
+                                                    else setEli5Text("Imagine you have a magic box that can do something really cool — that's basically what this scientist figured out! 🎉");
+                                                } catch {
+                                                    setEli5Text("Imagine you have a magic box that can do something really cool — that's basically what this scientist figured out! 🎉");
+                                                } finally {
+                                                    setEli5Loading(false);
+                                                }
+                                            }}
+                                            className="rounded-xl border-amber-500/30 text-amber-500 hover:bg-amber-500/10 text-xs font-bold uppercase tracking-widest gap-2"
+                                        >
+                                            {eli5Loading ? <><Loader2 className="h-3 w-3 animate-spin" /> Generating...</> : "Generate Explanation"}
+                                        </Button>
+                                    )}
+                                </div>
+                                {eli5Text ? (
+                                    <p className="text-sm text-foreground/80 leading-relaxed">{eli5Text}</p>
+                                ) : (
+                                    <p className="text-sm text-muted-foreground italic">Click "Generate Explanation" to get a simplified, child-friendly explanation of this laureate's groundbreaking work.</p>
                                 )}
                             </div>
                         </motion.div>
