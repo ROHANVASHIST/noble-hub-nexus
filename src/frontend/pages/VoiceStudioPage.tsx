@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import PageLayout from "@/frontend/components/layout/PageLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -14,9 +14,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchLaureates, searchLaureates } from "@/backend/services/laureates";
 import {
-  Mic, MicOff, Volume2, VolumeX, Search, Play, Pause, Square,
-  SkipForward, SkipBack, BookOpen, Headphones, StickyNote,
-  Waveform, Settings2, Clock, Trash2, Save
+  Mic, MicOff, Volume2, Search, Play, Pause, Square,
+  BookOpen, Headphones, StickyNote,
+  Settings2, Clock, Trash2, Save
 } from "lucide-react";
 import { toast } from "sonner";
 
