@@ -47,7 +47,7 @@ import {
 } from "@/components/ui/tooltip";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
+
 
 const MAIN_NAV = [
   { to: "/", label: "Home", icon: Home, badge: null },
