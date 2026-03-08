@@ -3,7 +3,7 @@ import {
   Home, BookOpen, Compass, Network, FlaskConical, GraduationCap,
   BarChart3, HelpCircle, TrendingUp, Search, User, LogOut,
   Award, Sparkles, Brain, Trophy, Video, Info, Shield, Scale,
-  ChevronDown, ChevronsUpDown, Settings, Bell, Zap
+  ChevronDown, ChevronsUpDown, Settings, Bell, Zap, Bot
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/App";
@@ -62,6 +62,7 @@ const RESEARCH_NAV = [
 ];
 
 const ENGAGE_NAV = [
+  { to: "/nobel-ai", label: "Nobel Oracle", icon: Bot, badge: "AI" },
   { to: "/analytics", label: "Analytics", icon: BarChart3, badge: null },
   { to: "/quiz", label: "Quiz", icon: HelpCircle, badge: "New" },
   { to: "/predictions", label: "Predictions", icon: TrendingUp, badge: null },

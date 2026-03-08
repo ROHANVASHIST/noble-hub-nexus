@@ -24,6 +24,7 @@ import DiscoveryPage from "./frontend/pages/DiscoveryPage";
 import ConnectionsPage from "./frontend/pages/ConnectionsPage";
 import PredictionsPage from "./frontend/pages/PredictionsPage";
 import NotFound from "./frontend/pages/NotFound";
+import NobelAIPage from "./frontend/pages/NobelAIPage";
 import { useAuthReady } from "@/frontend/hooks/useAuthReady";
 import React, { createContext, useContext } from "react";
 import type { User, Session } from "@supabase/supabase-js";
@@ -76,6 +77,7 @@ const App = () => {
               <Route path="/discovery" element={<ProtectedRoute session={session} isReady={isReady}><DiscoveryPage /></ProtectedRoute>} />
               <Route path="/connections" element={<ProtectedRoute session={session} isReady={isReady}><ConnectionsPage /></ProtectedRoute>} />
               <Route path="/predictions" element={<ProtectedRoute session={session} isReady={isReady}><PredictionsPage /></ProtectedRoute>} />
+              <Route path="/nobel-ai" element={<ProtectedRoute session={session} isReady={isReady}><NobelAIPage /></ProtectedRoute>} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
