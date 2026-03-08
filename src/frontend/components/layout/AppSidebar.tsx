@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
-  Home, BookOpen, Compass, Network, FlaskConical, GraduationCap,
+  Home, BookOpen, Compass, Network, FlaskConical, GraduationCap, Globe,
   BarChart3, HelpCircle, TrendingUp, Search, User, LogOut,
   Award, Sparkles, Brain, Trophy, Video, Info, Shield, Scale,
   ChevronDown, ChevronsUpDown, Settings, Bell, Zap, Bot, Target
