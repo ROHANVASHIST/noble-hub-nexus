@@ -61,6 +61,7 @@ const App = () => {
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <CommandPalette />
             <Routes>
               <Route path="/auth" element={isReady && session ? <Navigate to="/" replace /> : <Auth />} />
               <Route path="/" element={<ProtectedRoute session={session} isReady={isReady}><Index /></ProtectedRoute>} />
