@@ -1,6 +1,6 @@
-import { useState, useMemo, useCallback, useEffect } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Loader2, Sparkles, Bookmark, BookmarkCheck, ArrowRight, Award, BookOpen, FileText } from "lucide-react";
+import { Sparkles, Bookmark, BookmarkCheck, ArrowRight, Award, BookOpen, FileText } from "lucide-react";
 import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
 import PageLayout from "@/frontend/components/layout/PageLayout";
