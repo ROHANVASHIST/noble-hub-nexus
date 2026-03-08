@@ -14,6 +14,7 @@ import {
   BarChart3, HelpCircle, TrendingUp, Search, User, Award,
   Brain, Trophy, Video, Bot, Target, Bell, Globe, Info,
   Timer, Layers, Bookmark, ListChecks, MessageSquare, FileText, Kanban,
+  Highlighter, PieChart, Mail, CalendarCheck,
 } from "lucide-react";
 
 const PAGES = [
