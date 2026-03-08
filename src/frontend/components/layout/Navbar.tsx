@@ -14,6 +14,7 @@ const NAV_LINKS = [
   { to: "/mentorship", label: "Mentorship" },
   { to: "/scientific-skills", label: "Lab" },
   { to: "/analytics", label: "Analytics" },
+  { to: "/quiz", label: "Quiz" },
 ];
 
 const Navbar = () => {
