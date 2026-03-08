@@ -122,6 +122,7 @@ const App = () => {
               <Route path="/reminders" element={<ProtectedRoute session={session} isReady={isReady}><RemindersPage /></ProtectedRoute>} />
               <Route path="/compare" element={<ProtectedRoute session={session} isReady={isReady}><ComparePage /></ProtectedRoute>} />
               <Route path="/achievements" element={<ProtectedRoute session={session} isReady={isReady}><AchievementsPage /></ProtectedRoute>} />
+              <Route path="/voice-studio" element={<ProtectedRoute session={session} isReady={isReady}><VoiceStudioPage /></ProtectedRoute>} />
               <Route path="*" element={<NotFound />} />
             </Routes>
             {session && <QuickCapture />}
