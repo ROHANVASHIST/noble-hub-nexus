@@ -1,1 +1,7 @@
 project_id = "tvuxjubteefsphjstckh"
+
+[functions.mentor-chat]
+verify_jwt = false
+
+[functions.scholar-tool]
+verify_jwt = false

@@ -43,7 +43,7 @@ export const useScholarData = () => {
             .eq('user_id', user.id)
             .order('created_at', { ascending: false });
         if (!error && data) {
-            setNotes(data.map(n => ({
+            setNotes(data.map((n: any) => ({
                 id: n.id,
                 title: n.title,
                 content: n.content,
@@ -62,7 +62,7 @@ export const useScholarData = () => {
             .eq('user_id', user.id)
             .order('created_at', { ascending: false });
         if (!error && data) {
-            setProjects(data.map(p => ({
+            setProjects(data.map((p: any) => ({
                 id: p.id,
                 name: p.name,
                 status: p.status,
@@ -83,11 +83,11 @@ export const useScholarData = () => {
             .eq('user_id', user.id)
             .order('created_at', { ascending: false });
         if (!error && data) {
-            setBookmarks(data.map(b => ({
+            setBookmarks(data.map((b: any) => ({
                 id: b.id,
                 itemId: b.item_id,
                 itemType: b.item_type as 'paper' | 'lecture' | 'laureate',
-                title: b.item_type,
+                title: `${b.item_type.charAt(0).toUpperCase() + b.item_type.slice(1)} Bookmark`,
                 date: new Date(b.created_at).toISOString().split('T')[0],
             })));
         }
@@ -131,7 +131,6 @@ export const useScholarData = () => {
     const addBookmark = async (bookmark: Omit<Bookmark, 'id' | 'date'>) => {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return null;
-        // Check for existing
         const existing = bookmarks.find(b => b.itemId === bookmark.itemId && b.itemType === bookmark.itemType);
         if (existing) return null;
         const { data, error } = await supabase
@@ -148,6 +147,18 @@ export const useScholarData = () => {
         const { error } = await (supabase as any).from('scholar_notes').delete().eq('id', id);
         if (error) { toast.error('Failed to delete note'); return; }
         setNotes(prev => prev.filter(n => n.id !== id));
+    };
+
+    const deleteProject = async (id: string) => {
+        const { error } = await (supabase as any).from('research_projects').delete().eq('id', id);
+        if (error) { toast.error('Failed to delete project'); return; }
+        setProjects(prev => prev.filter(p => p.id !== id));
+    };
+
+    const deleteBookmark = async (id: string) => {
+        const { error } = await supabase.from('bookmarks').delete().eq('id', id);
+        if (error) { toast.error('Failed to delete bookmark'); return; }
+        setBookmarks(prev => prev.filter(b => b.id !== id));
     };
 
     const updateProjectProgress = async (id: string, progress: number, status?: string) => {
@@ -173,9 +184,12 @@ export const useScholarData = () => {
         addProject,
         addBookmark,
         deleteNote,
+        deleteProject,
+        deleteBookmark,
         updateProjectProgress,
         updateNote,
         refreshNotes: fetchNotes,
         refreshProjects: fetchProjects,
+        refreshBookmarks: fetchBookmarks,
     };
 };

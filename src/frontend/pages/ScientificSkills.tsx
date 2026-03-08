@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import ReactMarkdown from "react-markdown";
 import PageLayout from "@/frontend/components/layout/PageLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,7 +13,6 @@ import {
     Dna,
     ArrowRight,
     MonitorPlay,
-    FileQuestion,
     Trophy,
     ArrowLeft,
     Sparkles,
@@ -21,16 +21,14 @@ import {
     FileText,
     Users,
     Save,
-    Plus,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { useScholarData } from "@/frontend/hooks/useScholarData";
-import { supabase } from "@/integrations/supabase/client";
 
 const ScientificSkills = () => {
     const navigate = useNavigate();
-    const [activeModule, setActiveModule] = useState(0);
+    const [activeModule] = useState(0);
     const [currentRiddleIndex, setCurrentRiddleIndex] = useState(0);
     const [simulationStep, setSimulationStep] = useState(0);
     const [simulationProgress, setSimulationProgress] = useState(0);
@@ -43,6 +41,7 @@ const ScientificSkills = () => {
     ]);
     const [skillInput, setSkillInput] = useState("");
     const [isGeneratingSkill, setIsGeneratingSkill] = useState(false);
+    const [generatedInsight, setGeneratedInsight] = useState<string | null>(null);
 
     // Notebook state
     const [notebookTitle, setNotebookTitle] = useState("");
@@ -130,6 +129,7 @@ const ScientificSkills = () => {
     const handleGenerateInsight = async () => {
         if (!skillInput.trim() || selectedSkill === null) return;
         setIsGeneratingSkill(true);
+        setGeneratedInsight("");
 
         try {
             const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/mentor-chat`;
@@ -166,7 +166,10 @@ const ScientificSkills = () => {
                     try {
                         const parsed = JSON.parse(jsonStr);
                         const content = parsed.choices?.[0]?.delta?.content;
-                        if (content) fullText += content;
+                        if (content) {
+                            fullText += content;
+                            setGeneratedInsight(fullText);
+                        }
                     } catch { textBuffer = line + "\n" + textBuffer; break; }
                 }
             }
@@ -174,8 +177,7 @@ const ScientificSkills = () => {
             await addNote({ title: `${modules[selectedSkill].title} Strategy`, content: fullText || "AI-generated research strategy saved.", type: 'breakthrough' });
             toast.success("AI research advice saved to your Lab Notes!");
             setSkillInput("");
-            setSelectedSkill(null);
-        } catch (err) {
+        } catch {
             toast.error("Failed to generate insight. Please try again.");
         } finally {
             setIsGeneratingSkill(false);
@@ -440,18 +442,30 @@ const ScientificSkills = () => {
                                 </div>
 
                                 <div className="space-y-8 h-full">
-                                    <div className="bg-secondary/30 rounded-[3rem] p-10 border border-border/50 h-full flex flex-col items-center justify-center text-center space-y-10 shadow-inner">
-                                        <div className="h-32 w-32 bg-primary/5 rounded-full flex items-center justify-center border border-primary/10 shadow-inner relative">
-                                            <Brain className="h-12 w-12 text-primary animate-pulse" />
-                                        </div>
-                                        <div className="space-y-4 w-full">
-                                            <h4 className="text-3xl font-display font-bold">AI Research Assistant</h4>
-                                            <p className="text-muted-foreground max-w-sm mx-auto leading-relaxed">Describe a research challenge. AI will generate a strategy and save it to your Lab Notes.</p>
-                                        </div>
-                                        <div className="w-full space-y-4">
-                                            <Input placeholder="Enter scenario details..." className="h-14 rounded-2xl text-center" value={skillInput} onChange={(e) => setSkillInput(e.target.value)} />
-                                            <Button size="lg" disabled={!skillInput.trim() || isGeneratingSkill} className="h-20 w-full rounded-[2rem] font-black text-2xl shadow-xl shadow-primary/30 hover:scale-[1.02] active:scale-95 transition-all" onClick={handleGenerateInsight}>
-                                                {isGeneratingSkill ? <><Sparkles className="h-6 w-6 mr-3 animate-spin" /> Generating...</> : "Generate Breakthrough"}
+                                    <div className="bg-secondary/30 rounded-[3rem] p-10 border border-border/50 h-full flex flex-col space-y-6 shadow-inner">
+                                        {!generatedInsight && !isGeneratingSkill && (
+                                            <div className="flex flex-col items-center justify-center text-center space-y-6 flex-1">
+                                                <div className="h-24 w-24 bg-primary/5 rounded-full flex items-center justify-center border border-primary/10 shadow-inner">
+                                                    <Brain className="h-10 w-10 text-primary animate-pulse" />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <h4 className="text-2xl font-display font-bold">AI Research Assistant</h4>
+                                                    <p className="text-muted-foreground max-w-sm mx-auto text-sm">Describe a research challenge. AI will generate a strategy and save it to your Lab Notes.</p>
+                                                </div>
+                                            </div>
+                                        )}
+                                        {(generatedInsight || isGeneratingSkill) && (
+                                            <div className="flex-1 overflow-y-auto rounded-2xl bg-card/50 border border-border/30 p-6">
+                                                <div className="prose prose-sm max-w-none">
+                                                    <ReactMarkdown>{generatedInsight || ""}</ReactMarkdown>
+                                                </div>
+                                                {isGeneratingSkill && <div className="mt-4 flex items-center gap-2 text-primary text-xs font-bold animate-pulse"><Sparkles className="h-3 w-3" /> Generating...</div>}
+                                            </div>
+                                        )}
+                                        <div className="w-full space-y-3">
+                                            <Input placeholder="Enter scenario details..." className="h-12 rounded-2xl" value={skillInput} onChange={(e) => setSkillInput(e.target.value)} />
+                                            <Button size="lg" disabled={!skillInput.trim() || isGeneratingSkill} className="h-14 w-full rounded-2xl font-black text-lg shadow-xl shadow-primary/30 hover:scale-[1.02] active:scale-95 transition-all" onClick={handleGenerateInsight}>
+                                                {isGeneratingSkill ? <><Sparkles className="h-5 w-5 mr-2 animate-spin" /> Generating...</> : "Generate Breakthrough"}
                                             </Button>
                                         </div>
                                     </div>
