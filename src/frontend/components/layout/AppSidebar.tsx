@@ -80,6 +80,7 @@ const RESEARCH_NAV = [
   { to: "/compare", label: "Compare", icon: GitCompareArrows, badge: "New" },
   { to: "/voice-studio", label: "Voice Studio", icon: Headphones, badge: "New" },
   { to: "/deep-focus", label: "Deep Focus", icon: Zap, badge: "New" },
+  { to: "/research-copilot", label: "AI Copilot", icon: Cpu, badge: "AI" },
 ];
 
 const ENGAGE_NAV = [
