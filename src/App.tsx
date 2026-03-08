@@ -102,6 +102,10 @@ const App = () => {
               <Route path="/flashcards" element={<ProtectedRoute session={session} isReady={isReady}><FlashcardsPage /></ProtectedRoute>} />
               <Route path="/bookmarks" element={<ProtectedRoute session={session} isReady={isReady}><BookmarksPage /></ProtectedRoute>} />
               <Route path="/daily-goals" element={<ProtectedRoute session={session} isReady={isReady}><ReadingListPage /></ProtectedRoute>} />
+              <Route path="/study-rooms" element={<ProtectedRoute session={session} isReady={isReady}><StudyRoomsPage /></ProtectedRoute>} />
+              <Route path="/progress" element={<ProtectedRoute session={session} isReady={isReady}><ProgressReportsPage /></ProtectedRoute>} />
+              <Route path="/citations" element={<ProtectedRoute session={session} isReady={isReady}><CitationGeneratorPage /></ProtectedRoute>} />
+              <Route path="/planner" element={<ProtectedRoute session={session} isReady={isReady}><ResearchPlannerPage /></ProtectedRoute>} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
