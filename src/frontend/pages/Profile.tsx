@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { User, Bookmark, Settings, LogOut, ChevronRight, Award, BookOpen, Video, Sparkles, FolderKanban, FileEdit, Plus, Trash2, Download, FileDown, Globe } from "lucide-react";
+import { User, Bookmark, Settings, LogOut, ChevronRight, Award, BookOpen, Video, Sparkles, FolderKanban, FileEdit, Plus, Trash2, Download, FileDown } from "lucide-react";
 import PageLayout from "@/frontend/components/layout/PageLayout";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
