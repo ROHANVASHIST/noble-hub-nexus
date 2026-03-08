@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Search, ArrowRight, Award, BookOpen, Video, Globe, Loader2, Sparkles, Brain } from "lucide-react";
+import { Search, ArrowRight, Award, BookOpen, Video, Globe, Loader2, Sparkles } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import PageLayout from "@/frontend/components/layout/PageLayout";
 import { Button } from "@/components/ui/button";
