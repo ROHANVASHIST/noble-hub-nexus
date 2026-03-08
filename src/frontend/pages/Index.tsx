@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import { motion, useScroll, useTransform, useSpring } from "framer-motion";
-import { Search, ArrowRight, Award, BookOpen, Video, Globe, Loader2, Sparkles } from "lucide-react";
+import { motion } from "framer-motion";
+import { Search, ArrowRight, Award, BookOpen, Video, Globe, Loader2, Sparkles, Brain } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import PageLayout from "@/frontend/components/layout/PageLayout";
 import { Button } from "@/components/ui/button";
@@ -8,11 +8,12 @@ import { toast } from "sonner";
 import LaureateCard from "@/frontend/components/cards/LaureateCard";
 import LectureCard from "@/frontend/components/cards/LectureCard";
 import StatCard from "@/frontend/components/cards/StatCard";
-import { CATEGORIES, ANALYTICS_DATA, NobelCategory } from "@/backend/data/mock-data";
+import NobelOfTheDay from "@/frontend/components/NobelOfTheDay";
+import { CATEGORIES, NobelCategory } from "@/backend/data/mock-data";
 import { fetchLaureates } from "@/backend/services/laureates";
 import { fetchLectures } from "@/backend/services/lectures";
 import heroBg from "@/frontend/assets/hero-bg.jpg";
-import { useState, useRef } from "react";
+import { useState } from "react";
 
 const Index = () => {
   const { data: laureates, isLoading: loadingLaureates } = useQuery({
