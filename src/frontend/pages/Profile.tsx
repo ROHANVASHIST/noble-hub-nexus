@@ -10,7 +10,6 @@ import { toast } from "sonner";
 import { useAuth } from "@/App";
 import { useScholarData, LabNote } from "@/frontend/hooks/useScholarData";
 import ReactMarkdown from "react-markdown";
-import NobelPassport from "@/frontend/components/NobelPassport";
 import { generateLearningReportHTML, openPrintWindow } from "@/lib/pdf-utils";
 import {
     Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
