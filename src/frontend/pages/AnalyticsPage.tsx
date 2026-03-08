@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import PageLayout from "@/frontend/components/layout/PageLayout";
 import StatCard from "@/frontend/components/cards/StatCard";
+import InteractiveTimeline from "@/frontend/components/InteractiveTimeline";
 import { ANALYTICS_DATA } from "@/backend/data/mock-data";
 import { Award, BookOpen, Video, Globe, Users, TrendingUp } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, Treemap } from "recharts";
