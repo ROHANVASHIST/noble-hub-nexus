@@ -40,7 +40,7 @@ const CATEGORY_COLORS: Record<string, string> = {
 };
 
 const KnowledgeGraphPage = () => {
-  const { user } = useAuth();
+  
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [zoom, setZoom] = useState(1);
   const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
