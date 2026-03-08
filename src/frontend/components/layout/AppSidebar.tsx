@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
-  Home, BookOpen, Compass, Network, FlaskConical, GraduationCap,
+  Home, BookOpen, Compass, Network, FlaskConical, GraduationCap, Globe,
   BarChart3, HelpCircle, TrendingUp, Search, User, LogOut,
   Award, Sparkles, Brain, Trophy, Video, Info, Shield, Scale,
   ChevronDown, ChevronsUpDown, Settings, Bell, Zap, Bot, Target
@@ -68,6 +68,8 @@ const ENGAGE_NAV = [
   { to: "/predictions", label: "Predictions", icon: TrendingUp, badge: null },
   { to: "/notifications", label: "Notifications", icon: Bell, badge: null },
   { to: "/tracker", label: "Tracker", icon: Target, badge: null },
+  { to: "/world-map", label: "World Map", icon: Globe, badge: "New" },
+  { to: "/leaderboard", label: "Leaderboard", icon: Trophy, badge: null },
 ];
 
 const INFO_NAV = [
