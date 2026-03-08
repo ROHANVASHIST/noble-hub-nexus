@@ -120,6 +120,7 @@ const AppSidebar = () => {
   const location = useLocation();
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  const handleSignOut = async () => {
     await supabase.auth.signOut();
     navigate("/");
   };
