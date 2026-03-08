@@ -271,6 +271,16 @@ const DeepFocusPage = () => {
         className="flex items-center justify-between px-4 py-2 border-b border-border bg-card/80 backdrop-blur-sm z-10"
       >
         <div className="flex items-center gap-3">
+          <Button
+            size="sm"
+            variant="ghost"
+            className="h-8 gap-1.5 text-muted-foreground hover:text-foreground"
+            onClick={() => navigate(-1)}
+          >
+            <ArrowLeft className="h-4 w-4" />
+            <span className="text-xs font-medium">Exit</span>
+          </Button>
+          <Separator orientation="vertical" className="h-5" />
           <Zap className="h-5 w-5 text-primary" />
           <span className="font-semibold text-sm">Deep Focus</span>
           {isRunning && (
