@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      annotations: {
+        Row: {
+          color: string
+          created_at: string
+          id: string
+          item_id: string
+          item_type: string
+          note: string | null
+          selected_text: string
+          user_id: string
+        }
+        Insert: {
+          color?: string
+          created_at?: string
+          id?: string
+          item_id: string
+          item_type?: string
+          note?: string | null
+          selected_text: string
+          user_id: string
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          id?: string
+          item_id?: string
+          item_type?: string
+          note?: string | null
+          selected_text?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       bookmarks: {
         Row: {
           created_at: string
