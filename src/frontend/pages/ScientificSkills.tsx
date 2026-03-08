@@ -44,6 +44,7 @@ const ScientificSkills = () => {
     ]);
     const [skillInput, setSkillInput] = useState("");
     const [isGeneratingSkill, setIsGeneratingSkill] = useState(false);
+    const [generatedInsight, setGeneratedInsight] = useState<string | null>(null);
 
     // Notebook state
     const [notebookTitle, setNotebookTitle] = useState("");
