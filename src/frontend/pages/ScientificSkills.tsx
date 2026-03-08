@@ -13,7 +13,6 @@ import {
     Dna,
     ArrowRight,
     MonitorPlay,
-    FileQuestion,
     Trophy,
     ArrowLeft,
     Sparkles,
@@ -22,12 +21,11 @@ import {
     FileText,
     Users,
     Save,
-    Plus,
+    Loader2,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { useScholarData } from "@/frontend/hooks/useScholarData";
-import { supabase } from "@/integrations/supabase/client";
 
 const ScientificSkills = () => {
     const navigate = useNavigate();
