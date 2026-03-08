@@ -21,6 +21,7 @@ import {
     FolderKanban,
     Sparkles,
     ArrowRight,
+    Brain,
 } from "lucide-react";
 import { toast } from "sonner";
 
