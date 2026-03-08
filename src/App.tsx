@@ -19,6 +19,7 @@ import ScholarDashboard from "./frontend/pages/ScholarDashboard";
 import ScientificSkills from "./frontend/pages/ScientificSkills";
 import MentorshipPage from "./frontend/pages/MentorshipPage";
 import ScholarToolPage from "./frontend/pages/ScholarToolPage";
+import QuizPage from "./frontend/pages/QuizPage";
 import NotFound from "./frontend/pages/NotFound";
 import { useAuthReady } from "@/frontend/hooks/useAuthReady";
 import React, { createContext, useContext } from "react";
