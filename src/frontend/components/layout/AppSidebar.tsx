@@ -54,6 +54,8 @@ const MAIN_NAV = [
   { to: "/discovery", label: "Discovery", icon: Compass, badge: null },
   { to: "/connections", label: "Connections", icon: Network, badge: null },
   { to: "/search", label: "Search", icon: Search, badge: null },
+  { to: "/knowledge-graph", label: "Knowledge Graph", icon: Network, badge: "New" },
+  { to: "/time-machine", label: "Time Machine", icon: Clock, badge: "New" },
 ];
 
 const RESEARCH_NAV = [
