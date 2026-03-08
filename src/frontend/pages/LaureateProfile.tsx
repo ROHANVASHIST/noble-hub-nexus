@@ -13,6 +13,8 @@ import { useScholarData } from "@/frontend/hooks/useScholarData";
 const LaureateProfile = () => {
     const { id } = useParams<{ id: string }>();
     const { addBookmark } = useScholarData();
+    const [eli5Text, setEli5Text] = useState("");
+    const [eli5Loading, setEli5Loading] = useState(false);
 
     const { data: laureate, isLoading, error } = useQuery({
         queryKey: ["laureate", id],
