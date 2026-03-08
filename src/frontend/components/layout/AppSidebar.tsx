@@ -60,10 +60,14 @@ const RESEARCH_NAV = [
   { to: "/mentorship", label: "Mentorship", icon: GraduationCap, badge: "AI" },
   { to: "/scholar-dashboard", label: "Dashboard", icon: Brain, badge: null },
   { to: "/scientific-skills", label: "Skills", icon: Trophy, badge: null },
-  { to: "/focus", label: "Focus Timer", icon: Timer, badge: "New" },
-  { to: "/flashcards", label: "Flashcards", icon: Layers, badge: "New" },
+  { to: "/focus", label: "Focus Timer", icon: Timer, badge: null },
+  { to: "/flashcards", label: "Flashcards", icon: Layers, badge: null },
   { to: "/bookmarks", label: "Bookmarks", icon: Bookmark, badge: null },
-  { to: "/daily-goals", label: "Daily Goals", icon: ListChecks, badge: "New" },
+  { to: "/daily-goals", label: "Daily Goals", icon: ListChecks, badge: null },
+  { to: "/study-rooms", label: "Study Rooms", icon: MessageSquare, badge: "New" },
+  { to: "/planner", label: "Planner", icon: Kanban, badge: "New" },
+  { to: "/citations", label: "Citations", icon: FileText, badge: "New" },
+  { to: "/progress", label: "Reports", icon: BarChart3, badge: null },
 ];
 
 const ENGAGE_NAV = [
