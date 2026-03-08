@@ -103,17 +103,7 @@ const PageLayout = ({ children }: { children: React.ReactNode }) => {
             </button>
 
             {/* Notifications */}
-            <button
-              onClick={() => navigate("/notifications")}
-              className="relative flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all"
-            >
-              <Bell className="h-4 w-4" />
-              {unreadCount > 0 && (
-                <Badge className="absolute -top-1 -right-1 h-4 min-w-4 px-1 text-[9px] rounded-full flex items-center justify-center">
-                  {unreadCount > 9 ? "9+" : unreadCount}
-                </Badge>
-              )}
-            </button>
+            <NotificationDropdown />
 
             {/* User avatar */}
             {session && (
