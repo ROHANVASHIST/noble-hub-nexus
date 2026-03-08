@@ -8,7 +8,7 @@ import { Slider } from "@/components/ui/slider";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { Clock, ChevronLeft, ChevronRight, Sparkles, Award, BookOpen, Globe } from "lucide-react";
-import { ScrollArea } from "@/components/ui/scroll-area";
+
 
 const CATEGORY_COLORS: Record<string, string> = {
   Physics: "bg-blue-500/20 text-blue-400 border-blue-500/30",

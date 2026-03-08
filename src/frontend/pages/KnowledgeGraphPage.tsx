@@ -6,10 +6,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useAuth } from "@/App";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
-import { Network, ZoomIn, ZoomOut, Maximize2, Search, Filter, Info } from "lucide-react";
+import { Network, ZoomIn, ZoomOut, Maximize2, Info } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface GraphNode {
@@ -41,7 +40,7 @@ const CATEGORY_COLORS: Record<string, string> = {
 };
 
 const KnowledgeGraphPage = () => {
-  const { user } = useAuth();
+  
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [zoom, setZoom] = useState(1);
   const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
