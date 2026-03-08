@@ -15,6 +15,7 @@ import {
   Brain, Trophy, Video, Bot, Target, Bell, Globe, Info,
   Timer, Layers, Bookmark, ListChecks, MessageSquare, FileText, Kanban,
   Highlighter, PieChart, Mail, CalendarCheck,
+  AlarmClock, GitCompareArrows, Medal,
 } from "lucide-react";
 
 const PAGES = [
