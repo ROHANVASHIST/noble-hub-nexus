@@ -1,7 +1,8 @@
+import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { ArrowLeft, Award, Globe, GraduationCap, Calendar, MapPin, Sparkles, Share2, Bookmark, ExternalLink, Info, TrendingUp } from "lucide-react";
+import { ArrowLeft, Award, Globe, GraduationCap, Calendar, MapPin, Sparkles, Share2, Bookmark, ExternalLink, Info, TrendingUp, Lightbulb, Loader2 } from "lucide-react";
 import PageLayout from "@/frontend/components/layout/PageLayout";
 import { fetchLaureateById } from "@/backend/services/laureates";
 import { Button } from "@/components/ui/button";
