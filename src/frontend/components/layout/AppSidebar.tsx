@@ -77,6 +77,7 @@ const RESEARCH_NAV = [
   { to: "/reminders", label: "Reminders", icon: AlarmClock, badge: "New" },
   { to: "/compare", label: "Compare", icon: GitCompareArrows, badge: "New" },
   { to: "/voice-studio", label: "Voice Studio", icon: Headphones, badge: "New" },
+  { to: "/deep-focus", label: "Deep Focus", icon: Zap, badge: "New" },
 ];
 
 const ENGAGE_NAV = [
