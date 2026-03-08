@@ -143,6 +143,19 @@ const AnalyticsPage = () => (
             ))}
           </div>
         </motion.div>
+        {/* Interactive Timeline */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          className="mt-6 rounded-xl border border-border/50 bg-card p-5"
+        >
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-display text-lg font-semibold text-foreground">Interactive Timeline</h3>
+            <span className="text-xs bg-emerald-500/10 text-emerald-500 px-2 py-1 rounded-full font-bold uppercase">Explore</span>
+          </div>
+          <InteractiveTimeline />
+        </motion.div>
       </div>
     </div>
   </PageLayout>
