@@ -7,7 +7,7 @@ import { useAuth } from "@/App";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
-import { Mail, TrendingUp, BookOpen, Brain, Flame, Target, Clock, Award } from "lucide-react";
+import { Mail, TrendingUp, BookOpen, Brain, Flame, Target, Clock, Award, Timer } from "lucide-react";
 import type { Json } from "@/integrations/supabase/types";
 
 const WeeklyDigestPage = () => {
