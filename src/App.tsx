@@ -124,7 +124,6 @@ const App = () => {
               <Route path="*" element={<NotFound />} />
             </Routes>
             {session && <QuickCapture />}
-            </Routes>
           </BrowserRouter>
         </TooltipProvider>
       </AuthContext.Provider>
