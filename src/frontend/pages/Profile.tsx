@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { User, Bookmark, Settings, LogOut, ChevronRight, Award, BookOpen, Video, Sparkles, FolderKanban, FileEdit, Plus, Trash2, Download } from "lucide-react";
+import { User, Bookmark, Settings, LogOut, ChevronRight, Award, BookOpen, Video, Sparkles, FolderKanban, FileEdit, Plus, Trash2, Download, FileDown, Globe } from "lucide-react";
 import PageLayout from "@/frontend/components/layout/PageLayout";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,6 +10,8 @@ import { toast } from "sonner";
 import { useAuth } from "@/App";
 import { useScholarData, LabNote } from "@/frontend/hooks/useScholarData";
 import ReactMarkdown from "react-markdown";
+import NobelPassport from "@/frontend/components/NobelPassport";
+import { generateLearningReportHTML, openPrintWindow } from "@/lib/pdf-utils";
 import {
     Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from "@/components/ui/dialog";
