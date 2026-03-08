@@ -35,6 +35,10 @@ import FocusTimerPage from "./frontend/pages/FocusTimerPage";
 import FlashcardsPage from "./frontend/pages/FlashcardsPage";
 import BookmarksPage from "./frontend/pages/BookmarksPage";
 import ReadingListPage from "./frontend/pages/ReadingListPage";
+import StudyRoomsPage from "./frontend/pages/StudyRoomsPage";
+import ProgressReportsPage from "./frontend/pages/ProgressReportsPage";
+import CitationGeneratorPage from "./frontend/pages/CitationGeneratorPage";
+import ResearchPlannerPage from "./frontend/pages/ResearchPlannerPage";
 import { useAuthReady } from "@/frontend/hooks/useAuthReady";
 import React, { createContext, useContext } from "react";
 import type { User, Session } from "@supabase/supabase-js";
@@ -98,6 +102,10 @@ const App = () => {
               <Route path="/flashcards" element={<ProtectedRoute session={session} isReady={isReady}><FlashcardsPage /></ProtectedRoute>} />
               <Route path="/bookmarks" element={<ProtectedRoute session={session} isReady={isReady}><BookmarksPage /></ProtectedRoute>} />
               <Route path="/daily-goals" element={<ProtectedRoute session={session} isReady={isReady}><ReadingListPage /></ProtectedRoute>} />
+              <Route path="/study-rooms" element={<ProtectedRoute session={session} isReady={isReady}><StudyRoomsPage /></ProtectedRoute>} />
+              <Route path="/progress" element={<ProtectedRoute session={session} isReady={isReady}><ProgressReportsPage /></ProtectedRoute>} />
+              <Route path="/citations" element={<ProtectedRoute session={session} isReady={isReady}><CitationGeneratorPage /></ProtectedRoute>} />
+              <Route path="/planner" element={<ProtectedRoute session={session} isReady={isReady}><ResearchPlannerPage /></ProtectedRoute>} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
