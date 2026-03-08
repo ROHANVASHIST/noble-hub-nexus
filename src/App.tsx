@@ -47,6 +47,7 @@ import RemindersPage from "./frontend/pages/RemindersPage";
 import ComparePage from "./frontend/pages/ComparePage";
 import AchievementsPage from "./frontend/pages/AchievementsPage";
 import QuickCapture from "./frontend/components/QuickCapture";
+import VoiceStudioPage from "./frontend/pages/VoiceStudioPage";
 import { useAuthReady } from "@/frontend/hooks/useAuthReady";
 import React, { createContext, useContext } from "react";
 import type { User, Session } from "@supabase/supabase-js";
