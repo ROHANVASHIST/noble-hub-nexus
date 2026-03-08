@@ -29,7 +29,7 @@ import { useScholarData } from "@/frontend/hooks/useScholarData";
 
 const ScientificSkills = () => {
     const navigate = useNavigate();
-    const [activeModule, setActiveModule] = useState(0);
+    const [activeModule] = useState(0);
     const [currentRiddleIndex, setCurrentRiddleIndex] = useState(0);
     const [simulationStep, setSimulationStep] = useState(0);
     const [simulationProgress, setSimulationProgress] = useState(0);
