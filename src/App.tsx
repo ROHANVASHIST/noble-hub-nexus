@@ -126,6 +126,7 @@ const App = () => {
               <Route path="/achievements" element={<ProtectedRoute session={session} isReady={isReady}><AchievementsPage /></ProtectedRoute>} />
               <Route path="/voice-studio" element={<ProtectedRoute session={session} isReady={isReady}><VoiceStudioPage /></ProtectedRoute>} />
               <Route path="/deep-focus" element={<ProtectedRoute session={session} isReady={isReady}><DeepFocusPage /></ProtectedRoute>} />
+              <Route path="/personal-insights" element={<ProtectedRoute session={session} isReady={isReady}><PersonalInsightsPage /></ProtectedRoute>} />
               <Route path="*" element={<NotFound />} />
             </Routes>
             {session && <QuickCapture />}
