@@ -28,6 +28,41 @@ const Index = () => {
   });
 
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+  // Auto-sync Nobel data if database is empty
+  useEffect(() => {
+    const syncKey = "nobel-data-synced";
+    if (localStorage.getItem(syncKey)) return;
+    
+    const checkAndSync = async () => {
+      const { count } = await supabase.from("laureates").select("*", { count: "exact", head: true });
+      if ((count || 0) < 50) {
+        console.log("Database has few laureates, triggering sync...");
+        try {
+          const resp = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/sync-nobel-data`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+            },
+            body: JSON.stringify({}),
+          });
+          if (resp.ok) {
+            const result = await resp.json();
+            console.log("Nobel data sync complete:", result);
+            localStorage.setItem(syncKey, "true");
+            toast.success("Nobel Prize database synced with 125 years of data!");
+          }
+        } catch (e) {
+          console.error("Sync failed:", e);
+        }
+      } else {
+        localStorage.setItem(syncKey, "true");
+      }
+    };
+    checkAndSync();
+  }, []);
+
   const handleMouseMove = (e: React.MouseEvent) => {
     const { clientX, clientY } = e;
     const { innerWidth, innerHeight } = window;
