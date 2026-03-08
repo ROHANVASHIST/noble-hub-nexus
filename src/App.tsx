@@ -50,6 +50,10 @@ import QuickCapture from "./frontend/components/QuickCapture";
 import VoiceStudioPage from "./frontend/pages/VoiceStudioPage";
 import DeepFocusPage from "./frontend/pages/DeepFocusPage";
 import PersonalInsightsPage from "./frontend/pages/PersonalInsightsPage";
+import KnowledgeGraphPage from "./frontend/pages/KnowledgeGraphPage";
+import TimeMachinePage from "./frontend/pages/TimeMachinePage";
+import ImpactSimulatorPage from "./frontend/pages/ImpactSimulatorPage";
+import ResearchCopilotPage from "./frontend/pages/ResearchCopilotPage";
 import { useAuthReady } from "@/frontend/hooks/useAuthReady";
 import React, { createContext, useContext } from "react";
 import type { User, Session } from "@supabase/supabase-js";
@@ -127,6 +131,10 @@ const App = () => {
               <Route path="/voice-studio" element={<ProtectedRoute session={session} isReady={isReady}><VoiceStudioPage /></ProtectedRoute>} />
               <Route path="/deep-focus" element={<ProtectedRoute session={session} isReady={isReady}><DeepFocusPage /></ProtectedRoute>} />
               <Route path="/personal-insights" element={<ProtectedRoute session={session} isReady={isReady}><PersonalInsightsPage /></ProtectedRoute>} />
+              <Route path="/knowledge-graph" element={<ProtectedRoute session={session} isReady={isReady}><KnowledgeGraphPage /></ProtectedRoute>} />
+              <Route path="/time-machine" element={<ProtectedRoute session={session} isReady={isReady}><TimeMachinePage /></ProtectedRoute>} />
+              <Route path="/impact-simulator" element={<ProtectedRoute session={session} isReady={isReady}><ImpactSimulatorPage /></ProtectedRoute>} />
+              <Route path="/research-copilot" element={<ProtectedRoute session={session} isReady={isReady}><ResearchCopilotPage /></ProtectedRoute>} />
               <Route path="*" element={<NotFound />} />
             </Routes>
             {session && <QuickCapture />}

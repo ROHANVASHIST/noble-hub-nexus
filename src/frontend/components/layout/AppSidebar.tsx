@@ -6,7 +6,7 @@ import {
   ChevronDown, ChevronsUpDown, Settings, Bell, Zap, Bot, Target,
   Timer, Layers, Bookmark, ListChecks, MessageSquare, FileText, Kanban,
   Highlighter, PieChart, Mail, CalendarCheck,
-  AlarmClock, GitCompareArrows, Medal, Headphones,
+  AlarmClock, GitCompareArrows, Medal, Headphones, Clock, Cpu,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/App";
@@ -54,6 +54,8 @@ const MAIN_NAV = [
   { to: "/discovery", label: "Discovery", icon: Compass, badge: null },
   { to: "/connections", label: "Connections", icon: Network, badge: null },
   { to: "/search", label: "Search", icon: Search, badge: null },
+  { to: "/knowledge-graph", label: "Knowledge Graph", icon: Network, badge: "New" },
+  { to: "/time-machine", label: "Time Machine", icon: Clock, badge: "New" },
 ];
 
 const RESEARCH_NAV = [
@@ -78,6 +80,7 @@ const RESEARCH_NAV = [
   { to: "/compare", label: "Compare", icon: GitCompareArrows, badge: "New" },
   { to: "/voice-studio", label: "Voice Studio", icon: Headphones, badge: "New" },
   { to: "/deep-focus", label: "Deep Focus", icon: Zap, badge: "New" },
+  { to: "/research-copilot", label: "AI Copilot", icon: Cpu, badge: "AI" },
 ];
 
 const ENGAGE_NAV = [
@@ -92,6 +95,7 @@ const ENGAGE_NAV = [
   { to: "/passport", label: "Passport", icon: Award, badge: null },
   { to: "/achievements", label: "Achievements", icon: Medal, badge: "New" },
   { to: "/personal-insights", label: "Insights", icon: TrendingUp, badge: "New" },
+  { to: "/impact-simulator", label: "Impact Sim", icon: Zap, badge: "New" },
 ];
 
 const INFO_NAV = [
