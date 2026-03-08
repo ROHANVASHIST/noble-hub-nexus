@@ -14,6 +14,7 @@ import {
   BarChart3, HelpCircle, TrendingUp, Search, User, Award,
   Brain, Trophy, Video, Bot, Target, Bell, Globe, Info,
   Timer, Layers, Bookmark, ListChecks, MessageSquare, FileText, Kanban,
+  Highlighter, PieChart, Mail, CalendarCheck,
 } from "lucide-react";
 
 const PAGES = [
@@ -43,6 +44,10 @@ const PAGES = [
   { label: "Research Planner", path: "/planner", icon: Kanban, group: "Research" },
   { label: "Citation Generator", path: "/citations", icon: FileText, group: "Research" },
   { label: "Progress Reports", path: "/progress", icon: BarChart3, group: "Research" },
+  { label: "AI Study Plan", path: "/study-plan", icon: CalendarCheck, group: "Research" },
+  { label: "Focus Statistics", path: "/focus-stats", icon: PieChart, group: "Research" },
+  { label: "Annotations", path: "/annotations", icon: Highlighter, group: "Research" },
+  { label: "Weekly Digest", path: "/weekly-digest", icon: Mail, group: "Research" },
   { label: "Passport", path: "/passport", icon: Award, group: "Engage" },
   { label: "Profile", path: "/profile", icon: User, group: "Account" },
   { label: "About", path: "/about", icon: Info, group: "Info" },
