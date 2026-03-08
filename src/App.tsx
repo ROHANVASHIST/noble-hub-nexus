@@ -48,6 +48,7 @@ import ComparePage from "./frontend/pages/ComparePage";
 import AchievementsPage from "./frontend/pages/AchievementsPage";
 import QuickCapture from "./frontend/components/QuickCapture";
 import VoiceStudioPage from "./frontend/pages/VoiceStudioPage";
+import DeepFocusPage from "./frontend/pages/DeepFocusPage";
 import { useAuthReady } from "@/frontend/hooks/useAuthReady";
 import React, { createContext, useContext } from "react";
 import type { User, Session } from "@supabase/supabase-js";
@@ -123,6 +124,7 @@ const App = () => {
               <Route path="/compare" element={<ProtectedRoute session={session} isReady={isReady}><ComparePage /></ProtectedRoute>} />
               <Route path="/achievements" element={<ProtectedRoute session={session} isReady={isReady}><AchievementsPage /></ProtectedRoute>} />
               <Route path="/voice-studio" element={<ProtectedRoute session={session} isReady={isReady}><VoiceStudioPage /></ProtectedRoute>} />
+              <Route path="/deep-focus" element={<ProtectedRoute session={session} isReady={isReady}><DeepFocusPage /></ProtectedRoute>} />
               <Route path="*" element={<NotFound />} />
             </Routes>
             {session && <QuickCapture />}
