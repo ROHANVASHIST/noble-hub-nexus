@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/App";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,9 +11,10 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
+import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import {
-  Maximize2, Minimize2, Play, Pause, RotateCcw, Volume2, VolumeX,
+  ArrowLeft, Maximize2, Minimize2, Play, Pause, RotateCcw, Volume2, VolumeX,
   Target, Clock, Save, TreePine, Waves, Wind, Cloud,
   Coffee, Flame, Music, Zap, ChevronUp, BarChart3,
 } from "lucide-react";
@@ -135,6 +137,7 @@ function useAmbientNoise() {
 
 const DeepFocusPage = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const qc = useQueryClient();
 
   // ── State ──
@@ -271,6 +274,16 @@ const DeepFocusPage = () => {
         className="flex items-center justify-between px-4 py-2 border-b border-border bg-card/80 backdrop-blur-sm z-10"
       >
         <div className="flex items-center gap-3">
+          <Button
+            size="sm"
+            variant="ghost"
+            className="h-8 gap-1.5 text-muted-foreground hover:text-foreground"
+            onClick={() => navigate(-1)}
+          >
+            <ArrowLeft className="h-4 w-4" />
+            <span className="text-xs font-medium">Exit</span>
+          </Button>
+          <Separator orientation="vertical" className="h-5" />
           <Zap className="h-5 w-5 text-primary" />
           <span className="font-semibold text-sm">Deep Focus</span>
           {isRunning && (
