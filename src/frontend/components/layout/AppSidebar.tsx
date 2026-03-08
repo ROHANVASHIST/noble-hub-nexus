@@ -4,7 +4,7 @@ import {
   BarChart3, HelpCircle, TrendingUp, Search, User, LogOut,
   Award, Sparkles, Brain, Trophy, Video, Info, Shield, Scale,
   ChevronDown, ChevronsUpDown, Settings, Bell, Zap, Bot, Target,
-  Timer, Layers, Bookmark, ListChecks
+  Timer, Layers, Bookmark, ListChecks, MessageSquare, FileText, Kanban
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/App";
