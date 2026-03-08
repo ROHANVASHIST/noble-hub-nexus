@@ -152,6 +152,39 @@ export type Database = {
         }
         Relationships: []
       }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          is_read: boolean
+          link: string | null
+          message: string
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          link?: string | null
+          message: string
+          title: string
+          type?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          link?: string | null
+          message?: string
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -337,6 +370,39 @@ export type Database = {
           item_id?: string | null
           item_type?: string | null
           metadata?: Json | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_trackers: {
+        Row: {
+          created_at: string
+          entries: Json
+          id: string
+          tracker_name: string
+          tracker_type: string
+          unit: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          entries?: Json
+          id?: string
+          tracker_name: string
+          tracker_type?: string
+          unit?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          entries?: Json
+          id?: string
+          tracker_name?: string
+          tracker_type?: string
+          unit?: string
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
