@@ -1,4 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useRef } from "react";
 import {
   Home, BookOpen, Compass, Network, FlaskConical, GraduationCap, Globe,
   BarChart3, HelpCircle, TrendingUp, Search, User, LogOut,
@@ -46,7 +47,7 @@ import {
 } from "@/components/ui/tooltip";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
+
 
 const MAIN_NAV = [
   { to: "/", label: "Home", icon: Home, badge: null },
@@ -117,6 +118,7 @@ const AppSidebar = () => {
   const collapsed = state === "collapsed";
   const navigate = useNavigate();
   const location = useLocation();
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -292,12 +294,16 @@ const AppSidebar = () => {
 
       {/* Navigation Groups */}
       <SidebarContent>
-        <ScrollArea className="flex-1">
+        <div
+          ref={scrollRef}
+          className="flex-1 overflow-y-auto overflow-x-hidden"
+          style={{ scrollbarWidth: "thin", scrollbarColor: "hsl(var(--sidebar-border)) transparent" }}
+        >
           {renderCollapsibleGroup("Navigate", MAIN_NAV, Compass, true)}
           {renderCollapsibleGroup("Research & Learn", RESEARCH_NAV, FlaskConical, true)}
           {renderCollapsibleGroup("Engage", ENGAGE_NAV, Zap, true)}
           {renderCollapsibleGroup("Information", INFO_NAV, Info, false)}
-        </ScrollArea>
+        </div>
       </SidebarContent>
 
       <SidebarSeparator className="bg-sidebar-border/50" />
