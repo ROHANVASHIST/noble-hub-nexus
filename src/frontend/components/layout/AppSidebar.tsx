@@ -293,12 +293,16 @@ const AppSidebar = () => {
 
       {/* Navigation Groups */}
       <SidebarContent>
-        <ScrollArea className="flex-1">
+        <div
+          ref={scrollRef}
+          className="flex-1 overflow-y-auto overflow-x-hidden"
+          style={{ scrollbarWidth: "thin", scrollbarColor: "hsl(var(--sidebar-border)) transparent" }}
+        >
           {renderCollapsibleGroup("Navigate", MAIN_NAV, Compass, true)}
           {renderCollapsibleGroup("Research & Learn", RESEARCH_NAV, FlaskConical, true)}
           {renderCollapsibleGroup("Engage", ENGAGE_NAV, Zap, true)}
           {renderCollapsibleGroup("Information", INFO_NAV, Info, false)}
-        </ScrollArea>
+        </div>
       </SidebarContent>
 
       <SidebarSeparator className="bg-sidebar-border/50" />
