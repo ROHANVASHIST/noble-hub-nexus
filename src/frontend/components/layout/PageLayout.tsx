@@ -37,7 +37,7 @@ const PAGE_TITLES: Record<string, string> = {
 const PageLayout = ({ children }: { children: React.ReactNode }) => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const { user, session } = useAuth();
+  const { session } = useAuth();
   const [showScrollTop, setShowScrollTop] = useState(false);
 
   const pageTitle = PAGE_TITLES[pathname] || (pathname.startsWith("/laureates/") ? "Laureate Profile" : "");
