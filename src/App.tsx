@@ -85,6 +85,8 @@ const App = () => {
               <Route path="/nobel-ai" element={<ProtectedRoute session={session} isReady={isReady}><NobelAIPage /></ProtectedRoute>} />
               <Route path="/notifications" element={<ProtectedRoute session={session} isReady={isReady}><NotificationsPage /></ProtectedRoute>} />
               <Route path="/tracker" element={<ProtectedRoute session={session} isReady={isReady}><TrackerPage /></ProtectedRoute>} />
+              <Route path="/world-map" element={<ProtectedRoute session={session} isReady={isReady}><WorldMapPage /></ProtectedRoute>} />
+              <Route path="/leaderboard" element={<ProtectedRoute session={session} isReady={isReady}><LeaderboardPage /></ProtectedRoute>} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
