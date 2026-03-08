@@ -91,6 +91,7 @@ const ENGAGE_NAV = [
   { to: "/leaderboard", label: "Leaderboard", icon: Trophy, badge: null },
   { to: "/passport", label: "Passport", icon: Award, badge: null },
   { to: "/achievements", label: "Achievements", icon: Medal, badge: "New" },
+  { to: "/personal-insights", label: "Insights", icon: TrendingUp, badge: "New" },
 ];
 
 const INFO_NAV = [
