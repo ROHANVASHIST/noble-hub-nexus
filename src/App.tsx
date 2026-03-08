@@ -49,6 +49,7 @@ import AchievementsPage from "./frontend/pages/AchievementsPage";
 import QuickCapture from "./frontend/components/QuickCapture";
 import VoiceStudioPage from "./frontend/pages/VoiceStudioPage";
 import DeepFocusPage from "./frontend/pages/DeepFocusPage";
+import PersonalInsightsPage from "./frontend/pages/PersonalInsightsPage";
 import { useAuthReady } from "@/frontend/hooks/useAuthReady";
 import React, { createContext, useContext } from "react";
 import type { User, Session } from "@supabase/supabase-js";
