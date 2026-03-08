@@ -70,6 +70,7 @@ const ENGAGE_NAV = [
   { to: "/tracker", label: "Tracker", icon: Target, badge: null },
   { to: "/world-map", label: "World Map", icon: Globe, badge: "New" },
   { to: "/leaderboard", label: "Leaderboard", icon: Trophy, badge: null },
+  { to: "/passport", label: "Passport", icon: Award, badge: null },
 ];
 
 const INFO_NAV = [
