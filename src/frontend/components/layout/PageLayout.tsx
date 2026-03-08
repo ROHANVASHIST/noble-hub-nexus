@@ -70,8 +70,15 @@ const PageLayout = ({ children }: { children: React.ReactNode }) => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [pathname]);
 
+  // Read persisted sidebar state from cookie
+  const getSidebarDefault = () => {
+    const match = document.cookie.match(/(?:^|;\s*)sidebar:state=([^;]*)/);
+    if (match) return match[1] === "true";
+    return true;
+  };
+
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={getSidebarDefault()}>
       <div className="relative min-h-screen flex w-full bg-background text-foreground selection:bg-primary/30 selection:text-primary">
         {/* Animated Background Elements */}
         <div className="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
