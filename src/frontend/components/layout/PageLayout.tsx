@@ -3,11 +3,13 @@ import { useEffect, useState } from "react";
 import Footer from "./Footer";
 import AppSidebar from "./AppSidebar";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ArrowUp, Brain, Search, Command, Award } from "lucide-react";
+import { ArrowUp, Brain, Search, Bell, Command, Award } from "lucide-react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { useAuth } from "@/App";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import NotificationDropdown from "@/frontend/components/NotificationDropdown";
+import { Badge } from "@/components/ui/badge";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const PAGE_TITLES: Record<string, string> = {
   "/": "Home",
@@ -39,6 +41,21 @@ const PageLayout = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
   const { session } = useAuth();
   const [showScrollTop, setShowScrollTop] = useState(false);
+
+  const { data: unreadCount = 0 } = useQuery({
+    queryKey: ["unread-notif-count", session?.user?.id],
+    queryFn: async () => {
+      if (!session) return 0;
+      const { count } = await supabase
+        .from("notifications")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", session.user.id)
+        .eq("is_read", false);
+      return count || 0;
+    },
+    enabled: !!session,
+    refetchInterval: 30000,
+  });
 
   const pageTitle = PAGE_TITLES[pathname] || (pathname.startsWith("/laureates/") ? "Laureate Profile" : "");
 
@@ -103,7 +120,17 @@ const PageLayout = ({ children }: { children: React.ReactNode }) => {
             </button>
 
             {/* Notifications */}
-            <NotificationDropdown />
+            <button
+              onClick={() => navigate("/notifications")}
+              className="relative flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all"
+            >
+              <Bell className="h-4 w-4" />
+              {unreadCount > 0 && (
+                <Badge className="absolute -top-1 -right-1 h-4 min-w-4 px-1 text-[9px] rounded-full flex items-center justify-center">
+                  {unreadCount > 9 ? "9+" : unreadCount}
+                </Badge>
+              )}
+            </button>
 
             {/* User avatar */}
             {session && (
