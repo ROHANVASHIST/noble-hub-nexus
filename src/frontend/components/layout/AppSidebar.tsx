@@ -74,6 +74,8 @@ const RESEARCH_NAV = [
   { to: "/focus-stats", label: "Focus Stats", icon: PieChart, badge: "New" },
   { to: "/annotations", label: "Annotations", icon: Highlighter, badge: "New" },
   { to: "/weekly-digest", label: "Weekly Digest", icon: Mail, badge: "New" },
+  { to: "/reminders", label: "Reminders", icon: AlarmClock, badge: "New" },
+  { to: "/compare", label: "Compare", icon: GitCompareArrows, badge: "New" },
 ];
 
 const ENGAGE_NAV = [
