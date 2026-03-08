@@ -130,6 +130,7 @@ const ScientificSkills = () => {
     const handleGenerateInsight = async () => {
         if (!skillInput.trim() || selectedSkill === null) return;
         setIsGeneratingSkill(true);
+        setGeneratedInsight("");
 
         try {
             const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/mentor-chat`;
@@ -166,7 +167,10 @@ const ScientificSkills = () => {
                     try {
                         const parsed = JSON.parse(jsonStr);
                         const content = parsed.choices?.[0]?.delta?.content;
-                        if (content) fullText += content;
+                        if (content) {
+                            fullText += content;
+                            setGeneratedInsight(fullText);
+                        }
                     } catch { textBuffer = line + "\n" + textBuffer; break; }
                 }
             }
@@ -174,8 +178,7 @@ const ScientificSkills = () => {
             await addNote({ title: `${modules[selectedSkill].title} Strategy`, content: fullText || "AI-generated research strategy saved.", type: 'breakthrough' });
             toast.success("AI research advice saved to your Lab Notes!");
             setSkillInput("");
-            setSelectedSkill(null);
-        } catch (err) {
+        } catch {
             toast.error("Failed to generate insight. Please try again.");
         } finally {
             setIsGeneratingSkill(false);
