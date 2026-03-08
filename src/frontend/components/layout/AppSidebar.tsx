@@ -1,5 +1,4 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
 import {
   Home, BookOpen, Compass, Network, FlaskConical, GraduationCap,
   BarChart3, HelpCircle, TrendingUp, Search, User, LogOut,
