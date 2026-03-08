@@ -3,11 +3,13 @@ import { useEffect, useState } from "react";
 import Footer from "./Footer";
 import AppSidebar from "./AppSidebar";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ArrowUp, Brain, Search, Command, Award } from "lucide-react";
+import { ArrowUp, Brain, Search, Bell, Command, Award } from "lucide-react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { useAuth } from "@/App";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import NotificationDropdown from "@/frontend/components/NotificationDropdown";
+import { Badge } from "@/components/ui/badge";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const PAGE_TITLES: Record<string, string> = {
   "/": "Home",
