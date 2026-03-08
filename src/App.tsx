@@ -50,7 +50,7 @@ const App = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthContext.Provider value={{ user, session }}>
+      <AuthContext.Provider value={{ user, session, isReady }}>
         <TooltipProvider>
           <Toaster />
           <Sonner />

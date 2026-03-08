@@ -52,7 +52,7 @@ const INFO_NAV = [
 ];
 
 const AppSidebar = () => {
-  const { session } = useAuth();
+  const { session, isReady } = useAuth();
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const navigate = useNavigate();
