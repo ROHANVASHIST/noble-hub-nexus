@@ -118,7 +118,12 @@ const App = () => {
               <Route path="/focus-stats" element={<ProtectedRoute session={session} isReady={isReady}><PomodoroStatsPage /></ProtectedRoute>} />
               <Route path="/annotations" element={<ProtectedRoute session={session} isReady={isReady}><AnnotationsPage /></ProtectedRoute>} />
               <Route path="/weekly-digest" element={<ProtectedRoute session={session} isReady={isReady}><WeeklyDigestPage /></ProtectedRoute>} />
+              <Route path="/reminders" element={<ProtectedRoute session={session} isReady={isReady}><RemindersPage /></ProtectedRoute>} />
+              <Route path="/compare" element={<ProtectedRoute session={session} isReady={isReady}><ComparePage /></ProtectedRoute>} />
+              <Route path="/achievements" element={<ProtectedRoute session={session} isReady={isReady}><AchievementsPage /></ProtectedRoute>} />
               <Route path="*" element={<NotFound />} />
+            </Routes>
+            {session && <QuickCapture />}
             </Routes>
           </BrowserRouter>
         </TooltipProvider>

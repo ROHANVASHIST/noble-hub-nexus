@@ -88,6 +88,7 @@ const ENGAGE_NAV = [
   { to: "/world-map", label: "World Map", icon: Globe, badge: "New" },
   { to: "/leaderboard", label: "Leaderboard", icon: Trophy, badge: null },
   { to: "/passport", label: "Passport", icon: Award, badge: null },
+  { to: "/achievements", label: "Achievements", icon: Medal, badge: "New" },
 ];
 
 const INFO_NAV = [
