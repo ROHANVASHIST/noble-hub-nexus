@@ -12,8 +12,9 @@ import NobelOfTheDay from "@/frontend/components/NobelOfTheDay";
 import { CATEGORIES, NobelCategory } from "@/backend/data/mock-data";
 import { fetchLaureates } from "@/backend/services/laureates";
 import { fetchLectures } from "@/backend/services/lectures";
+import { supabase } from "@/integrations/supabase/client";
 import heroBg from "@/frontend/assets/hero-bg.jpg";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const Index = () => {
   const { data: laureates, isLoading: loadingLaureates } = useQuery({
