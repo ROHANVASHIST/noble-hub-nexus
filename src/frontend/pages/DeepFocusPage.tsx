@@ -13,8 +13,8 @@ import { Slider } from "@/components/ui/slider";
 import { toast } from "sonner";
 import {
   Maximize2, Minimize2, Play, Pause, RotateCcw, Volume2, VolumeX,
-  Target, Clock, FileText, Save, TreePine, Waves, Wind, Cloud,
-  Coffee, Flame, Music, Zap, ChevronDown, ChevronUp, BarChart3,
+  Target, Clock, Save, TreePine, Waves, Wind, Cloud,
+  Coffee, Flame, Music, Zap, ChevronUp, BarChart3,
 } from "lucide-react";
 
 // ── Ambient Soundscapes ──
