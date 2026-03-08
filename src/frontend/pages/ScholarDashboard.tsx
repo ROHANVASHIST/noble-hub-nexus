@@ -5,9 +5,6 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useScholarData } from "@/frontend/hooks/useScholarData";
 import AchievementBadges from "@/frontend/components/AchievementBadges";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/App";
 import {
     Timer,
     BookOpen,
