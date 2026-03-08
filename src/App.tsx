@@ -80,6 +80,8 @@ const App = () => {
               <Route path="/connections" element={<ProtectedRoute session={session} isReady={isReady}><ConnectionsPage /></ProtectedRoute>} />
               <Route path="/predictions" element={<ProtectedRoute session={session} isReady={isReady}><PredictionsPage /></ProtectedRoute>} />
               <Route path="/nobel-ai" element={<ProtectedRoute session={session} isReady={isReady}><NobelAIPage /></ProtectedRoute>} />
+              <Route path="/notifications" element={<ProtectedRoute session={session} isReady={isReady}><NotificationsPage /></ProtectedRoute>} />
+              <Route path="/tracker" element={<ProtectedRoute session={session} isReady={isReady}><TrackerPage /></ProtectedRoute>} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

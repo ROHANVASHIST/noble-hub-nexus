@@ -58,7 +58,7 @@ const ResearchPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [scholarMode, setScholarMode] = useState(false);
   const [viewMode, setViewMode] = useState<"papers" | "tools">("papers");
-  const { addNote } = useScholarData();
+  useScholarData();
 
   const { data: papers, isLoading } = useQuery({
     queryKey: ["papers", selectedCategory],

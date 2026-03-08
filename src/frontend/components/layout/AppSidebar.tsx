@@ -66,6 +66,8 @@ const ENGAGE_NAV = [
   { to: "/analytics", label: "Analytics", icon: BarChart3, badge: null },
   { to: "/quiz", label: "Quiz", icon: HelpCircle, badge: "New" },
   { to: "/predictions", label: "Predictions", icon: TrendingUp, badge: null },
+  { to: "/notifications", label: "Notifications", icon: Bell, badge: null },
+  { to: "/tracker", label: "Tracker", icon: Target, badge: null },
 ];
 
 const INFO_NAV = [
