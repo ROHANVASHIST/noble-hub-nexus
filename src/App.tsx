@@ -32,8 +32,9 @@ import type { User, Session } from "@supabase/supabase-js";
 interface AuthContextType {
   user: User | null;
   session: Session | null;
+  isReady: boolean;
 }
-const AuthContext = createContext<AuthContextType>({ user: null, session: null });
+const AuthContext = createContext<AuthContextType>({ user: null, session: null, isReady: false });
 export const useAuth = () => useContext(AuthContext);
 
 const ProtectedRoute = ({ children, session, isReady }: { children: React.ReactNode; session: Session | null; isReady: boolean }) => {
@@ -49,7 +50,7 @@ const App = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthContext.Provider value={{ user, session }}>
+      <AuthContext.Provider value={{ user, session, isReady }}>
         <TooltipProvider>
           <Toaster />
           <Sonner />

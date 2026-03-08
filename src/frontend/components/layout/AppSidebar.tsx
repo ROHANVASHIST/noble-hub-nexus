@@ -52,7 +52,7 @@ const INFO_NAV = [
 ];
 
 const AppSidebar = () => {
-  const { session } = useAuth();
+  const { session, isReady } = useAuth();
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const navigate = useNavigate();
@@ -127,7 +127,12 @@ const AppSidebar = () => {
       <SidebarSeparator />
 
       <SidebarFooter className="p-3">
-        {session ? (
+        {!isReady ? (
+          <div className="flex items-center gap-3 px-3 py-2.5">
+            <div className="h-7 w-7 rounded-full bg-muted animate-pulse shrink-0" />
+            {!collapsed && <div className="h-4 w-24 rounded bg-muted animate-pulse" />}
+          </div>
+        ) : session ? (
           <div className="flex flex-col gap-2">
             <SidebarMenu>
               <SidebarMenuItem>
