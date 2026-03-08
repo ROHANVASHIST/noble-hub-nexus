@@ -2,8 +2,8 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Home, BookOpen, Compass, Network, FlaskConical, GraduationCap,
   BarChart3, HelpCircle, TrendingUp, Search, User, LogOut,
-  Award, Sparkles, Brain, Stamp, FileText, Trophy,
-  Video, Settings, Info, Shield, Scale
+  Award, Sparkles, Brain, Trophy,
+  Video, Info, Shield, Scale
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/App";
