@@ -20,6 +20,9 @@ import ScientificSkills from "./frontend/pages/ScientificSkills";
 import MentorshipPage from "./frontend/pages/MentorshipPage";
 import ScholarToolPage from "./frontend/pages/ScholarToolPage";
 import QuizPage from "./frontend/pages/QuizPage";
+import DiscoveryPage from "./frontend/pages/DiscoveryPage";
+import ConnectionsPage from "./frontend/pages/ConnectionsPage";
+import PredictionsPage from "./frontend/pages/PredictionsPage";
 import NotFound from "./frontend/pages/NotFound";
 import { useAuthReady } from "@/frontend/hooks/useAuthReady";
 import React, { createContext, useContext } from "react";
@@ -69,6 +72,9 @@ const App = () => {
               <Route path="/mentorship" element={<ProtectedRoute session={session} isReady={isReady}><MentorshipPage /></ProtectedRoute>} />
               <Route path="/scholar-os/:toolId" element={<ProtectedRoute session={session} isReady={isReady}><ScholarToolPage /></ProtectedRoute>} />
               <Route path="/quiz" element={<ProtectedRoute session={session} isReady={isReady}><QuizPage /></ProtectedRoute>} />
+              <Route path="/discovery" element={<ProtectedRoute session={session} isReady={isReady}><DiscoveryPage /></ProtectedRoute>} />
+              <Route path="/connections" element={<ProtectedRoute session={session} isReady={isReady}><ConnectionsPage /></ProtectedRoute>} />
+              <Route path="/predictions" element={<ProtectedRoute session={session} isReady={isReady}><PredictionsPage /></ProtectedRoute>} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

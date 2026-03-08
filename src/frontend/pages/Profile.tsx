@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { User, Bookmark, Settings, LogOut, ChevronRight, Award, BookOpen, Video, Sparkles, FolderKanban, FileEdit, Plus, Trash2, Download } from "lucide-react";
+import { User, Bookmark, Settings, LogOut, ChevronRight, Award, BookOpen, Video, Sparkles, FolderKanban, FileEdit, Plus, Trash2, Download, FileDown } from "lucide-react";
 import PageLayout from "@/frontend/components/layout/PageLayout";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { useAuth } from "@/App";
 import { useScholarData, LabNote } from "@/frontend/hooks/useScholarData";
 import ReactMarkdown from "react-markdown";
+import { generateLearningReportHTML, openPrintWindow } from "@/lib/pdf-utils";
 import {
     Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from "@/components/ui/dialog";
@@ -121,6 +122,27 @@ const Profile = () => {
                                     <h1 className="font-display text-3xl font-bold text-foreground">Scholar Dashboard</h1>
                                     <p className="mt-1 text-muted-foreground">Manage your saved research and scholarly interests.</p>
                                 </div>
+                                <Button
+                                    variant="outline"
+                                    onClick={() => {
+                                        const html = generateLearningReportHTML({
+                                            userName: displayName,
+                                            totalNotes: notes.length,
+                                            totalProjects: projects.length,
+                                            totalBookmarks: bookmarks.length,
+                                            breakthroughs: notes.filter(n => n.type === 'breakthrough').length,
+                                            topCategories: [],
+                                            joinDate: new Date(user.created_at || Date.now()).toLocaleDateString(),
+                                            notes: notes.map(n => ({ title: n.title, type: n.type, date: n.date })),
+                                            projects: projects.map(p => ({ name: p.name, status: p.status, progress: p.progress })),
+                                        });
+                                        openPrintWindow(html);
+                                        toast.success("Learning report generated!");
+                                    }}
+                                    className="rounded-xl gap-2 text-xs font-bold uppercase tracking-widest"
+                                >
+                                    <FileDown className="h-4 w-4" /> Export PDF Report
+                                </Button>
                             </div>
 
                             {activeTab === 'library' && (

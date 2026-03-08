@@ -9,12 +9,13 @@ import { useAuth } from "@/App";
 const NAV_LINKS = [
   { to: "/", label: "Home" },
   { to: "/laureates", label: "Library" },
-  { to: "/lectures", label: "Lectures" },
+  { to: "/discovery", label: "Discovery" },
+  { to: "/connections", label: "Connections" },
   { to: "/research", label: "Research" },
   { to: "/mentorship", label: "Mentorship" },
-  { to: "/scientific-skills", label: "Lab" },
   { to: "/analytics", label: "Analytics" },
   { to: "/quiz", label: "Quiz" },
+  { to: "/predictions", label: "Predict" },
 ];
 
 const Navbar = () => {
