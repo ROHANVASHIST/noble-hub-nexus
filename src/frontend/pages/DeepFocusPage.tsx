@@ -140,7 +140,7 @@ const DeepFocusPage = () => {
   // ── State ──
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [text, setText] = useState("");
-  const [wordGoal, setWordGoal] = useState(500);
+  const [wordGoal, setWordGoal] = useState(0);
   const [timerMinutes, setTimerMinutes] = useState(25);
   const [timeLeft, setTimeLeft] = useState(25 * 60);
   const [isRunning, setIsRunning] = useState(false);
