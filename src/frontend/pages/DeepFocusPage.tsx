@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/App";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,9 +11,10 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
+import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import {
-  Maximize2, Minimize2, Play, Pause, RotateCcw, Volume2, VolumeX,
+  ArrowLeft, Maximize2, Minimize2, Play, Pause, RotateCcw, Volume2, VolumeX,
   Target, Clock, Save, TreePine, Waves, Wind, Cloud,
   Coffee, Flame, Music, Zap, ChevronUp, BarChart3,
 } from "lucide-react";
