@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { User, Bookmark, Heart, Clock, Settings, LogOut, ChevronRight, Award, BookOpen, Video, Sparkles, FolderKanban, FileEdit, Plus, Trash2, ExternalLink, Share2, Download } from "lucide-react";
+import { User, Bookmark, Clock, Settings, LogOut, ChevronRight, Award, BookOpen, Video, Sparkles, FolderKanban, FileEdit, Plus, Trash2, ExternalLink, Share2, Download } from "lucide-react";
 import PageLayout from "@/frontend/components/layout/PageLayout";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -9,6 +9,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { toast } from "sonner";
 import { useAuth } from "@/App";
 import { useScholarData, LabNote } from "@/frontend/hooks/useScholarData";
+import ReactMarkdown from "react-markdown";
 import {
     Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from "@/components/ui/dialog";
@@ -19,7 +20,7 @@ const Profile = () => {
     const [activeTab, setActiveTab] = useState<"library" | "projects" | "notes">("library");
     const navigate = useNavigate();
 
-    const { notes, projects, bookmarks, addNote: addNoteHook, deleteNote, addBookmark, updateNote } = useScholarData();
+    const { notes, projects, bookmarks, addNote: addNoteHook, deleteNote, deleteProject, deleteBookmark, addBookmark, updateNote, updateProjectProgress } = useScholarData();
     const [newNoteTitle, setNewNoteTitle] = useState("");
 
     const [editingNote, setEditingNote] = useState<LabNote | null>(null);
@@ -77,6 +78,21 @@ const Profile = () => {
                                 <div className="mt-2 inline-flex items-center gap-1 rounded-full bg-amber-500/10 px-3 py-0.5 text-[10px] font-bold uppercase tracking-widest text-amber-600">Academic Member</div>
                             </div>
 
+                            <div className="mt-6 grid grid-cols-3 gap-2 text-center">
+                                <div className="rounded-xl bg-secondary/50 p-3">
+                                    <p className="text-lg font-bold font-display">{notes.length}</p>
+                                    <p className="text-[9px] font-bold text-muted-foreground uppercase">Notes</p>
+                                </div>
+                                <div className="rounded-xl bg-secondary/50 p-3">
+                                    <p className="text-lg font-bold font-display">{projects.length}</p>
+                                    <p className="text-[9px] font-bold text-muted-foreground uppercase">Projects</p>
+                                </div>
+                                <div className="rounded-xl bg-secondary/50 p-3">
+                                    <p className="text-lg font-bold font-display">{bookmarks.length}</p>
+                                    <p className="text-[9px] font-bold text-muted-foreground uppercase">Saved</p>
+                                </div>
+                            </div>
+
                             <div className="mt-10 space-y-1">
                                 <button onClick={() => setActiveTab("library")} className={`flex w-full items-center justify-between rounded-xl px-4 py-3 text-sm font-bold transition-all ${activeTab === 'library' ? 'bg-primary/10 text-primary shadow-sm border border-primary/10' : 'text-muted-foreground hover:bg-secondary'}`}>
                                     <div className="flex items-center gap-3"><Bookmark className="h-4 w-4" /> My Library</div><ChevronRight className="h-4 w-4" />
@@ -130,7 +146,6 @@ const Profile = () => {
                                     <div className="space-y-4">
                                         <div className="flex items-center justify-between">
                                             <h2 className="text-lg font-bold text-foreground flex items-center gap-2"><Sparkles className="h-5 w-5 text-amber-500" /> Personalized Research Feed</h2>
-                                            <Button variant="ghost" size="sm" className="text-xs text-primary font-bold" onClick={() => toast.info("Refreshing your personalized feed...")}>Refresh Feed</Button>
                                         </div>
 
                                         <div className="space-y-4">
@@ -143,7 +158,6 @@ const Profile = () => {
                                                             <p className="mt-1 text-xs text-muted-foreground leading-relaxed">Based on your interest in Physics ({bookmarks.filter(b => b.itemType === 'paper').length} saved items), we've summarized 3 recent papers on topological insulators.</p>
                                                             <div className="mt-3 flex gap-2">
                                                                 <Button variant="outline" size="sm" className="h-7 text-[10px] font-bold uppercase" onClick={() => { addNoteHook({ title: "AI Insight Summary", content: "Superconductivity breakthroughs summary...", type: 'insight' }); toast.success("Summary added to Lab Notes"); }}>Add to Notes</Button>
-                                                                <Button variant="outline" size="sm" className="h-7 text-[10px] font-bold uppercase" onClick={() => toast.info("Full report generating...")}>Full Report</Button>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -155,7 +169,7 @@ const Profile = () => {
                                                 <h3 className="text-sm font-bold text-foreground flex items-center gap-2"><Bookmark className="h-4 w-4 text-primary" /> Recent Bookmarks</h3>
                                                 <div className="grid gap-3">
                                                     {bookmarks.slice(0, 5).map(b => (
-                                                        <div key={b.id} className="flex items-center justify-between p-3 bg-card border border-border/50 rounded-xl">
+                                                        <div key={b.id} className="flex items-center justify-between p-3 bg-card border border-border/50 rounded-xl group">
                                                             <div className="flex items-center gap-3">
                                                                 <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
                                                                     {b.itemType === 'paper' ? <BookOpen className="h-4 w-4 text-primary" /> : b.itemType === 'lecture' ? <Video className="h-4 w-4 text-primary" /> : <Award className="h-4 w-4 text-primary" />}
@@ -165,12 +179,17 @@ const Profile = () => {
                                                                     <p className="text-[9px] uppercase font-bold text-muted-foreground">{b.itemType} · {b.date}</p>
                                                                 </div>
                                                             </div>
-                                                            <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => navigate(b.itemType === 'laureate' ? `/laureates/${b.itemId}` : b.itemType === 'paper' ? '/research' : '/lectures')}>
-                                                                <ChevronRight className="h-4 w-4" />
-                                                            </Button>
+                                                            <div className="flex items-center gap-1">
+                                                                <Button variant="ghost" size="sm" className="h-7 w-7 p-0 opacity-0 group-hover:opacity-100 text-destructive hover:text-destructive" onClick={() => { deleteBookmark(b.id); toast.success("Bookmark removed"); }}>
+                                                                    <Trash2 className="h-3 w-3" />
+                                                                </Button>
+                                                                <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => navigate(b.itemType === 'laureate' ? `/laureates/${b.itemId}` : b.itemType === 'paper' ? '/research' : '/lectures')}>
+                                                                    <ChevronRight className="h-4 w-4" />
+                                                                </Button>
+                                                            </div>
                                                         </div>
                                                     ))}
-                                                    {bookmarks.length === 0 && <p className="text-xs text-muted-foreground italic text-center py-4 bg-secondary/10 rounded-xl">No items bookmarked yet.</p>}
+                                                    {bookmarks.length === 0 && <p className="text-xs text-muted-foreground italic text-center py-4 bg-secondary/10 rounded-xl">No items bookmarked yet. Explore laureates, papers, and lectures to save them here.</p>}
                                                 </div>
                                             </div>
                                         </div>
@@ -182,18 +201,10 @@ const Profile = () => {
                                             <p className="mt-2 text-sm text-muted-foreground max-w-sm mx-auto">Discover groundbreaking achievements and add them to your collection.</p>
                                             <Link to="/laureates"><Button className="mt-6 rounded-xl shadow-lg shadow-primary/20">Explore Discoveries</Button></Link>
                                         </div>
-                                        <div className="rounded-3xl bg-slate-900/40 p-8 border border-white/5 relative overflow-hidden group">
-                                            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity"><Sparkles className="h-20 w-20 text-primary" /></div>
-                                            <h3 className="text-xl font-bold text-foreground font-display">Scholar OS Suggestion</h3>
-                                            <p className="mt-1 text-xs text-muted-foreground uppercase font-black tracking-widest">Top Pick for your Field</p>
-                                            <div className="mt-6 flex items-start gap-3 p-4 bg-white/5 rounded-2xl border border-white/5">
-                                                <div className="h-10 w-10 bg-primary/10 rounded-xl flex items-center justify-center shrink-0"><BookOpen className="h-5 w-5 text-primary" /></div>
-                                                <div className="text-left">
-                                                    <p className="text-xs font-bold leading-tight">Universal Mechanism of Complex Scaling</p>
-                                                    <p className="text-[10px] text-muted-foreground mt-1">Foundational Paper · Cited by 14k</p>
-                                                </div>
-                                            </div>
-                                            <Button variant="ghost" size="sm" className="mt-4 w-full h-8 text-[10px] font-bold uppercase text-primary border border-primary/20 hover:bg-primary/5 transition-all" onClick={() => toast.success("Paper added to background sync queue.")}>Sync to Repository</Button>
+                                        <div className="rounded-3xl bg-gradient-to-br from-amber-500/5 to-transparent p-8 text-center border border-amber-500/10">
+                                            <h3 className="text-xl font-bold text-foreground font-display">Scholar OS Tools</h3>
+                                            <p className="mt-2 text-sm text-muted-foreground max-w-sm mx-auto">Use AI-powered research tools to accelerate your PhD work.</p>
+                                            <Link to="/research"><Button variant="outline" className="mt-6 rounded-xl border-amber-500/30 text-amber-600 hover:bg-amber-500/10">Open Research Archive</Button></Link>
                                         </div>
                                     </div>
                                 </motion.div>
@@ -204,14 +215,14 @@ const Profile = () => {
                                     <div className="flex items-center justify-between">
                                         <h2 className="text-lg font-bold text-foreground flex items-center gap-2"><FileEdit className="h-5 w-5 text-primary" /> Research Lab Notes</h2>
                                         <div className="flex gap-2">
-                                            <input className="h-9 rounded-xl bg-secondary/50 border border-border px-4 text-xs focus:ring-1 focus:ring-primary outline-none w-48 text-foreground" placeholder="Note title..." value={newNoteTitle} onChange={(e) => setNewNoteTitle(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleAddNote()} />
+                                            <input className="h-9 rounded-xl bg-secondary/50 border border-border px-4 text-xs focus:ring-1 focus:ring-primary outline-none w-48 text-foreground" placeholder="Note title..." value={newNoteTitle} onChange={(e) => setNewNoteTitle(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleAddNote()} />
                                             <Button onClick={handleAddNote} size="sm" className="rounded-xl h-9"><Plus className="h-4 w-4 mr-1" /> New Note</Button>
                                         </div>
                                     </div>
 
                                     <div className="grid gap-4">
                                         {notes.length === 0 ? (
-                                            <div className="text-center py-20 bg-secondary/20 rounded-3xl border-2 border-dashed border-border text-muted-foreground italic">No notes yet. Click the 'New Note' button to start documenting your research findings.</div>
+                                            <div className="text-center py-20 bg-secondary/20 rounded-3xl border-2 border-dashed border-border text-muted-foreground italic">No notes yet. Click 'New Note' or use Scholar Tools to auto-generate notes.</div>
                                         ) : (
                                             notes.map(note => (
                                                 <div key={note.id} className="group relative rounded-2xl border border-border bg-card p-6 transition-all hover:border-primary/30">
@@ -219,17 +230,20 @@ const Profile = () => {
                                                         <div className="flex items-center gap-2">
                                                             <div className={`h-2 w-2 rounded-full ${note.type === 'insight' ? 'bg-amber-500' : note.type === 'breakthrough' ? 'bg-primary' : 'bg-blue-500'}`} />
                                                             <h4 className="font-bold text-foreground">{note.title}</h4>
+                                                            <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-secondary text-muted-foreground">{note.type}</span>
                                                         </div>
                                                         <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                                             <span className="text-[10px] font-bold text-muted-foreground uppercase">{note.date}</span>
                                                             <button onClick={() => { deleteNote(note.id); toast.error("Note deleted"); }} className="text-destructive hover:scale-110 transition-transform"><Trash2 className="h-4 w-4" /></button>
                                                         </div>
                                                     </div>
-                                                    <p className="text-xs text-muted-foreground leading-relaxed line-clamp-3">{note.content}</p>
+                                                    <div className="text-xs text-muted-foreground leading-relaxed line-clamp-3 prose prose-sm max-w-none">
+                                                        <ReactMarkdown>{note.content}</ReactMarkdown>
+                                                    </div>
                                                     <div className="mt-4 flex gap-2">
                                                         <Button variant="ghost" size="sm" className="h-7 text-[10px] font-bold uppercase text-primary" onClick={() => { setEditingNote(note); setEditTitle(note.title); setEditContent(note.content); }}>Edit Note</Button>
-                                                        <Button variant="ghost" size="sm" className="h-7 text-[10px] font-bold uppercase" onClick={() => setViewingNote(note)}>View Full Screen</Button>
-                                                        <Button variant="ghost" size="sm" className="h-7 text-[10px] font-bold uppercase" onClick={() => handleExportNote(note)}>Export to PDF</Button>
+                                                        <Button variant="ghost" size="sm" className="h-7 text-[10px] font-bold uppercase" onClick={() => setViewingNote(note)}>View Full</Button>
+                                                        <Button variant="ghost" size="sm" className="h-7 text-[10px] font-bold uppercase" onClick={() => handleExportNote(note)}>Export PDF</Button>
                                                     </div>
                                                 </div>
                                             ))
@@ -253,17 +267,26 @@ const Profile = () => {
                                                         <h4 className="font-bold text-foreground text-lg">{proj.name}</h4>
                                                         <span className="inline-block mt-1 px-2 py-0.5 rounded-full bg-primary/10 text-[8px] font-bold uppercase tracking-widest text-primary italic">{proj.status}</span>
                                                     </div>
-                                                    <div className="h-10 w-10 rounded-xl bg-secondary flex items-center justify-center text-primary group-hover:bg-primary/10 transition-colors"><FolderKanban className="h-5 w-5" /></div>
+                                                    <div className="flex items-center gap-2">
+                                                        <button onClick={() => { deleteProject(proj.id); toast.success("Project deleted"); }} className="h-8 w-8 rounded-xl flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 opacity-0 group-hover:opacity-100 transition-all">
+                                                            <Trash2 className="h-4 w-4" />
+                                                        </button>
+                                                        <div className="h-10 w-10 rounded-xl bg-secondary flex items-center justify-center text-primary group-hover:bg-primary/10 transition-colors"><FolderKanban className="h-5 w-5" /></div>
+                                                    </div>
                                                 </div>
                                                 <div className="space-y-2">
                                                     <div className="flex justify-between text-[10px] font-bold uppercase text-muted-foreground"><span>Project Progress</span><span>{proj.progress}%</span></div>
                                                     <div className="h-2 w-full bg-secondary rounded-full overflow-hidden"><motion.div className="h-full bg-primary" initial={{ width: 0 }} animate={{ width: `${proj.progress}%` }} /></div>
+                                                    <div className="flex gap-2 mt-2">
+                                                        {[25, 50, 75, 100].map(p => (
+                                                            <button key={p} onClick={() => updateProjectProgress(proj.id, p, p === 100 ? 'Completed' : 'Active Research')} className={`text-[9px] font-bold px-2 py-1 rounded-lg border transition-all ${proj.progress >= p ? 'bg-primary/10 border-primary/20 text-primary' : 'border-border text-muted-foreground hover:border-primary/20'}`}>
+                                                                {p}%
+                                                            </button>
+                                                        ))}
+                                                    </div>
                                                 </div>
                                                 {proj.discovery && <p className="mt-4 text-[11px] text-muted-foreground italic line-clamp-2">"{proj.discovery}"</p>}
-                                                <div className="mt-6 flex gap-2">
-                                                    <Button variant="default" className="flex-1 rounded-xl font-bold h-9 text-xs" onClick={() => toast.info(`Resuming ${proj.name}...`)}>Open Lab</Button>
-                                                    <Button variant="outline" className="rounded-xl h-9 w-10 p-0 text-muted-foreground hover:text-primary"><Share2 className="h-4 w-4" /></Button>
-                                                </div>
+                                                <div className="mt-4 text-[10px] text-muted-foreground">Topic: <span className="text-primary font-bold">{proj.topic}</span> · Created: {proj.date}</div>
                                             </div>
                                         ))}
 
@@ -310,8 +333,8 @@ const Profile = () => {
                                 <div className="flex justify-between items-start mb-6">
                                     <div className="space-y-2">
                                         <div className="flex items-center gap-3">
-                                            <div className="h-2 w-2 rounded-full bg-primary shadow-[0_0_10px_rgba(139,92,246,0.5)]" />
-                                            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary/70">Research Entry</span>
+                                            <div className={`h-2 w-2 rounded-full shadow-[0_0_10px_rgba(139,92,246,0.5)] ${viewingNote.type === 'breakthrough' ? 'bg-primary' : viewingNote.type === 'insight' ? 'bg-amber-500' : 'bg-blue-500'}`} />
+                                            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary/70">{viewingNote.type} Entry</span>
                                         </div>
                                         <h2 className="text-4xl font-display font-bold text-white pr-12">{viewingNote.title}</h2>
                                     </div>
@@ -323,12 +346,11 @@ const Profile = () => {
                                 <div className="flex gap-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">
                                     <span>Created: {viewingNote.date}</span>
                                     <span>Type: {viewingNote.type}</span>
-                                    <span>Scholar ID: 7782-BC</span>
                                 </div>
                             </div>
-                            <div className="flex-1 overflow-y-auto p-12 custom-scrollbar">
-                                <div className="prose prose-invert max-w-none">
-                                    <p className="text-lg leading-relaxed text-slate-300 font-serif whitespace-pre-wrap">{viewingNote.content}</p>
+                            <div className="flex-1 overflow-y-auto p-12">
+                                <div className="prose prose-invert max-w-none prose-headings:font-display prose-p:leading-relaxed prose-li:leading-relaxed">
+                                    <ReactMarkdown>{viewingNote.content}</ReactMarkdown>
                                 </div>
                             </div>
                             <div className="p-8 bg-black/40 border-t border-white/5 flex justify-center gap-4">
