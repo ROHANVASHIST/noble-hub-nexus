@@ -76,6 +76,7 @@ const RESEARCH_NAV = [
   { to: "/weekly-digest", label: "Weekly Digest", icon: Mail, badge: "New" },
   { to: "/reminders", label: "Reminders", icon: AlarmClock, badge: "New" },
   { to: "/compare", label: "Compare", icon: GitCompareArrows, badge: "New" },
+  { to: "/voice-studio", label: "Voice Studio", icon: Headphones, badge: "New" },
 ];
 
 const ENGAGE_NAV = [
