@@ -60,6 +60,10 @@ const RESEARCH_NAV = [
   { to: "/mentorship", label: "Mentorship", icon: GraduationCap, badge: "AI" },
   { to: "/scholar-dashboard", label: "Dashboard", icon: Brain, badge: null },
   { to: "/scientific-skills", label: "Skills", icon: Trophy, badge: null },
+  { to: "/focus", label: "Focus Timer", icon: Timer, badge: "New" },
+  { to: "/flashcards", label: "Flashcards", icon: Layers, badge: "New" },
+  { to: "/bookmarks", label: "Bookmarks", icon: Bookmark, badge: null },
+  { to: "/daily-goals", label: "Daily Goals", icon: ListChecks, badge: "New" },
 ];
 
 const ENGAGE_NAV = [
