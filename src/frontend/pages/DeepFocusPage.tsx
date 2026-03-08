@@ -137,6 +137,7 @@ function useAmbientNoise() {
 
 const DeepFocusPage = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const qc = useQueryClient();
 
   // ── State ──
