@@ -3,10 +3,7 @@ import { Filter, X, Calendar, Globe, Award, BookOpen, SlidersHorizontal } from "
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Slider } from "@/components/ui/slider";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
 
 export interface SearchFilters {
   categories: string[];

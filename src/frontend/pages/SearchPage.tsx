@@ -16,7 +16,7 @@ import { fetchPapers } from "@/backend/services/papers";
 import { NobelCategory } from "@/backend/data/mock-data";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { cn } from "@/lib/utils";
+
 
 type ContentType = "all" | "laureates" | "lectures" | "papers";
 
