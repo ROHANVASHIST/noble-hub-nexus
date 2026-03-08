@@ -77,6 +77,7 @@ const App = () => {
               <Route path="/discovery" element={<ProtectedRoute session={session} isReady={isReady}><DiscoveryPage /></ProtectedRoute>} />
               <Route path="/connections" element={<ProtectedRoute session={session} isReady={isReady}><ConnectionsPage /></ProtectedRoute>} />
               <Route path="/predictions" element={<ProtectedRoute session={session} isReady={isReady}><PredictionsPage /></ProtectedRoute>} />
+              <Route path="/nobel-ai" element={<ProtectedRoute session={session} isReady={isReady}><NobelAIPage /></ProtectedRoute>} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

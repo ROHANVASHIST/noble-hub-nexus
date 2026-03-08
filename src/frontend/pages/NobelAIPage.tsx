@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import PageLayout from "@/frontend/components/layout/PageLayout";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Send, Sparkles, Loader2, Bot, User, Trash2, Copy, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
