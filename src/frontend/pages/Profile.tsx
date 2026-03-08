@@ -123,6 +123,27 @@ const Profile = () => {
                                     <h1 className="font-display text-3xl font-bold text-foreground">Scholar Dashboard</h1>
                                     <p className="mt-1 text-muted-foreground">Manage your saved research and scholarly interests.</p>
                                 </div>
+                                <Button
+                                    variant="outline"
+                                    onClick={() => {
+                                        const html = generateLearningReportHTML({
+                                            userName: displayName,
+                                            totalNotes: notes.length,
+                                            totalProjects: projects.length,
+                                            totalBookmarks: bookmarks.length,
+                                            breakthroughs: notes.filter(n => n.type === 'breakthrough').length,
+                                            topCategories: [],
+                                            joinDate: new Date(user.created_at || Date.now()).toLocaleDateString(),
+                                            notes: notes.map(n => ({ title: n.title, type: n.type, date: n.date })),
+                                            projects: projects.map(p => ({ name: p.name, status: p.status, progress: p.progress })),
+                                        });
+                                        openPrintWindow(html);
+                                        toast.success("Learning report generated!");
+                                    }}
+                                    className="rounded-xl gap-2 text-xs font-bold uppercase tracking-widest"
+                                >
+                                    <FileDown className="h-4 w-4" /> Export PDF Report
+                                </Button>
                             </div>
 
                             {activeTab === 'library' && (
