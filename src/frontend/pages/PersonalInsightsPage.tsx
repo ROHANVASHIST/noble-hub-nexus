@@ -9,21 +9,15 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  Flame, Target, BookOpen, Clock, TrendingUp, Calendar,
+  Flame, Target, Clock, TrendingUp, Calendar,
   Award, Zap, Brain, FileText, Bookmark, CheckCircle2,
 } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip,
-  ResponsiveContainer, LineChart, Line, AreaChart, Area, RadarChart,
+  ResponsiveContainer, AreaChart, Area, RadarChart,
   PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar,
 } from "recharts";
 import { format, subDays, startOfDay, eachDayOfInterval, getDay, subWeeks, startOfWeek, differenceInDays } from "date-fns";
-
-const CHART_STYLE = {
-  bg: "hsl(var(--card))",
-  border: "hsl(var(--border))",
-  text: "hsl(var(--muted-foreground))",
-};
 
 const PersonalInsightsPage = () => {
   const { user } = useAuth();
