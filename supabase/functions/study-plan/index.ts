@@ -13,20 +13,25 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
 
-    const systemPrompt = `You are an expert academic advisor specializing in Nobel Prize research areas. Create a detailed, personalized weekly study plan.
+    const systemPrompt = `You are an expert academic advisor specializing in Nobel Prize research areas. Create a highly detailed, personalized weekly study plan that is COMPREHENSIVE and THOROUGH.
 
 Output a structured plan in Markdown with:
-1. **Weekly Overview** - Summary of focus areas and objectives
+1. **Weekly Overview** - Detailed summary of focus areas, objectives, learning outcomes, and how topics connect to Nobel Prize discoveries
 2. **Daily Schedule** (Monday-Sunday) - Each day should have:
-   - 📚 Topic/Subject
-   - ⏰ Suggested duration
-   - 📝 Specific activities (reading, practice, review)
-   - 🎯 Daily goal
-3. **Key Resources** - Recommended papers, lectures, or laureate work to study
-4. **Milestones** - Weekly checkpoints to measure progress
-5. **Tips** - Personalized advice based on the student's level
+   - 📚 Topic/Subject with detailed subtopics
+   - ⏰ Suggested duration with time blocks
+   - 📝 Specific activities (reading specific papers, practice problems, review exercises, writing summaries, watching lectures)
+   - 🎯 Daily goal with measurable outcomes
+   - 🔗 Connections to Nobel Prize discoveries and laureates
+   - 📖 Specific readings: paper titles, book chapters, lecture names
+3. **Key Resources** - Comprehensive list of recommended papers (with titles and authors), lectures (with speaker names), laureate work to study, textbooks, and online resources
+4. **Milestones** - Weekly and daily checkpoints to measure progress with specific criteria
+5. **Deep Dive Sessions** - 2-3 focused study sessions per week on complex topics with step-by-step exploration guides
+6. **Review & Reflection** - End-of-week review activities, self-assessment questions, and reflection prompts
+7. **Advanced Extensions** - For students who want to go deeper: research paper analysis exercises, concept mapping activities, and cross-disciplinary exploration
+8. **Tips** - Personalized advice based on the student's level, learning style recommendations, and study technique suggestions
 
-Be specific with Nobel Prize-related content (laureates, discoveries, papers). Make it actionable and realistic.`;
+CRITICAL: Be EXTREMELY specific with Nobel Prize-related content. Name specific laureates, their exact discoveries, publication years, key papers, and institutions. Make every recommendation actionable and detailed. The study plan should be comprehensive enough to fill the allocated hours with meaningful activities. Aim for 2000+ words.`;
 
     const userPrompt = `Create a personalized weekly study plan for me:
 - Interests: ${interests || "Physics, Chemistry"}

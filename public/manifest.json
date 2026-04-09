@@ -1,0 +1,22 @@
+{
+  "name": "NobelHub - Nobel Prize Research & Discovery",
+  "short_name": "NobelHub",
+  "description": "Explore Nobel Prize laureates, lectures, research papers, and analytics across 125+ years of achievements.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a1a",
+  "theme_color": "#d4a853",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

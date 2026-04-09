@@ -9,7 +9,7 @@ const BASE_INSTRUCTIONS = `
 
 ## OUTPUT QUALITY REQUIREMENTS (CRITICAL):
 - Responses must be **exhaustive, research-grade, and publication-ready**.
-- Minimum 1000 words for any substantive query. Aim for 1500+ when the topic warrants it.
+- Minimum 2000 words for any substantive query. Aim for 3000+ when the topic warrants it.
 - Cite **real researchers by full name**, their institutions, and publication years.
 - Reference **real journals** (Nature, Science, PNAS, Physical Review Letters, etc.).
 - Include **specific methodologies** — not just "they used machine learning" but "they employed a transformer-based architecture with attention mechanisms trained on 2.3M samples from the UniProt database."
