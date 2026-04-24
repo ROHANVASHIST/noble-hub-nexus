@@ -326,7 +326,7 @@ const PaperFormatEditor = ({ format }: PaperFormatEditorProps) => {
                     <h3 className="text-base font-bold flex items-center gap-2">
                       {section.title}
                       {filled && (
-                        <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                        <CheckCircle2 className="h-4 w-4 text-primary" />
                       )}
                     </h3>
                     <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
