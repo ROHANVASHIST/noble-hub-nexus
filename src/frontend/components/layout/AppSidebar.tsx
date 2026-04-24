@@ -1,5 +1,7 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
+
+const SIDEBAR_SCROLL_KEY = "nobelhub:sidebar-scroll";
 import {
   Home, BookOpen, Compass, Network, FlaskConical, GraduationCap, Globe,
   BarChart3, HelpCircle, TrendingUp, Search, User, LogOut,
@@ -122,6 +124,41 @@ const AppSidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Restore sidebar scroll position on mount and after each route change.
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    try {
+      const saved = sessionStorage.getItem(SIDEBAR_SCROLL_KEY);
+      if (saved !== null) {
+        const top = parseInt(saved, 10);
+        if (!Number.isNaN(top)) {
+          // Defer one frame so the new route's content is laid out.
+          requestAnimationFrame(() => {
+            el.scrollTop = top;
+          });
+        }
+      }
+    } catch {
+      // ignore
+    }
+  }, [location.pathname]);
+
+  // Persist sidebar scroll position as the user scrolls inside it.
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const handle = () => {
+      try {
+        sessionStorage.setItem(SIDEBAR_SCROLL_KEY, String(el.scrollTop));
+      } catch {
+        // ignore quota / privacy errors
+      }
+    };
+    el.addEventListener("scroll", handle, { passive: true });
+    return () => el.removeEventListener("scroll", handle);
+  }, []);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
