@@ -82,6 +82,8 @@ const RESEARCH_NAV = [
   { to: "/voice-studio", label: "Voice Studio", icon: Headphones, badge: "New" },
   { to: "/deep-focus", label: "Deep Focus", icon: Zap, badge: "New" },
   { to: "/research-copilot", label: "AI Copilot", icon: Cpu, badge: "AI" },
+  { to: "/papers/research", label: "Research Paper", icon: FileText, badge: "New" },
+  { to: "/papers/review", label: "Review Paper", icon: BookOpen, badge: "New" },
 ];
 
 const ENGAGE_NAV = [
