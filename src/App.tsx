@@ -30,6 +30,7 @@ import TrackerPage from "./frontend/pages/TrackerPage";
 import WorldMapPage from "./frontend/pages/WorldMapPage";
 import LeaderboardPage from "./frontend/pages/LeaderboardPage";
 import CommandPalette from "./frontend/components/CommandPalette";
+import ScrollRestoration from "./frontend/components/ScrollRestoration";
 import PassportPage from "./frontend/pages/PassportPage";
 import FocusTimerPage from "./frontend/pages/FocusTimerPage";
 import FlashcardsPage from "./frontend/pages/FlashcardsPage";
@@ -85,6 +86,7 @@ const App = () => {
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <ScrollRestoration />
             <CommandPalette />
             <Routes>
               <Route path="/auth" element={isReady && session ? <Navigate to="/" replace /> : <Auth />} />
