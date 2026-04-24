@@ -6,7 +6,6 @@ import {
   HeadingLevel,
   AlignmentType,
 } from "docx";
-import { saveAs } from "file-saver";
 import type { PaperFormat } from "./paperFormats";
 
 const safeFilename = (s: string) =>
@@ -17,25 +16,15 @@ const safeFilename = (s: string) =>
     .slice(0, 60) || "paper";
 
 const downloadBlob = (blob: Blob, filename: string) => {
-  // Fallback if file-saver isn't installed; create link directly.
-  try {
-    saveAs(blob, filename);
-  } catch {
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  }
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 };
-
-const splitParagraphs = (text: string): string[] =>
-  text.replace(/\r\n/g, "\n").split(/\n{2,}/).flatMap((block) =>
-    block.split("\n").length === 1 ? [block] : [block]
-  );
 
 export const exportPaperToDocx = async (
   format: PaperFormat,
