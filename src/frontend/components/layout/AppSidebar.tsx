@@ -9,7 +9,7 @@ import {
   ChevronDown, ChevronsUpDown, Settings, Bell, Zap, Bot, Target,
   Timer, Layers, Bookmark, ListChecks, MessageSquare, FileText, Kanban,
   Highlighter, PieChart, Mail, CalendarCheck,
-  AlarmClock, GitCompareArrows, Medal, Headphones, Clock, Cpu,
+  AlarmClock, GitCompareArrows, Medal, Headphones, Clock, Cpu, Library,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/App";
@@ -86,6 +86,7 @@ const RESEARCH_NAV = [
   { to: "/research-copilot", label: "AI Copilot", icon: Cpu, badge: "AI" },
   { to: "/papers/research", label: "Research Paper", icon: FileText, badge: "New" },
   { to: "/papers/review", label: "Review Paper", icon: BookOpen, badge: "New" },
+  { to: "/resources", label: "Resources Hub", icon: Library, badge: "New" },
 ];
 
 const ENGAGE_NAV = [
