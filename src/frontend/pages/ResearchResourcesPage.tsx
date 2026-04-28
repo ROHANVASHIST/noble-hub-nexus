@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
-import { ExternalLink, Search, BookOpen, FileText, GraduationCap, Users, PenTool, Library } from "lucide-react";
+import { ExternalLink, Search, BookOpen, GraduationCap, Users, PenTool, Library } from "lucide-react";
 import PageLayout from "@/frontend/components/layout/PageLayout";
+import PaperSearch from "@/frontend/components/research/PaperSearch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
