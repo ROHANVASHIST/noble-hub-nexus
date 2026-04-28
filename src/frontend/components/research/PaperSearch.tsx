@@ -105,29 +105,20 @@ export default function PaperSearch() {
     toast.success("Citation copied");
   };
 
-  const saveBookmark = async (p: Paper) => {
+  const saveBookmark = (p: Paper) => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) { toast.error("Sign in to bookmark"); return; }
-      const { error } = await supabase.from("bookmarks").insert({
-        user_id: session.user.id,
-        item_type: "paper",
-        item_id: p.id,
-        metadata: {
-          title: p.title,
-          authors: p.authors,
-          year: p.year,
-          source: p.source,
-          url: p.url,
-          doi: p.doi,
-          venue: p.venue,
-        },
-      } as any);
-      if (error) throw error;
-      toast.success("Saved to bookmarks");
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : "Unknown error";
-      toast.error(`Could not save: ${msg}`);
+      const KEY = "nobelhub:saved-papers";
+      const raw = localStorage.getItem(KEY);
+      const list: Paper[] = raw ? JSON.parse(raw) : [];
+      if (list.some((x) => x.id === p.id)) {
+        toast.info("Already saved");
+        return;
+      }
+      list.unshift(p);
+      localStorage.setItem(KEY, JSON.stringify(list.slice(0, 200)));
+      toast.success("Saved to your reading list");
+    } catch {
+      toast.error("Could not save");
     }
   };
 
