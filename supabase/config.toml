@@ -11,3 +11,6 @@ verify_jwt = false
 
 [functions.research-copilot]
 verify_jwt = false
+
+[functions.research-search]
+verify_jwt = false
