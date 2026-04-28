@@ -117,6 +117,11 @@ export default function ResearchResourcesPage() {
           </p>
         </div>
 
+        {/* Live multi-source paper search */}
+        <div className="mb-10">
+          <PaperSearch />
+        </div>
+
         {/* Search */}
         <div className="relative mb-8 max-w-xl">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
