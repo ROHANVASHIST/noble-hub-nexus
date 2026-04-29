@@ -9,6 +9,7 @@ import LecturesPage from "./frontend/pages/LecturesPage";
 import ResearchPage from "./frontend/pages/ResearchPage";
 import AnalyticsPage from "./frontend/pages/AnalyticsPage";
 import SearchPage from "./frontend/pages/SearchPage";
+import Landing from "./frontend/pages/Landing";
 import Auth from "./frontend/pages/Auth";
 import Profile from "./frontend/pages/Profile";
 import LaureateProfile from "./frontend/pages/LaureateProfile";
@@ -92,7 +93,8 @@ const App = () => {
             <ScrollRestoration />
             <CommandPalette />
             <Routes>
-              <Route path="/auth" element={isReady && session ? <Navigate to="/" replace /> : <Auth />} />
+              <Route path="/auth" element={isReady && session ? <Navigate to="/" replace /> : <Landing />} />
+              <Route path="/auth/legacy" element={isReady && session ? <Navigate to="/" replace /> : <Auth />} />
               <Route path="/" element={<ProtectedRoute session={session} isReady={isReady}><Index /></ProtectedRoute>} />
               <Route path="/laureates" element={<ProtectedRoute session={session} isReady={isReady}><LaureatesPage /></ProtectedRoute>} />
               <Route path="/laureates/:id" element={<ProtectedRoute session={session} isReady={isReady}><LaureateProfile /></ProtectedRoute>} />
