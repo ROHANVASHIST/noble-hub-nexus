@@ -14,7 +14,7 @@ import { useToast } from "@/frontend/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { signUpSchema, signInSchema } from "@/backend/services/auth";
 import { lovable } from "@/integrations/lovable/index";
-import heroBg from "@/assets/hero-bg.jpg";
+import heroBg from "@/frontend/assets/hero-bg.jpg";
 
 const stats = [
   { value: "950+", label: "Laureates" },
