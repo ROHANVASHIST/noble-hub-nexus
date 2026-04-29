@@ -30,7 +30,7 @@ export default defineConfig(({ mode }) => ({
         cleanupOutdatedCaches: true,
         runtimeCaching: [
           {
-            urlPattern: ({ url }) => url.origin === self.location.origin && url.pathname.startsWith("/assets/"),
+            urlPattern: ({ url }: { url: URL }) => url.pathname.startsWith("/assets/"),
             handler: "CacheFirst",
             options: {
               cacheName: "static-assets",
