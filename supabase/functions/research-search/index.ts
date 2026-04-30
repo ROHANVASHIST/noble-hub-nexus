@@ -215,6 +215,44 @@ async function searchDOAJ(q: string, limit: number): Promise<Paper[]> {
   });
 }
 
+// ---------------- Nobel Prize API (official) ----------------
+// Public REST API at https://api.nobelprize.org/2.1 — no key required.
+async function searchNobel(q: string, limit: number): Promise<Paper[]> {
+  const url = `https://api.nobelprize.org/2.1/laureates?name=${encodeURIComponent(q)}&limit=${limit}&format=json`;
+  const r = await fetch(url, { headers: { Accept: "application/json" } });
+  if (!r.ok) return [];
+  const j = await r.json();
+  const laureates = (j.laureates ?? []) as Array<Record<string, unknown>>;
+  return laureates.flatMap((l): Paper[] => {
+    const fullName =
+      (l.fullName as { en?: string } | undefined)?.en ??
+      (l.knownName as { en?: string } | undefined)?.en ??
+      "Unknown laureate";
+    const prizes = (l.nobelPrizes as Array<Record<string, unknown>>) ?? [];
+    const links = (l.links as Array<{ href?: string; rel?: string }>) ?? [];
+    const wiki = (l.wikipedia as { english?: string } | undefined)?.english;
+    return prizes.map((pz, idx): Paper => {
+      const cat = (pz.category as { en?: string } | undefined)?.en ?? "Nobel Prize";
+      const motivation = (pz.motivation as { en?: string } | undefined)?.en ?? "";
+      const year = pz.awardYear ? Number(pz.awardYear) : null;
+      const href = wiki ?? links.find((x) => x.rel === "self")?.href ?? "https://www.nobelprize.org/";
+      return {
+        id: `nobel:${l.id ?? fullName}-${idx}`,
+        source: "Nobel Prize",
+        title: `${fullName} — Nobel Prize in ${cat} (${year ?? "n/a"})`,
+        authors: [fullName],
+        year,
+        abstract: motivation ? `Awarded "${motivation}"` : null,
+        url: href,
+        pdfUrl: null,
+        doi: null,
+        venue: `Official Nobel Prize · ${cat}`,
+        citations: null,
+      };
+    });
+  });
+}
+
 const SOURCES: Record<string, (q: string, n: number) => Promise<Paper[]>> = {
   arxiv: searchArxiv,
   semantic_scholar: searchSemanticScholar,
@@ -222,6 +260,7 @@ const SOURCES: Record<string, (q: string, n: number) => Promise<Paper[]>> = {
   crossref: searchCrossref,
   pubmed: searchPubMed,
   doaj: searchDOAJ,
+  nobel: searchNobel,
 };
 
 Deno.serve(async (req) => {
