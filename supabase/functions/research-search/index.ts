@@ -310,7 +310,9 @@ async function searchNobel(q: string, limit: number): Promise<Paper[]> {
         url: href,
         pdfUrl: null,
         doi: null,
-        venue: `NobelPrize.org · ${cat}${year ? ` ${year}` : ""}`,
+        venue: cat
+          ? `NobelPrize.org · ${cat}${year ? ` · ${year}` : ""}`
+          : `NobelPrize.org${year ? ` · ${year}` : ""}`,
         citations: null,
       };
     });
