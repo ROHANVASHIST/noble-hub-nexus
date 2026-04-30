@@ -217,36 +217,70 @@ async function searchDOAJ(q: string, limit: number): Promise<Paper[]> {
 
 // ---------------- Nobel Prize API (official) ----------------
 // Public REST API at https://api.nobelprize.org/2.1 — no key required.
+// Docs: https://www.nobelprize.org/about/developer-zone-2/
 async function searchNobel(q: string, limit: number): Promise<Paper[]> {
   const url = `https://api.nobelprize.org/2.1/laureates?name=${encodeURIComponent(q)}&limit=${limit}&format=json`;
   const r = await fetch(url, { headers: { Accept: "application/json" } });
   if (!r.ok) return [];
   const j = await r.json();
   const laureates = (j.laureates ?? []) as Array<Record<string, unknown>>;
+
+  const tidy = (s: string) => s.replace(/^["“”\s]+|["“”\s.;,]+$/g, "").trim();
+  const summarise = (s: string, max = 220) => {
+    const t = tidy(s).replace(/\s+/g, " ");
+    if (t.length <= max) return t;
+    const cut = t.slice(0, max);
+    const lastSpace = cut.lastIndexOf(" ");
+    return `${cut.slice(0, lastSpace > 0 ? lastSpace : max)}…`;
+  };
+
   return laureates.flatMap((l): Paper[] => {
-    const fullName =
-      (l.fullName as { en?: string } | undefined)?.en ??
-      (l.knownName as { en?: string } | undefined)?.en ??
-      "Unknown laureate";
+    const knownName = (l.knownName as { en?: string } | undefined)?.en;
+    const fullName = (l.fullName as { en?: string } | undefined)?.en;
+    const orgName = (l.orgName as { en?: string } | undefined)?.en;
+    const displayName = knownName ?? fullName ?? orgName ?? "Unknown laureate";
+
     const prizes = (l.nobelPrizes as Array<Record<string, unknown>>) ?? [];
-    const links = (l.links as Array<{ href?: string; rel?: string }>) ?? [];
+    const laureateLinks = (l.links as Array<{ href?: string; rel?: string }>) ?? [];
     const wiki = (l.wikipedia as { english?: string } | undefined)?.english;
+    const laureateId = l.id ?? "";
+
     return prizes.map((pz, idx): Paper => {
       const cat = (pz.category as { en?: string } | undefined)?.en ?? "Nobel Prize";
-      const motivation = (pz.motivation as { en?: string } | undefined)?.en ?? "";
+      const motivation = tidy((pz.motivation as { en?: string } | undefined)?.en ?? "");
       const year = pz.awardYear ? Number(pz.awardYear) : null;
-      const href = wiki ?? links.find((x) => x.rel === "self")?.href ?? "https://www.nobelprize.org/";
+
+      const prizeLinks = (pz.links as Array<{ href?: string; rel?: string }>) ?? [];
+      const prizeSelf = prizeLinks.find((x) => x.rel === "nobelPrize" || x.rel === "self")?.href;
+      const laureateSelf = laureateLinks.find((x) => x.rel === "self")?.href;
+      const canonicalPrize =
+        year && cat
+          ? `https://www.nobelprize.org/prizes/${cat.toLowerCase().replace(/[^a-z]/g, "-")}/${year}/summary/`
+          : null;
+      const href =
+        prizeSelf ??
+        canonicalPrize ??
+        wiki ??
+        (laureateId ? `https://www.nobelprize.org/prizes/lists/all-nobel-prizes/?laureate=${laureateId}` : null) ??
+        laureateSelf ??
+        "https://www.nobelprize.org/prizes/";
+
+      const title = `${displayName} — Nobel Prize in ${cat}${year ? `, ${year}` : ""}`;
+      const abstract = motivation
+        ? `For ${summarise(motivation)}`
+        : `Laureate of the Nobel Prize in ${cat}${year ? ` (${year})` : ""}.`;
+
       return {
-        id: `nobel:${l.id ?? fullName}-${idx}`,
+        id: `nobel:${laureateId || displayName}-${year ?? "x"}-${idx}`,
         source: "Nobel Prize",
-        title: `${fullName} — Nobel Prize in ${cat} (${year ?? "n/a"})`,
-        authors: [fullName],
+        title,
+        authors: [displayName],
         year,
-        abstract: motivation ? `Awarded "${motivation}"` : null,
+        abstract,
         url: href,
         pdfUrl: null,
         doi: null,
-        venue: `Official Nobel Prize · ${cat}`,
+        venue: `NobelPrize.org · ${cat}${year ? ` ${year}` : ""}`,
         citations: null,
       };
     });
