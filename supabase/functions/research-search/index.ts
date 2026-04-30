@@ -19,6 +19,9 @@ interface Paper {
   doi: string | null;
   venue: string | null;
   citations: number | null;
+  // Optional source-specific metadata. Used by the frontend for stable
+  // references and deep-linking (e.g. Nobel laureate / prize IDs).
+  meta?: Record<string, string | number | null>;
 }
 
 const clean = (s: string | null | undefined) =>
@@ -300,8 +303,15 @@ async function searchNobel(q: string, limit: number): Promise<Paper[]> {
           ? `Laureate of the ${prizeLabel} (${year}).`
           : `Laureate of the ${prizeLabel}.`;
 
+      const categorySlug = cat
+        ? cat.toLowerCase().replace(/[^a-z]+/g, "-").replace(/^-|-$/g, "")
+        : null;
+      // Stable, human-readable prize ID e.g. "physics-1921".
+      const prizeId = categorySlug && year ? `${categorySlug}-${year}` : null;
+      const laureateIdStr = String(laureateId ?? "") || null;
+
       return {
-        id: `nobel:${laureateId || displayName}-${year ?? "x"}-${idx}`,
+        id: `nobel:${laureateIdStr ?? displayName}-${year ?? "x"}-${idx}`,
         source: "Nobel Prize",
         title,
         authors: [displayName],
@@ -314,6 +324,14 @@ async function searchNobel(q: string, limit: number): Promise<Paper[]> {
           ? `NobelPrize.org · ${cat}${year ? ` · ${year}` : ""}`
           : `NobelPrize.org${year ? ` · ${year}` : ""}`,
         citations: null,
+        meta: {
+          laureateId: laureateIdStr,
+          prizeId,
+          category: cat || null,
+          categorySlug,
+          awardYear: year,
+          prizeIndex: idx,
+        },
       };
     });
   });
