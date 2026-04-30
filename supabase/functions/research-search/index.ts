@@ -270,7 +270,7 @@ Deno.serve(async (req) => {
     const url = new URL(req.url);
     const q = (url.searchParams.get("q") ?? "").trim();
     const limit = Math.min(Math.max(Number(url.searchParams.get("limit") ?? 10), 1), 25);
-    const requested = (url.searchParams.get("sources") ?? "arxiv,semantic_scholar,openalex,crossref,pubmed,doaj")
+    const requested = (url.searchParams.get("sources") ?? "arxiv,semantic_scholar,openalex,crossref,pubmed,doaj,nobel")
       .split(",")
       .map((s) => s.trim().toLowerCase())
       .filter((s) => s in SOURCES);
