@@ -39,6 +39,7 @@ const SOURCES = [
   { id: "crossref", label: "Crossref" },
   { id: "pubmed", label: "PubMed" },
   { id: "doaj", label: "DOAJ" },
+  { id: "nobel", label: "Nobel Prize" },
 ];
 
 const SOURCE_COLOR: Record<string, string> = {
@@ -48,6 +49,7 @@ const SOURCE_COLOR: Record<string, string> = {
   "Crossref": "bg-purple-500/15 text-purple-400 border-purple-500/30",
   "PubMed": "bg-cyan-500/15 text-cyan-400 border-cyan-500/30",
   "DOAJ": "bg-amber-500/15 text-amber-400 border-amber-500/30",
+  "Nobel Prize": "bg-yellow-500/15 text-yellow-300 border-yellow-500/30",
 };
 
 const buildCitation = (p: Paper): string => {
