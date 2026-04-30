@@ -245,17 +245,43 @@ async function searchNobel(q: string, limit: number): Promise<Paper[]> {
     const wiki = (l.wikipedia as { english?: string } | undefined)?.english;
     const laureateId = l.id ?? "";
 
+    // Normalise category names from the API (which may be lowercase, abbreviated,
+    // or vary between "economic sciences" / "economics") into a consistent label.
+    const CATEGORY_LABELS: Record<string, string> = {
+      physics: "Physics",
+      chemistry: "Chemistry",
+      medicine: "Physiology or Medicine",
+      "physiology or medicine": "Physiology or Medicine",
+      literature: "Literature",
+      peace: "Peace",
+      economics: "Economic Sciences",
+      "economic sciences": "Economic Sciences",
+      "the sveriges riksbank prize in economic sciences in memory of alfred nobel": "Economic Sciences",
+    };
+    const normaliseCategory = (raw: string): string => {
+      const key = raw.trim().toLowerCase();
+      if (CATEGORY_LABELS[key]) return CATEGORY_LABELS[key];
+      return raw
+        .trim()
+        .split(/\s+/)
+        .map((w) => (w.length <= 2 ? w.toLowerCase() : w[0].toUpperCase() + w.slice(1).toLowerCase()))
+        .join(" ");
+    };
+
     return prizes.map((pz, idx): Paper => {
-      const cat = (pz.category as { en?: string } | undefined)?.en ?? "Nobel Prize";
+      const rawCat = (pz.category as { en?: string } | undefined)?.en ?? "";
+      const cat = rawCat ? normaliseCategory(rawCat) : "";
       const motivation = tidy((pz.motivation as { en?: string } | undefined)?.en ?? "");
       const year = pz.awardYear ? Number(pz.awardYear) : null;
+
+      const prizeLabel = cat ? `Nobel Prize in ${cat}` : "Nobel Prize";
 
       const prizeLinks = (pz.links as Array<{ href?: string; rel?: string }>) ?? [];
       const prizeSelf = prizeLinks.find((x) => x.rel === "nobelPrize" || x.rel === "self")?.href;
       const laureateSelf = laureateLinks.find((x) => x.rel === "self")?.href;
       const canonicalPrize =
         year && cat
-          ? `https://www.nobelprize.org/prizes/${cat.toLowerCase().replace(/[^a-z]/g, "-")}/${year}/summary/`
+          ? `https://www.nobelprize.org/prizes/${cat.toLowerCase().replace(/[^a-z]+/g, "-").replace(/^-|-$/g, "")}/${year}/summary/`
           : null;
       const href =
         prizeSelf ??
@@ -265,10 +291,14 @@ async function searchNobel(q: string, limit: number): Promise<Paper[]> {
         laureateSelf ??
         "https://www.nobelprize.org/prizes/";
 
-      const title = `${displayName} — Nobel Prize in ${cat}${year ? `, ${year}` : ""}`;
+      const title = year
+        ? `${displayName} — ${prizeLabel} (${year})`
+        : `${displayName} — ${prizeLabel}`;
       const abstract = motivation
         ? `For ${summarise(motivation)}`
-        : `Laureate of the Nobel Prize in ${cat}${year ? ` (${year})` : ""}.`;
+        : year
+          ? `Laureate of the ${prizeLabel} (${year}).`
+          : `Laureate of the ${prizeLabel}.`;
 
       return {
         id: `nobel:${laureateId || displayName}-${year ?? "x"}-${idx}`,
