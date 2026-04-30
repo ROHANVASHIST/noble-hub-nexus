@@ -39,6 +39,7 @@ const SOURCES = [
   { id: "crossref", label: "Crossref" },
   { id: "pubmed", label: "PubMed" },
   { id: "doaj", label: "DOAJ" },
+  { id: "nobel", label: "Nobel Prize" },
 ];
 
 const SOURCE_COLOR: Record<string, string> = {
@@ -48,6 +49,7 @@ const SOURCE_COLOR: Record<string, string> = {
   "Crossref": "bg-purple-500/15 text-purple-400 border-purple-500/30",
   "PubMed": "bg-cyan-500/15 text-cyan-400 border-cyan-500/30",
   "DOAJ": "bg-amber-500/15 text-amber-400 border-amber-500/30",
+  "Nobel Prize": "bg-yellow-500/15 text-yellow-300 border-yellow-500/30",
 };
 
 const buildCitation = (p: Paper): string => {
@@ -140,7 +142,7 @@ export default function PaperSearch() {
         <div className="flex items-center gap-2">
           <Sparkles className="h-4 w-4 text-primary" />
           <span className="text-xs font-bold uppercase tracking-[0.25em] text-primary">
-            Live Search across 6 academic APIs
+            Live Search across 7 academic APIs · incl. official Nobel Prize
           </span>
         </div>
 
