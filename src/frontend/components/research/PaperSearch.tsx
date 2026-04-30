@@ -142,7 +142,7 @@ export default function PaperSearch() {
         <div className="flex items-center gap-2">
           <Sparkles className="h-4 w-4 text-primary" />
           <span className="text-xs font-bold uppercase tracking-[0.25em] text-primary">
-            Live Search across 6 academic APIs
+            Live Search across 7 academic APIs · incl. official Nobel Prize
           </span>
         </div>
 
