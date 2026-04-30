@@ -19,6 +19,9 @@ interface Paper {
   doi: string | null;
   venue: string | null;
   citations: number | null;
+  // Optional source-specific metadata. Used by the frontend for stable
+  // references and deep-linking (e.g. Nobel laureate / prize IDs).
+  meta?: Record<string, string | number | null>;
 }
 
 const clean = (s: string | null | undefined) =>
