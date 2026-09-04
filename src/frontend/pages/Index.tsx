@@ -1,3 +1,4 @@
+import Seo from "@/frontend/components/Seo";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Search, ArrowRight, Award, BookOpen, Video, Globe, Loader2, Sparkles, Brain, Trophy, Target, Bot, BarChart3, HelpCircle, TrendingUp, GraduationCap, Network } from "lucide-react";
@@ -82,6 +83,7 @@ const Index = () => {
 
   return (
     <PageLayout>
+      <Seo title={"NobelHub — Nobel Prize Research & Discovery Platform"} description={"Explore 125+ years of Nobel Prize laureates, lectures, research papers and analytics in one research workspace."} />
       {/* Hero */}
       <section
         onMouseMove={handleMouseMove}

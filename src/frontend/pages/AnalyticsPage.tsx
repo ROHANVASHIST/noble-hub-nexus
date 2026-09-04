@@ -1,3 +1,4 @@
+import Seo from "@/frontend/components/Seo";
 import { motion } from "framer-motion";
 import PageLayout from "@/frontend/components/layout/PageLayout";
 import StatCard from "@/frontend/components/cards/StatCard";
@@ -19,6 +20,7 @@ const CHART_COLORS = ['hsl(220, 60%, 55%)', 'hsl(155, 55%, 45%)', 'hsl(350, 55%,
 
 const AnalyticsPage = () => (
   <PageLayout>
+      <Seo title={"Nobel Prize Analytics & Trends | NobelHub"} description={"Visualize Nobel Prize trends by category, country, gender and decade across 125+ years of award data."} />
     <div className="container mx-auto px-4 py-12">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="font-display text-3xl font-bold text-foreground">Analytics & Insights</h1>

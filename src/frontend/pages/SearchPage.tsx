@@ -1,3 +1,4 @@
+import Seo from "@/frontend/components/Seo";
 import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, Bookmark, BookmarkCheck, ArrowRight, Award, BookOpen, FileText } from "lucide-react";
@@ -157,6 +158,7 @@ const SearchPage = () => {
 
   return (
     <PageLayout>
+      <Seo title={"Search Nobel Laureates & Research | NobelHub"} description={"Search across Nobel laureates, lectures and research papers with faceted filters and instant autocomplete."} />
       <div className="container mx-auto px-4 py-12">
         {/* Hero */}
         <motion.div

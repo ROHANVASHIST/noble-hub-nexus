@@ -1,3 +1,4 @@
+import Seo from "@/frontend/components/Seo";
 import { useMemo, useState } from "react";
 import { ExternalLink, Search, BookOpen, GraduationCap, Users, PenTool, Library } from "lucide-react";
 import PageLayout from "@/frontend/components/layout/PageLayout";
@@ -101,6 +102,7 @@ export default function ResearchResourcesPage() {
 
   return (
     <PageLayout>
+      <Seo title={"Research Resources Hub | NobelHub"} description={"Academic search engines, reference managers, thesis repositories and scholarly networks, plus live multi-source paper search."} />
       <div className="container mx-auto px-4 py-10 max-w-6xl">
         {/* Header */}
         <div className="mb-10">

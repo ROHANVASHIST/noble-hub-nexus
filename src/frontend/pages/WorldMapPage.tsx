@@ -1,3 +1,4 @@
+import Seo from "@/frontend/components/Seo";
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
@@ -45,6 +46,7 @@ const WorldMapPage = () => {
 
   return (
     <PageLayout>
+      <Seo title={"Nobel Prize World Map | NobelHub"} description={"Explore an interactive world map of Nobel laureates by birth country and institution."} />
       <div className="container mx-auto px-4 py-12 max-w-6xl">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <div className="flex items-center gap-3 mb-2">
