@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { ArrowLeft, Award, Globe, GraduationCap, Calendar, MapPin, Sparkles, Share2, Bookmark, ExternalLink, Info, TrendingUp, Lightbulb, Loader2 } from "lucide-react";
 import PageLayout from "@/frontend/components/layout/PageLayout";
+import Seo from "@/frontend/components/Seo";
 import { fetchLaureateById } from "@/backend/services/laureates";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -112,6 +113,22 @@ const LaureateProfile = () => {
         );
     }
 
+    const fullName = `${laureate.first_name} ${laureate.last_name}`.trim();
+    const seoTitle = `${fullName} — Nobel Prize in ${laureate.category} (${laureate.year}) | NobelHub`;
+    const seoDescription = `${fullName} received the ${laureate.year} Nobel Prize in ${laureate.category}${laureate.motivation ? ` "${laureate.motivation}"` : ""}.`.slice(0, 300);
+    const personJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        name: fullName,
+        ...(laureate.birth_year ? { birthDate: String(laureate.birth_year) } : {}),
+        ...(laureate.death_year ? { deathDate: String(laureate.death_year) } : {}),
+        ...(laureate.country ? { nationality: laureate.country } : {}),
+        ...(laureate.photo ? { image: laureate.photo } : {}),
+        award: `Nobel Prize in ${laureate.category} (${laureate.year})`,
+        hasOccupation: { "@type": "Occupation", name: "Nobel Laureate" },
+        sameAs: [`https://www.nobelprize.org/prizes/${laureate.category.toLowerCase()}/${laureate.year}/`],
+    };
+
     const officialUrl = `https://www.nobelprize.org/prizes/${laureate.category.toLowerCase()}/${laureate.year}/${laureate.last_name.toLowerCase() || 'biography'}/facts/`;
 
     // Mock productivity data
@@ -127,6 +144,7 @@ const LaureateProfile = () => {
 
     return (
         <PageLayout>
+            <Seo title={seoTitle} description={seoDescription} jsonLd={personJsonLd} />
             <div className="container mx-auto px-4 py-12">
                 <motion.div
                     initial={{ opacity: 0, x: -10 }}
