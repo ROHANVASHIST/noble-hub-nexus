@@ -1,3 +1,4 @@
+import Seo from "@/frontend/components/Seo";
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
@@ -84,6 +85,7 @@ const ResearchPage = () => {
 
   return (
     <PageLayout>
+      <Seo title={"Research Papers & Publications | NobelHub"} description={"Search peer-reviewed papers and preprints from arXiv, Semantic Scholar, OpenAlex, Crossref, PubMed and DOAJ."} />
       <div className="container mx-auto px-4 py-12">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">

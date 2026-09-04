@@ -1,3 +1,4 @@
+import Seo from "@/frontend/components/Seo";
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
@@ -101,6 +102,7 @@ const LaureatesPage = () => {
 
   return (
     <PageLayout>
+      <Seo title={"Nobel Laureates Directory | NobelHub"} description={"Browse and filter every Nobel Prize laureate by category, year and country with profiles, motivations and achievements."} />
       <div className="container mx-auto px-4 py-12">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>

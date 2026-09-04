@@ -1,3 +1,4 @@
+import Seo from "@/frontend/components/Seo";
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
@@ -29,6 +30,7 @@ const LecturesPage = () => {
 
   return (
     <PageLayout>
+      <Seo title={"Nobel Lectures Archive | NobelHub"} description={"Watch and read Nobel Prize lectures from laureates across physics, chemistry, medicine, literature, peace and economics."} />
       <div className="container mx-auto px-4 py-12">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>

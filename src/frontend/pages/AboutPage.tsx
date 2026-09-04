@@ -1,9 +1,11 @@
+import Seo from "@/frontend/components/Seo";
 import PageLayout from "@/frontend/components/layout/PageLayout";
 import { motion } from "framer-motion";
 import { Award, Users, Globe, BookOpen } from "lucide-react";
 
 const AboutPage = () => (
   <PageLayout>
+      <Seo title={"About NobelHub | Nobel Prize Research Platform"} description={"Learn what NobelHub is, the data it uses and how it helps researchers explore Nobel Prize knowledge."} />
     <div className="container mx-auto px-4 py-16 max-w-3xl">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-10">
         <div className="text-center">

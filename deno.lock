@@ -1,5 +1,8 @@
 {
   "version": "5",
+  "redirects": {
+    "https://esm.sh/@supabase/supabase-js@2": "https://esm.sh/@supabase/supabase-js@2.115.0"
+  },
   "remote": {
     "https://deno.land/std@0.168.0/async/abortable.ts": "80b2ac399f142cc528f95a037a7d0e653296352d95c681e284533765961de409",
     "https://deno.land/std@0.168.0/async/deadline.ts": "2c2deb53c7c28ca1dda7a3ad81e70508b1ebc25db52559de6b8636c9278fd41f",
@@ -11,7 +14,8 @@
     "https://deno.land/std@0.168.0/async/pool.ts": "6854d8cd675a74c73391c82005cbbe4cc58183bddcd1fbbd7c2bcda42b61cf69",
     "https://deno.land/std@0.168.0/async/retry.ts": "e8e5173623915bbc0ddc537698fa418cf875456c347eda1ed453528645b42e67",
     "https://deno.land/std@0.168.0/async/tee.ts": "3a47cc4e9a940904fd4341f0224907e199121c80b831faa5ec2b054c6d2eff5e",
-    "https://deno.land/std@0.168.0/http/server.ts": "e99c1bee8a3f6571ee4cdeb2966efad465b8f6fe62bec1bdb59c1f007cc4d155"
+    "https://deno.land/std@0.168.0/http/server.ts": "e99c1bee8a3f6571ee4cdeb2966efad465b8f6fe62bec1bdb59c1f007cc4d155",
+    "https://esm.sh/@supabase/supabase-js@2.115.0": "f4e488ef8059a64be766b58feb4d6a18aa812038fdcf9c7c916efbdf26ab9585"
   },
   "workspace": {
     "packageJson": {
@@ -19,6 +23,7 @@
         "npm:@eslint/js@^9.32.0",
         "npm:@google/generative-ai@~0.24.1",
         "npm:@hookform/resolvers@^3.10.0",
+        "npm:@lovable.dev/cloud-auth-js@1",
         "npm:@radix-ui/react-accordion@^1.2.11",
         "npm:@radix-ui/react-alert-dialog@^1.1.14",
         "npm:@radix-ui/react-aspect-ratio@^1.1.7",
@@ -60,6 +65,7 @@
         "npm:clsx@^2.1.1",
         "npm:cmdk@^1.1.1",
         "npm:date-fns@^3.6.0",
+        "npm:docx@^9.6.1",
         "npm:embla-carousel-react@^8.6.0",
         "npm:esbuild@~0.27.3",
         "npm:eslint-plugin-react-hooks@^5.2.0",
@@ -76,6 +82,7 @@
         "npm:react-day-picker@^8.10.1",
         "npm:react-dom@^18.3.1",
         "npm:react-hook-form@^7.61.1",
+        "npm:react-markdown@^10.1.0",
         "npm:react-resizable-panels@^2.1.9",
         "npm:react-router-dom@^6.30.1",
         "npm:react@^18.3.1",
@@ -87,8 +94,10 @@
         "npm:typescript-eslint@^8.38.0",
         "npm:typescript@^5.8.3",
         "npm:vaul@~0.9.9",
+        "npm:vite-plugin-pwa@^1.2.0",
         "npm:vite@^5.4.19",
         "npm:vitest@^3.2.4",
+        "npm:workbox-window@^7.4.0",
         "npm:zod@^3.25.76"
       ]
     }

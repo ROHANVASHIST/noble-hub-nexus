@@ -1,9 +1,11 @@
+import Seo from "@/frontend/components/Seo";
 import PageLayout from "@/frontend/components/layout/PageLayout";
 import { motion } from "framer-motion";
 import { FileText } from "lucide-react";
 
 const TermsPage = () => (
   <PageLayout>
+      <Seo title={"Terms of Service | NobelHub"} description={"The terms and conditions for using the NobelHub Nobel Prize research and discovery platform."} />
     <div className="container mx-auto px-4 py-16 max-w-3xl">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
         <div className="text-center">
