@@ -1,3 +1,4 @@
+import Seo from "@/frontend/components/Seo";
 import { useState, useEffect, useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useNavigate } from "react-router-dom";
@@ -123,6 +124,22 @@ const Landing = () => {
   };
 
   return (
+    <>
+      <Seo
+        title="NobelHub — Nobel Prize Research & Discovery Platform"
+        description="Explore 125+ years of Nobel laureates, lectures and research papers with AI tools, analytics and a full scholar workspace."
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "NobelHub",
+          url: "https://noble-hub-nexus.lovable.app",
+          potentialAction: {
+            "@type": "SearchAction",
+            target: "https://noble-hub-nexus.lovable.app/search?q={search_term_string}",
+            "query-input": "required name=search_term_string",
+          },
+        }}
+      />
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
       {/* ===== Top Nav ===== */}
       <nav className="fixed top-0 inset-x-0 z-50 backdrop-blur-xl bg-background/70 border-b border-border/40">
@@ -526,6 +543,7 @@ const Landing = () => {
         </div>
       </footer>
     </div>
+    </>
   );
 };
 

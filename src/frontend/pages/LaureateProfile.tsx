@@ -122,7 +122,7 @@ const LaureateProfile = () => {
         name: fullName,
         ...(laureate.birth_year ? { birthDate: String(laureate.birth_year) } : {}),
         ...(laureate.death_year ? { deathDate: String(laureate.death_year) } : {}),
-        ...(laureate.country ? { nationality: laureate.country } : {}),
+        ...(laureate.nationality ? { nationality: laureate.nationality } : {}),
         ...(laureate.photo ? { image: laureate.photo } : {}),
         award: `Nobel Prize in ${laureate.category} (${laureate.year})`,
         hasOccupation: { "@type": "Occupation", name: "Nobel Laureate" },
