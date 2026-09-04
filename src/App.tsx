@@ -1,3 +1,4 @@
+import { HelmetProvider } from "react-helmet-async";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -84,6 +85,7 @@ const App = () => {
   const { user, session, isReady } = useAuthReady();
 
   return (
+    <HelmetProvider>
     <QueryClientProvider client={queryClient}>
       <AuthContext.Provider value={{ user, session, isReady }}>
         <TooltipProvider>
@@ -152,6 +154,7 @@ const App = () => {
         </TooltipProvider>
       </AuthContext.Provider>
     </QueryClientProvider>
+    </HelmetProvider>
   );
 };
 
