@@ -254,13 +254,20 @@ const ResearchPage = () => {
                 </AnimatePresence>
               </div>
             ) : (
-
               <div className="text-center py-20 rounded-3xl bg-muted/20 border border-dashed border-border">
                 <Search className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                 <h3 className="text-xl font-bold text-foreground">No papers found</h3>
                 <p className="mt-2 text-muted-foreground text-sm">Try adjusting your search or category filter.</p>
                 <Button variant="outline" className="mt-4 rounded-xl" onClick={() => { setSearchQuery(""); setSelectedCategory("All"); }}>
                   Clear Filters
+                </Button>
+              </div>
+            )}
+
+            {!isLoading && visibleCount < filteredPapers.length && (
+              <div className="flex justify-center mt-8">
+                <Button variant="outline" className="rounded-xl" onClick={() => setVisibleCount(c => c + 48)}>
+                  Load more papers ({filteredPapers.length - visibleCount} remaining)
                 </Button>
               </div>
             )}
