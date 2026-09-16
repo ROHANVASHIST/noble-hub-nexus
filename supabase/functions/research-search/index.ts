@@ -43,8 +43,8 @@ const withTimeout = async <T>(p: Promise<T>, ms: number): Promise<T | null> => {
 };
 
 // ---------------- arXiv (Atom XML) ----------------
-async function searchArxiv(q: string, limit: number): Promise<Paper[]> {
-  const url = `https://export.arxiv.org/api/query?search_query=all:${encodeURIComponent(q)}&start=0&max_results=${limit}&sortBy=relevance`;
+async function searchArxiv(q: string, limit: number, offset = 0): Promise<Paper[]> {
+  const url = `https://export.arxiv.org/api/query?search_query=all:${encodeURIComponent(q)}&start=${offset}&max_results=${limit}&sortBy=relevance`;
   const r = await fetch(url);
   if (!r.ok) return [];
   const xml = await r.text();
@@ -74,9 +74,9 @@ async function searchArxiv(q: string, limit: number): Promise<Paper[]> {
 }
 
 // ---------------- Semantic Scholar ----------------
-async function searchSemanticScholar(q: string, limit: number): Promise<Paper[]> {
+async function searchSemanticScholar(q: string, limit: number, offset = 0): Promise<Paper[]> {
   const fields = "title,abstract,authors,year,venue,citationCount,externalIds,openAccessPdf,url";
-  const url = `https://api.semanticscholar.org/graph/v1/paper/search?query=${encodeURIComponent(q)}&limit=${limit}&fields=${fields}`;
+  const url = `https://api.semanticscholar.org/graph/v1/paper/search?query=${encodeURIComponent(q)}&offset=${offset}&limit=${limit}&fields=${fields}`;
   const r = await fetch(url);
   if (!r.ok) return [];
   const j = await r.json();
@@ -100,8 +100,8 @@ async function searchSemanticScholar(q: string, limit: number): Promise<Paper[]>
 }
 
 // ---------------- OpenAlex ----------------
-async function searchOpenAlex(q: string, limit: number): Promise<Paper[]> {
-  const url = `https://api.openalex.org/works?search=${encodeURIComponent(q)}&per-page=${limit}`;
+async function searchOpenAlex(q: string, limit: number, offset = 0): Promise<Paper[]> {
+  const url = `https://api.openalex.org/works?search=${encodeURIComponent(q)}&per-page=${limit}&page=${Math.floor(offset / limit) + 1}`;
   const r = await fetch(url, { headers: { "User-Agent": "NobelHub/1.0 (mailto:research@nobelhub.app)" } });
   if (!r.ok) return [];
   const j = await r.json();
@@ -126,8 +126,8 @@ async function searchOpenAlex(q: string, limit: number): Promise<Paper[]> {
 }
 
 // ---------------- Crossref ----------------
-async function searchCrossref(q: string, limit: number): Promise<Paper[]> {
-  const url = `https://api.crossref.org/works?query=${encodeURIComponent(q)}&rows=${limit}`;
+async function searchCrossref(q: string, limit: number, offset = 0): Promise<Paper[]> {
+  const url = `https://api.crossref.org/works?query=${encodeURIComponent(q)}&rows=${limit}&offset=${offset}`;
   const r = await fetch(url, { headers: { "User-Agent": "NobelHub/1.0 (mailto:research@nobelhub.app)" } });
   if (!r.ok) return [];
   const j = await r.json();
@@ -154,8 +154,8 @@ async function searchCrossref(q: string, limit: number): Promise<Paper[]> {
 }
 
 // ---------------- PubMed (E-utilities) ----------------
-async function searchPubMed(q: string, limit: number): Promise<Paper[]> {
-  const esearch = `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&retmode=json&retmax=${limit}&term=${encodeURIComponent(q)}`;
+async function searchPubMed(q: string, limit: number, offset = 0): Promise<Paper[]> {
+  const esearch = `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&retmode=json&retmax=${limit}&retstart=${offset}&term=${encodeURIComponent(q)}`;
   const r1 = await fetch(esearch);
   if (!r1.ok) return [];
   const ids: string[] = (await r1.json()).esearchresult?.idlist ?? [];
@@ -189,8 +189,8 @@ async function searchPubMed(q: string, limit: number): Promise<Paper[]> {
 }
 
 // ---------------- DOAJ ----------------
-async function searchDOAJ(q: string, limit: number): Promise<Paper[]> {
-  const url = `https://doaj.org/api/search/articles/${encodeURIComponent(q)}?pageSize=${limit}`;
+async function searchDOAJ(q: string, limit: number, offset = 0): Promise<Paper[]> {
+  const url = `https://doaj.org/api/search/articles/${encodeURIComponent(q)}?pageSize=${limit}&page=${Math.floor(offset / limit) + 1}`;
   const r = await fetch(url);
   if (!r.ok) return [];
   const j = await r.json();
@@ -221,8 +221,8 @@ async function searchDOAJ(q: string, limit: number): Promise<Paper[]> {
 // ---------------- Nobel Prize API (official) ----------------
 // Public REST API at https://api.nobelprize.org/2.1 — no key required.
 // Docs: https://www.nobelprize.org/about/developer-zone-2/
-async function searchNobel(q: string, limit: number): Promise<Paper[]> {
-  const url = `https://api.nobelprize.org/2.1/laureates?name=${encodeURIComponent(q)}&limit=${limit}&format=json`;
+async function searchNobel(q: string, limit: number, offset = 0): Promise<Paper[]> {
+  const url = `https://api.nobelprize.org/2.1/laureates?name=${encodeURIComponent(q)}&limit=${limit}&offset=${offset}&format=json`;
   const r = await fetch(url, { headers: { Accept: "application/json" } });
   if (!r.ok) return [];
   const j = await r.json();
@@ -337,7 +337,7 @@ async function searchNobel(q: string, limit: number): Promise<Paper[]> {
   });
 }
 
-const SOURCES: Record<string, (q: string, n: number) => Promise<Paper[]>> = {
+const SOURCES: Record<string, (q: string, n: number, offset?: number) => Promise<Paper[]>> = {
   arxiv: searchArxiv,
   semantic_scholar: searchSemanticScholar,
   openalex: searchOpenAlex,
@@ -353,11 +353,12 @@ Deno.serve(async (req) => {
   try {
     const url = new URL(req.url);
     const q = (url.searchParams.get("q") ?? "").trim();
-    const limit = Math.min(Math.max(Number(url.searchParams.get("limit") ?? 10), 1), 25);
+    const limit = Math.min(Math.max(Number(url.searchParams.get("limit") ?? 25), 1), 50);
     const requested = (url.searchParams.get("sources") ?? "arxiv,semantic_scholar,openalex,crossref,pubmed,doaj,nobel")
       .split(",")
       .map((s) => s.trim().toLowerCase())
       .filter((s) => s in SOURCES);
+    const offset = Math.min(Math.max(Number(url.searchParams.get("offset") ?? 0), 0), 1000);
 
     if (!q || q.length < 2) {
       return new Response(JSON.stringify({ error: "Query must be at least 2 characters" }), {
@@ -373,7 +374,7 @@ Deno.serve(async (req) => {
     }
 
     const settled = await Promise.allSettled(
-      requested.map((s) => withTimeout(SOURCES[s](q, limit), 8000))
+      requested.map((s) => withTimeout(SOURCES[s](q, limit, offset), 12000))
     );
 
     const bySource: Record<string, Paper[]> = {};
@@ -387,7 +388,7 @@ Deno.serve(async (req) => {
     const merged = Object.values(bySource).flat();
 
     return new Response(
-      JSON.stringify({ query: q, count: merged.length, bySource, errors, results: merged }),
+      JSON.stringify({ query: q, count: merged.length, limit, offset, bySource, errors, results: merged }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (e) {
