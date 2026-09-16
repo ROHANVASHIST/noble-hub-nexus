@@ -254,6 +254,7 @@ const ResearchPage = () => {
                 </AnimatePresence>
               </div>
             ) : (
+
               <div className="text-center py-20 rounded-3xl bg-muted/20 border border-dashed border-border">
                 <Search className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                 <h3 className="text-xl font-bold text-foreground">No papers found</h3>
