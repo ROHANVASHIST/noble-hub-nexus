@@ -204,6 +204,26 @@ const ResearchPage = () => {
                   </button>
                 ))}
               </div>
+
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Sort</span>
+                {([["year", "Newest"], ["citations", "Most cited"], ["title", "A–Z"]] as const).map(([key, label]) => (
+                  <button
+                    key={key}
+                    onClick={() => setSortBy(key)}
+                    className={`rounded-full px-3 py-1.5 text-[11px] font-semibold border transition-all ${
+                      sortBy === key
+                        ? "bg-primary/10 text-primary border-primary/40"
+                        : "bg-card text-muted-foreground border-border hover:border-primary/30"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+                <span className="ml-auto text-[11px] text-muted-foreground">
+                  Showing {Math.min(visibleCount, filteredPapers.length)} of {filteredPapers.length}
+                </span>
+              </div>
             </div>
 
             {/* Papers Grid */}
@@ -214,7 +234,7 @@ const ResearchPage = () => {
             ) : filteredPapers.length > 0 ? (
               <div className="grid gap-6 md:grid-cols-2">
                 <AnimatePresence mode="popLayout">
-                  {filteredPapers.map((p: any, i: number) => (
+                  {visiblePapers.map((p: any, i: number) => (
                     <PaperCard
                       key={p.id}
                       paper={{
