@@ -1,5 +1,5 @@
 import Seo from "@/frontend/components/Seo";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -66,14 +66,27 @@ const ResearchPage = () => {
     queryFn: () => fetchPapers(selectedCategory === "All" ? undefined : selectedCategory),
   });
 
+  const [sortBy, setSortBy] = useState<"year" | "citations" | "title">("year");
+  const [visibleCount, setVisibleCount] = useState(48);
+
   const filteredPapers = useMemo(() => {
     if (!papers) return [];
-    return papers.filter(p =>
-      p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (p.authors && p.authors.some(a => a.toLowerCase().includes(searchQuery.toLowerCase()))) ||
-      (p.abstract && p.abstract.toLowerCase().includes(searchQuery.toLowerCase()))
+    const q = searchQuery.toLowerCase();
+    const list = papers.filter(p =>
+      p.title.toLowerCase().includes(q) ||
+      (p.authors && p.authors.some(a => a.toLowerCase().includes(q))) ||
+      (p.abstract && p.abstract.toLowerCase().includes(q))
     );
-  }, [papers, searchQuery]);
+    return [...list].sort((a: any, b: any) => {
+      if (sortBy === "citations") return (b.citations || 0) - (a.citations || 0);
+      if (sortBy === "title") return String(a.title).localeCompare(String(b.title));
+      return (b.year || 0) - (a.year || 0);
+    });
+  }, [papers, searchQuery, sortBy]);
+
+  useEffect(() => { setVisibleCount(48); }, [searchQuery, selectedCategory, sortBy]);
+
+  const visiblePapers = useMemo(() => filteredPapers.slice(0, visibleCount), [filteredPapers, visibleCount]);
 
   // Stats
   const stats = useMemo(() => {
@@ -191,6 +204,26 @@ const ResearchPage = () => {
                   </button>
                 ))}
               </div>
+
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Sort</span>
+                {([["year", "Newest"], ["citations", "Most cited"], ["title", "A–Z"]] as const).map(([key, label]) => (
+                  <button
+                    key={key}
+                    onClick={() => setSortBy(key)}
+                    className={`rounded-full px-3 py-1.5 text-[11px] font-semibold border transition-all ${
+                      sortBy === key
+                        ? "bg-primary/10 text-primary border-primary/40"
+                        : "bg-card text-muted-foreground border-border hover:border-primary/30"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+                <span className="ml-auto text-[11px] text-muted-foreground">
+                  Showing {Math.min(visibleCount, filteredPapers.length)} of {filteredPapers.length}
+                </span>
+              </div>
             </div>
 
             {/* Papers Grid */}
@@ -201,7 +234,7 @@ const ResearchPage = () => {
             ) : filteredPapers.length > 0 ? (
               <div className="grid gap-6 md:grid-cols-2">
                 <AnimatePresence mode="popLayout">
-                  {filteredPapers.map((p: any, i: number) => (
+                  {visiblePapers.map((p: any, i: number) => (
                     <PaperCard
                       key={p.id}
                       paper={{
@@ -227,6 +260,14 @@ const ResearchPage = () => {
                 <p className="mt-2 text-muted-foreground text-sm">Try adjusting your search or category filter.</p>
                 <Button variant="outline" className="mt-4 rounded-xl" onClick={() => { setSearchQuery(""); setSelectedCategory("All"); }}>
                   Clear Filters
+                </Button>
+              </div>
+            )}
+
+            {!isLoading && visibleCount < filteredPapers.length && (
+              <div className="flex justify-center mt-8">
+                <Button variant="outline" className="rounded-xl" onClick={() => setVisibleCount(c => c + 48)}>
+                  Load more papers ({filteredPapers.length - visibleCount} remaining)
                 </Button>
               </div>
             )}
