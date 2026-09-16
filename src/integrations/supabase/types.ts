@@ -284,6 +284,42 @@ export type Database = {
         }
         Relationships: []
       }
+      research_alerts: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          last_checked_at: string | null
+          seen_ids: string[]
+          sources: string[]
+          topic: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          last_checked_at?: string | null
+          seen_ids?: string[]
+          sources?: string[]
+          topic: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          last_checked_at?: string | null
+          seen_ids?: string[]
+          sources?: string[]
+          topic?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       research_papers: {
         Row: {
           abstract: string | null
@@ -353,6 +389,72 @@ export type Database = {
           status?: string
           topic?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      saved_papers: {
+        Row: {
+          abstract: string | null
+          ai_summary: string | null
+          authors: string[]
+          citations: number | null
+          created_at: string
+          doi: string | null
+          external_id: string
+          id: string
+          notes: string
+          pdf_url: string | null
+          source: string
+          status: string
+          tags: string[]
+          title: string
+          updated_at: string
+          url: string
+          user_id: string
+          venue: string | null
+          year: number | null
+        }
+        Insert: {
+          abstract?: string | null
+          ai_summary?: string | null
+          authors?: string[]
+          citations?: number | null
+          created_at?: string
+          doi?: string | null
+          external_id: string
+          id?: string
+          notes?: string
+          pdf_url?: string | null
+          source?: string
+          status?: string
+          tags?: string[]
+          title: string
+          updated_at?: string
+          url?: string
+          user_id: string
+          venue?: string | null
+          year?: number | null
+        }
+        Update: {
+          abstract?: string | null
+          ai_summary?: string | null
+          authors?: string[]
+          citations?: number | null
+          created_at?: string
+          doi?: string | null
+          external_id?: string
+          id?: string
+          notes?: string
+          pdf_url?: string | null
+          source?: string
+          status?: string
+          tags?: string[]
+          title?: string
+          updated_at?: string
+          url?: string
+          user_id?: string
+          venue?: string | null
+          year?: number | null
         }
         Relationships: []
       }
