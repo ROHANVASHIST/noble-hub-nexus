@@ -70,6 +70,65 @@ export default function PaperSearch() {
   const [enabledSources, setEnabledSources] = useState<Record<string, boolean>>(
     Object.fromEntries(SOURCES.map((s) => [s.id, true]))
   );
+  const [offset, setOffset] = useState(0);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const PER_SOURCE = 25;
+
+  const runQuery = async (q: string, nextOffset: number) => {
+    const sources = Object.entries(enabledSources).filter(([, v]) => v).map(([k]) => k).join(",");
+    const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+    const url = `https://${projectId}.supabase.co/functions/v1/research-search?q=${encodeURIComponent(q)}&limit=${PER_SOURCE}&offset=${nextOffset}&sources=${sources}`;
+    const { data: { session } } = await supabase.auth.getSession();
+    const headers: Record<string, string> = {};
+    if (session?.access_token) headers["Authorization"] = `Bearer ${session.access_token}`;
+    const r = await fetch(url, { headers });
+    if (!r.ok) throw new Error(`Request failed: ${r.status}`);
+    return (await r.json()) as ApiResponse;
+  };
+
+  const loadMore = async () => {
+    if (!data) return;
+    setLoadingMore(true);
+    try {
+      const next = offset + PER_SOURCE;
+      const json = await runQuery(query.trim(), next);
+      const seen = new Set(data.results.map((p) => p.id));
+      const fresh = json.results.filter((p) => !seen.has(p.id));
+      const mergedBySource: Record<string, Paper[]> = { ...data.bySource };
+      Object.entries(json.bySource).forEach(([k, v]) => {
+        const existing = mergedBySource[k] ?? [];
+        const ids = new Set(existing.map((p) => p.id));
+        mergedBySource[k] = [...existing, ...v.filter((p) => !ids.has(p.id))];
+      });
+      setData({
+        ...data,
+        bySource: mergedBySource,
+        results: [...data.results, ...fresh],
+        count: data.results.length + fresh.length,
+      });
+      setOffset(next);
+      if (fresh.length === 0) toast.info("No further results available");
+      else toast.success(`Loaded ${fresh.length} more papers`);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Could not load more");
+    } finally {
+      setLoadingMore(false);
+    }
+  };
+
+  const exportResults = () => {
+    if (!data || data.results.length === 0) return;
+    const bib = data.results.map((p) => {
+      const key = `${(p.authors[0] ?? "anon").split(" ").pop()?.toLowerCase()}${p.year ?? ""}`;
+      return `@article{${key},\n  title = {${p.title}},\n  author = {${p.authors.join(" and ")}},\n  year = {${p.year ?? ""}},\n  journal = {${p.venue ?? ""}},\n  doi = {${p.doi ?? ""}},\n  url = {${p.url}}\n}`;
+    }).join("\n\n");
+    const blob = new Blob([bib], { type: "text/plain" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "nobelhub-search.bib";
+    a.click();
+    toast.success("Exported BibTeX for all results");
+  };
 
   const handleSearch = async (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -80,16 +139,9 @@ export default function PaperSearch() {
     }
     setLoading(true);
     setData(null);
+    setOffset(0);
     try {
-      const sources = Object.entries(enabledSources).filter(([, v]) => v).map(([k]) => k).join(",");
-      const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
-      const url = `https://${projectId}.supabase.co/functions/v1/research-search?q=${encodeURIComponent(q)}&limit=12&sources=${sources}`;
-      const { data: { session } } = await supabase.auth.getSession();
-      const headers: Record<string, string> = {};
-      if (session?.access_token) headers["Authorization"] = `Bearer ${session.access_token}`;
-      const r = await fetch(url, { headers });
-      if (!r.ok) throw new Error(`Request failed: ${r.status}`);
-      const json: ApiResponse = await r.json();
+      const json = await runQuery(q, 0);
       setData(json);
       setActiveTab("all");
       if (json.count === 0) toast.info("No results found across selected sources");
@@ -276,6 +328,19 @@ export default function PaperSearch() {
                 )}
               </TabsContent>
             </Tabs>
+
+            <div className="flex flex-wrap items-center gap-2 mt-5">
+              {data.count > 0 && (
+                <Button variant="outline" size="sm" className="h-8 text-xs" onClick={loadMore} disabled={loadingMore}>
+                  {loadingMore ? <Loader2 className="h-3 w-3 animate-spin" /> : "Load more results"}
+                </Button>
+              )}
+              {data.count > 0 && (
+                <Button variant="ghost" size="sm" className="h-8 text-xs" onClick={exportResults}>
+                  <FileDown className="h-3 w-3" /> Export BibTeX
+                </Button>
+              )}
+            </div>
 
             {data.errors.length > 0 && (
               <p className="text-[11px] text-muted-foreground mt-3">
