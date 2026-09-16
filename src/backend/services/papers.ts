@@ -3,42 +3,6 @@ import type { Tables, Enums } from "@/integrations/supabase/types";
 
 export type PaperRow = Tables<"research_papers">;
 
-export const fetchPapers = async (category?: string) => {
-  try {
-    let query = supabase.from("research_papers").select("*").order("year", { ascending: false });
-    if (category && category !== "All") {
-      query = query.eq("category", category as Enums<"nobel_category">);
-    }
-    const { data, error } = await query;
-    if (error) throw error;
-
-    if (data && data.length > 0) return data;
-
-    // Fallback: Use prizes + laureate facts as research entries
-    const response = await fetch("https://api.nobelprize.org/2.1/nobelPrizes?limit=50&sort=desc");
-    const apiData = await response.json();
-
-    return apiData.nobelPrizes.map((p: any) => {
-      const categoryName = Object.keys(CATEGORY_MAP).find(k => p.category?.en?.includes(k)) || "Physics";
-      return {
-        id: self.crypto.randomUUID ? self.crypto.randomUUID() : Math.random().toString(36),
-        title: `${p.awardYear} ${p.categoryFullName?.en || "Nobel"} Advanced Information`,
-        author: p.laureates?.[0]?.knownName?.en || p.laureates?.[0]?.fullName?.en || "Committee Report",
-        category: categoryName as Enums<"nobel_category">,
-        year: parseInt(p.awardYear),
-        abstract: p.laureates?.[0]?.motivation?.en || "Advanced Information for Nobel Prize",
-        pdf_url: `https://www.nobelprize.org/prizes/${CATEGORY_MAP[categoryName]}/${p.awardYear}/advanced-information/`,
-        doi: `10.1142/nobel.${p.awardYear}`,
-        citations: Math.floor(Math.random() * 1000),
-        created_at: new Date().toISOString()
-      };
-    });
-  } catch (error) {
-    console.error("Fetch papers failed:", error);
-    return [];
-  }
-};
-
 const CATEGORY_MAP: Record<string, string> = {
   Physics: "physics",
   Chemistry: "chemistry",
@@ -46,6 +10,126 @@ const CATEGORY_MAP: Record<string, string> = {
   Literature: "literature",
   Peace: "peace",
   Economics: "economic-sciences"
+};
+
+const CATEGORY_FROM_API: Array<[RegExp, keyof typeof CATEGORY_MAP]> = [
+  [/physics/i, "Physics"],
+  [/chemistry/i, "Chemistry"],
+  [/medicine|physiology/i, "Medicine"],
+  [/literature/i, "Literature"],
+  [/peace/i, "Peace"],
+  [/economic/i, "Economics"],
+];
+
+const normaliseCategory = (raw: string): string => {
+  const hit = CATEGORY_FROM_API.find(([re]) => re.test(raw));
+  return hit ? hit[1] : "Physics";
+};
+
+type ArchivePaper = {
+  id: string;
+  title: string;
+  author: string;
+  authors: string[];
+  category: Enums<"nobel_category">;
+  year: number;
+  abstract: string;
+  pdf_url: string;
+  doi: string;
+  citations: number;
+  journal: string;
+  created_at: string;
+};
+
+// Cached full Nobel archive so we only page through the public API once per session.
+let archiveCache: ArchivePaper[] | null = null;
+let archivePromise: Promise<ArchivePaper[]> | null = null;
+
+const buildEntry = (p: any, index: number): ArchivePaper => {
+  const rawCategory = p.categoryFullName?.en || p.category?.en || "";
+  const category = normaliseCategory(rawCategory);
+  const laureates: any[] = Array.isArray(p.laureates) ? p.laureates : [];
+  const names = laureates.map(
+    (l) => l.knownName?.en || l.fullName?.en || l.orgName?.en || "Nobel Laureate"
+  );
+  const year = parseInt(p.awardYear, 10);
+  const motivation = laureates
+    .map((l) => (l.motivation?.en ? `${l.knownName?.en || l.fullName?.en || l.orgName?.en || ""}: ${l.motivation.en}` : ""))
+    .filter(Boolean)
+    .join(" · ");
+
+  return {
+    id: `nobel-${CATEGORY_MAP[category]}-${p.awardYear}-${index}`,
+    title: `${p.awardYear} Nobel Prize in ${category}${names.length ? ` — ${names.join(", ")}` : ""}`,
+    author: names.join(", ") || "Nobel Committee",
+    authors: names.length ? names : ["Nobel Committee"],
+    category: category as Enums<"nobel_category">,
+    year: Number.isFinite(year) ? year : 0,
+    abstract: motivation || p.topMotivation?.en || `Official record of the ${p.awardYear} Nobel Prize in ${category}.`,
+    pdf_url: `https://www.nobelprize.org/prizes/${CATEGORY_MAP[category]}/${p.awardYear}/summary/`,
+    doi: "",
+    citations: 0,
+    journal: "Nobel Prize Outreach AB",
+    created_at: new Date().toISOString(),
+  };
+};
+
+/** Pages through the entire official Nobel Prize archive (every prize, every year). */
+const loadFullArchive = async (): Promise<ArchivePaper[]> => {
+  if (archiveCache) return archiveCache;
+  if (archivePromise) return archivePromise;
+
+  archivePromise = (async () => {
+    const pageSize = 100;
+    const all: any[] = [];
+    let offset = 0;
+    let total = Infinity;
+
+    while (offset < total && offset < 2000) {
+      const res = await fetch(
+        `https://api.nobelprize.org/2.1/nobelPrizes?limit=${pageSize}&offset=${offset}&sort=desc&format=json`,
+        { headers: { Accept: "application/json" } }
+      );
+      if (!res.ok) break;
+      const json = await res.json();
+      const batch = json.nobelPrizes ?? [];
+      all.push(...batch);
+      total = json.meta?.count ?? all.length;
+      if (batch.length === 0) break;
+      offset += pageSize;
+    }
+
+    const mapped = all.map(buildEntry).sort((a, b) => b.year - a.year);
+    archiveCache = mapped;
+    return mapped;
+  })();
+
+  try {
+    return await archivePromise;
+  } finally {
+    archivePromise = null;
+  }
+};
+
+export const fetchPapers = async (category?: string) => {
+  try {
+    let query = supabase.from("research_papers").select("*").order("year", { ascending: false }).limit(1000);
+    if (category && category !== "All") {
+      query = query.eq("category", category as Enums<"nobel_category">);
+    }
+    const { data, error } = await query;
+    if (error) throw error;
+    if (data && data.length > 0) return data as any[];
+
+    // Fallback: the complete official Nobel Prize archive (all years, all categories).
+    const archive = await loadFullArchive();
+    return category && category !== "All"
+      ? archive.filter((p) => p.category === category)
+      : archive;
+  } catch (error) {
+    console.error("Fetch papers failed:", error);
+    return [];
+  }
 };
 
 export const fetchPaperById = async (id: string) => {
