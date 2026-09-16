@@ -66,14 +66,27 @@ const ResearchPage = () => {
     queryFn: () => fetchPapers(selectedCategory === "All" ? undefined : selectedCategory),
   });
 
+  const [sortBy, setSortBy] = useState<"year" | "citations" | "title">("year");
+  const [visibleCount, setVisibleCount] = useState(48);
+
   const filteredPapers = useMemo(() => {
     if (!papers) return [];
-    return papers.filter(p =>
-      p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (p.authors && p.authors.some(a => a.toLowerCase().includes(searchQuery.toLowerCase()))) ||
-      (p.abstract && p.abstract.toLowerCase().includes(searchQuery.toLowerCase()))
+    const q = searchQuery.toLowerCase();
+    const list = papers.filter(p =>
+      p.title.toLowerCase().includes(q) ||
+      (p.authors && p.authors.some(a => a.toLowerCase().includes(q))) ||
+      (p.abstract && p.abstract.toLowerCase().includes(q))
     );
-  }, [papers, searchQuery]);
+    return [...list].sort((a: any, b: any) => {
+      if (sortBy === "citations") return (b.citations || 0) - (a.citations || 0);
+      if (sortBy === "title") return String(a.title).localeCompare(String(b.title));
+      return (b.year || 0) - (a.year || 0);
+    });
+  }, [papers, searchQuery, sortBy]);
+
+  useEffect(() => { setVisibleCount(48); }, [searchQuery, selectedCategory, sortBy]);
+
+  const visiblePapers = useMemo(() => filteredPapers.slice(0, visibleCount), [filteredPapers, visibleCount]);
 
   // Stats
   const stats = useMemo(() => {
