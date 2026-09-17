@@ -246,7 +246,7 @@ const MentorshipPage = () => {
             }).subscribe();
 
         return () => { supabase.removeChannel(channel); };
-    }, [activeRoom]);
+    }, [activeRoom, user]);
 
     useEffect(() => {
         if (!user) return;
