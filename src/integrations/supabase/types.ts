@@ -515,6 +515,27 @@ export type Database = {
         }
         Relationships: []
       }
+      study_room_members: {
+        Row: {
+          id: string
+          joined_at: string
+          room_name: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          joined_at?: string
+          room_name: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          joined_at?: string
+          room_name?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       study_room_messages: {
         Row: {
           created_at: string
