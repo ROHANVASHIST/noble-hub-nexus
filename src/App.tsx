@@ -60,6 +60,8 @@ import ResearchCopilotPage from "./frontend/pages/ResearchCopilotPage";
 import ResearchPaperPage from "./frontend/pages/ResearchPaperPage";
 import ReviewPaperPage from "./frontend/pages/ReviewPaperPage";
 import ResearchResourcesPage from "./frontend/pages/ResearchResourcesPage";
+import PaperLibraryPage from "./frontend/pages/PaperLibraryPage";
+import ResearchAlertsPage from "./frontend/pages/ResearchAlertsPage";
 import { useAuthReady } from "@/frontend/hooks/useAuthReady";
 import React, { createContext, useContext } from "react";
 import type { User, Session } from "@supabase/supabase-js";
@@ -147,6 +149,8 @@ const App = () => {
               <Route path="/papers/research" element={<ProtectedRoute session={session} isReady={isReady}><ResearchPaperPage /></ProtectedRoute>} />
               <Route path="/papers/review" element={<ProtectedRoute session={session} isReady={isReady}><ReviewPaperPage /></ProtectedRoute>} />
               <Route path="/resources" element={<ProtectedRoute session={session} isReady={isReady}><ResearchResourcesPage /></ProtectedRoute>} />
+              <Route path="/library" element={<ProtectedRoute session={session} isReady={isReady}><PaperLibraryPage /></ProtectedRoute>} />
+              <Route path="/research-alerts" element={<ProtectedRoute session={session} isReady={isReady}><ResearchAlertsPage /></ProtectedRoute>} />
               <Route path="*" element={<NotFound />} />
             </Routes>
             {session && <QuickCapture />}

@@ -87,6 +87,8 @@ const RESEARCH_NAV = [
   { to: "/papers/research", label: "Research Paper", icon: FileText, badge: "New" },
   { to: "/papers/review", label: "Review Paper", icon: BookOpen, badge: "New" },
   { to: "/resources", label: "Resources Hub", icon: Library, badge: "New" },
+  { to: "/library", label: "My Library", icon: BookOpen, badge: "New" },
+  { to: "/research-alerts", label: "Research Alerts", icon: AlarmClock, badge: "New" },
 ];
 
 const ENGAGE_NAV = [
