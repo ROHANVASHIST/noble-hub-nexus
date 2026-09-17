@@ -86,10 +86,19 @@ const ResearchAlertsPage = () => {
   const checkAlert = async (a: Alert) => {
     setChecking(a.id);
     try {
-      const { data, error } = await supabase.functions.invoke("research-search", {
-        body: { query: a.topic, sources: a.sources, limit: 10 },
-      });
-      if (error) throw error;
+      const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+      const sources = (a.sources || []).join(",");
+      const url = `https://${projectId}.supabase.co/functions/v1/research-search?q=${encodeURIComponent(
+        a.topic,
+      )}&limit=10&offset=0${sources ? `&sources=${sources}` : ""}`;
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      const headers: Record<string, string> = {};
+      if (session?.access_token) headers["Authorization"] = `Bearer ${session.access_token}`;
+      const res = await fetch(url, { headers });
+      if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+      const data = await res.json();
       const results: Paper[] = (data?.results || []) as Paper[];
       const seen = new Set(a.seen_ids || []);
       const fresh = results.filter((p) => !seen.has(p.id));
