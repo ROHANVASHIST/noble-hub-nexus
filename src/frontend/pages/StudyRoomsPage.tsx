@@ -38,8 +38,13 @@ const StudyRoomsPage = () => {
   const displayName = session?.user.user_metadata?.display_name || session?.user.email?.split("@")[0] || "Scholar";
 
   const { data: messages = [], isLoading } = useQuery({
-    queryKey: ["room-messages", room],
+    queryKey: ["room-messages", room, user?.id],
+    enabled: !!user,
     queryFn: async () => {
+      if (!user) return [] as Message[];
+      await supabase
+        .from("study_room_members")
+        .upsert({ room_name: room, user_id: user.id }, { onConflict: "room_name,user_id" });
       const { data } = await supabase
         .from("study_room_messages")
         .select("*")

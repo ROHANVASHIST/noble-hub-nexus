@@ -229,8 +229,12 @@ const MentorshipPage = () => {
 
     // Study Room Logic
     useEffect(() => {
-        if (!activeRoom) return;
+        if (!activeRoom || !user) return;
         const fetchMessages = async () => {
+            await (supabase as any).from('study_room_members').upsert(
+                { room_name: activeRoom, user_id: user.id },
+                { onConflict: 'room_name,user_id' }
+            );
             const { data } = await (supabase as any).from('study_room_messages').select('*').eq('room_name', activeRoom).order('created_at', { ascending: true }).limit(100);
             if (data) setRoomMessages(data);
         };
@@ -242,7 +246,7 @@ const MentorshipPage = () => {
             }).subscribe();
 
         return () => { supabase.removeChannel(channel); };
-    }, [activeRoom]);
+    }, [activeRoom, user]);
 
     useEffect(() => {
         if (!user) return;
