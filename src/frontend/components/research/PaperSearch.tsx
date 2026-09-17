@@ -159,8 +159,35 @@ export default function PaperSearch() {
     toast.success("Citation copied");
   };
 
-  const saveBookmark = (p: Paper) => {
+  const saveBookmark = async (p: Paper) => {
     try {
+      const { data: auth } = await supabase.auth.getUser();
+      const userId = auth.user?.id;
+      if (userId) {
+        const { error } = await supabase.from("saved_papers").insert({
+          user_id: userId,
+          external_id: p.id,
+          source: p.source,
+          title: p.title,
+          authors: p.authors ?? [],
+          year: p.year,
+          abstract: p.abstract ?? "",
+          url: p.url ?? "",
+          pdf_url: p.pdfUrl,
+          doi: p.doi,
+          venue: p.venue,
+          citations: p.citations,
+        });
+        if (error) {
+          if (error.code === "23505") {
+            toast.info("Already in your library");
+            return;
+          }
+          throw error;
+        }
+        toast.success("Saved to your library");
+        return;
+      }
       const KEY = "nobelhub:saved-papers";
       const raw = localStorage.getItem(KEY);
       const list: Paper[] = raw ? JSON.parse(raw) : [];
