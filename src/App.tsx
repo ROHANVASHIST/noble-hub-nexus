@@ -63,6 +63,7 @@ import ResearchResourcesPage from "./frontend/pages/ResearchResourcesPage";
 import PaperLibraryPage from "./frontend/pages/PaperLibraryPage";
 import ResearchAlertsPage from "./frontend/pages/ResearchAlertsPage";
 import { useAuthReady } from "@/frontend/hooks/useAuthReady";
+import { useNotificationEngine } from "@/frontend/hooks/useNotificationEngine";
 import React, { createContext, useContext } from "react";
 import type { User, Session } from "@supabase/supabase-js";
 
@@ -83,6 +84,11 @@ const ProtectedRoute = ({ children, session, isReady }: { children: React.ReactN
 
 const queryClient = new QueryClient();
 
+const NotificationEngine = ({ userId }: { userId?: string }) => {
+  useNotificationEngine(userId);
+  return null;
+};
+
 const App = () => {
   const { user, session, isReady } = useAuthReady();
 
@@ -93,6 +99,7 @@ const App = () => {
         <TooltipProvider>
           <Toaster />
           <Sonner />
+          <NotificationEngine userId={user?.id} />
           <BrowserRouter>
             <ScrollRestoration />
             <CommandPalette />
