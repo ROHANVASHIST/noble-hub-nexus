@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import PageLayout from "@/frontend/components/layout/PageLayout";
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchLaureates } from "@/backend/services/laureates";
 
 type Notification = {
   id: string;
@@ -62,53 +61,8 @@ const NotificationsPage = () => {
     enabled: !!user,
   });
 
-  // Generate daily notifications on first load
-  useEffect(() => {
-    if (!user) return;
-    const todayKey = `notif-generated-${new Date().toISOString().split("T")[0]}`;
-    if (localStorage.getItem(todayKey)) return;
+  // Notifications are generated app-wide by the notification engine (see useNotificationEngine)
 
-    const generateDailyNotifications = async () => {
-      const laureates = await fetchLaureates();
-      if (!laureates || laureates.length === 0) return;
-
-      const today = new Date();
-      const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / 86400000);
-      const featured = laureates[dayOfYear % laureates.length];
-
-      const dailyNotifs = [
-        {
-          user_id: user.id,
-          title: "🏅 Nobel of the Day",
-          message: `Today's featured laureate: ${featured.first_name} ${featured.last_name} (${featured.category}, ${featured.year}) — "${featured.motivation}"`,
-          type: "info",
-          link: `/laureates/${featured.id}`,
-        },
-        {
-          user_id: user.id,
-          title: "📊 Daily Research Digest",
-          message: `Explore ${laureates.filter(l => l.category === featured.category).length} laureates in ${featured.category}. New insights and connections await in the Discovery engine.`,
-          type: "research",
-          link: "/discovery",
-        },
-        {
-          user_id: user.id,
-          title: "🧠 AI Mentor Tip",
-          message: "Your AI mentors are ready for deep research conversations. Try asking about methodology, career advice, or cross-disciplinary connections.",
-          type: "ai",
-          link: "/mentorship",
-        },
-      ];
-
-      const { error } = await supabase.from("notifications").insert(dailyNotifs);
-      if (!error) {
-        localStorage.setItem(todayKey, "true");
-        refetch();
-      }
-    };
-
-    generateDailyNotifications();
-  }, [user, refetch]);
 
   const markRead = useMutation({
     mutationFn: async (id: string) => {
