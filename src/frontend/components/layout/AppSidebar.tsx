@@ -88,6 +88,9 @@ const RESEARCH_NAV = [
   { to: "/papers/review", label: "Review Paper", icon: BookOpen, badge: "New" },
   { to: "/resources", label: "Resources Hub", icon: Library, badge: "New" },
   { to: "/library", label: "My Library", icon: BookOpen, badge: "New" },
+  { to: "/reading-list", label: "Reading List", icon: BookOpen, badge: "New" },
+  { to: "/summaries", label: "AI Summaries", icon: Cpu, badge: "AI" },
+  { to: "/reader", label: "PDF Reader", icon: FileText, badge: "New" },
   { to: "/research-alerts", label: "Research Alerts", icon: AlarmClock, badge: "New" },
 ];
 

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useScholarData } from "@/frontend/hooks/useScholarData";
 import AchievementBadges from "@/frontend/components/AchievementBadges";
+import SavedPapersWidget from "@/frontend/components/SavedPapersWidget";
 import {
     Timer,
     BookOpen,
@@ -91,6 +92,7 @@ const ScholarDashboard = () => {
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <div className="lg:col-span-2 space-y-8">
+                        <SavedPapersWidget />
                         {/* Real Stats */}
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                             <motion.div whileHover={{ y: -5 }} className="bg-card border border-border/50 rounded-3xl p-6 shadow-sm">
