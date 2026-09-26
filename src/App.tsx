@@ -62,6 +62,9 @@ import ReviewPaperPage from "./frontend/pages/ReviewPaperPage";
 import ResearchResourcesPage from "./frontend/pages/ResearchResourcesPage";
 import PaperLibraryPage from "./frontend/pages/PaperLibraryPage";
 import ResearchAlertsPage from "./frontend/pages/ResearchAlertsPage";
+import ReadingQueuePage from "./frontend/pages/ReadingQueuePage";
+import AISummariesPage from "./frontend/pages/AISummariesPage";
+import PdfReaderPage from "./frontend/pages/PdfReaderPage";
 import { useAuthReady } from "@/frontend/hooks/useAuthReady";
 import { useNotificationEngine } from "@/frontend/hooks/useNotificationEngine";
 import React, { createContext, useContext } from "react";
@@ -158,6 +161,10 @@ const App = () => {
               <Route path="/resources" element={<ProtectedRoute session={session} isReady={isReady}><ResearchResourcesPage /></ProtectedRoute>} />
               <Route path="/library" element={<ProtectedRoute session={session} isReady={isReady}><PaperLibraryPage /></ProtectedRoute>} />
               <Route path="/research-alerts" element={<ProtectedRoute session={session} isReady={isReady}><ResearchAlertsPage /></ProtectedRoute>} />
+              <Route path="/reading-list" element={<ProtectedRoute session={session} isReady={isReady}><ReadingQueuePage /></ProtectedRoute>} />
+              <Route path="/summaries" element={<ProtectedRoute session={session} isReady={isReady}><AISummariesPage /></ProtectedRoute>} />
+              <Route path="/reader" element={<ProtectedRoute session={session} isReady={isReady}><PdfReaderPage /></ProtectedRoute>} />
+              <Route path="/reader/:id" element={<ProtectedRoute session={session} isReady={isReady}><PdfReaderPage /></ProtectedRoute>} />
               <Route path="*" element={<NotFound />} />
             </Routes>
             {session && <QuickCapture />}
