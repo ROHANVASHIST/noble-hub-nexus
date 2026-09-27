@@ -83,7 +83,7 @@ const PdfReaderPage = () => {
         <div className="grid lg:grid-cols-[1fr_360px] gap-4">
           <div className="rounded-2xl border border-border overflow-hidden bg-muted/20 h-[80vh]">
             {pdf ? (
-              <iframe title={paper.title} src={pdf} className="w-full h-full" />
+              <PdfViewer src={pdf} onText={(t) => setWordCount(t.split(/\s+/).filter(Boolean).length)} />
             ) : (
               <div className="h-full flex flex-col items-center justify-center text-center p-8">
                 <FileText className="h-10 w-10 text-muted-foreground mb-3" />
