@@ -185,7 +185,7 @@ export default function PaperSearch() {
           }
           throw error;
         }
-        toast.success("Saved to your library");
+        toast.success("Saved to your library"); window.dispatchEvent(new Event("notif-engine:run"));
         return;
       }
       const KEY = "nobelhub:saved-papers";

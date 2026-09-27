@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/App";
+import AlertSuggestion from "@/frontend/components/AlertSuggestion";
 import { NavLink } from "@/frontend/components/NavLink";
 import {
   Sidebar,
@@ -352,6 +353,7 @@ const AppSidebar = () => {
         </div>
       </SidebarContent>
 
+      {!collapsed && <AlertSuggestion />}
       <SidebarSeparator className="bg-sidebar-border/50" />
 
       {/* Footer with User Dropdown */}

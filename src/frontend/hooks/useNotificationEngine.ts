@@ -7,6 +7,7 @@ import {
   buildReminderNotifications,
   buildLibraryNotifications,
   buildResearchAlertNotifications,
+  buildMilestoneNotifications,
   type NewNotification,
 } from "@/backend/services/notifications";
 
@@ -78,7 +79,8 @@ export function useNotificationEngine(userId: string | undefined) {
           buildResearchAlertNotifications(userId),
         ]);
         const items = groups.flat();
-        const created = await pushNotifications(userId, items);
+        let created = await pushNotifications(userId, items);
+        created += await pushNotifications(userId, await buildMilestoneNotifications(userId), 24 * 365 * 5);
         if (created > 0) invalidate();
       } catch (e) {
         console.error("Notification engine error:", e);
@@ -102,10 +104,13 @@ export function useNotificationEngine(userId: string | undefined) {
 
     const onFocus = () => invalidate();
     window.addEventListener("focus", onFocus);
+    const onTrigger = () => run();
+    window.addEventListener("notif-engine:run", onTrigger);
 
     return () => {
       window.clearInterval(interval);
       window.removeEventListener("focus", onFocus);
+      window.removeEventListener("notif-engine:run", onTrigger);
       supabase.removeChannel(channel);
     };
   }, [userId, queryClient]);
