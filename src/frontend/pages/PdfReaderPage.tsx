@@ -1,3 +1,5 @@
+import { useState } from "react";
+import PdfViewer from "@/frontend/components/papers/PdfViewer";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import PageLayout from "@/frontend/components/layout/PageLayout";
@@ -19,6 +21,7 @@ const PdfReaderPage = () => {
   const { papers, isLoading, update, summarize } = useSavedPapers();
   const withPdf = papers.filter((p) => toPdf(p));
   const paper = papers.find((p) => p.id === id);
+  const [wordCount, setWordCount] = useState(0);
 
   if (isLoading) {
     return <PageLayout><div className="flex justify-center py-24"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div></PageLayout>;
@@ -97,7 +100,7 @@ const PdfReaderPage = () => {
 
           <aside className="space-y-4 lg:h-[80vh] lg:overflow-y-auto">
             <div className="p-4 rounded-2xl border border-border bg-card/50">
-              <h2 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-2">My notes</h2>
+              <h2 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-2">My notes{wordCount > 0 && <span className="normal-case tracking-normal font-normal"> · {wordCount.toLocaleString()} words extracted</span>}</h2>
               <Textarea key={paper.id} className="min-h-[180px] rounded-xl" placeholder="Notes save when you click away..."
                 defaultValue={paper.notes}
                 onBlur={(e) => e.target.value !== paper.notes && update.mutate({ id: paper.id, patch: { notes: e.target.value } })} />
