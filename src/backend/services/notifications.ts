@@ -162,8 +162,9 @@ export const buildResearchAlertNotifications = async (userId: string): Promise<N
 /** One-time milestone notifications (saved/read papers, alerts, reminders). */
 export const buildMilestoneNotifications = async (userId: string): Promise<NewNotification[]> => {
   const count = async (table: "saved_papers" | "research_alerts" | "reminders", filter?: [string, string | boolean]) => {
-    let q = supabase.from(table).select("id", { count: "exact", head: true }).eq("user_id", userId);
-    if (filter) q = q.eq(filter[0], filter[1] as never);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let q: any = (supabase as any).from(table).select("id", { count: "exact", head: true }).eq("user_id", userId);
+    if (filter) q = q.eq(filter[0], filter[1]);
     const { count } = await q;
     return count || 0;
   };
