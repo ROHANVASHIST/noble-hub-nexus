@@ -14,7 +14,7 @@ export default function PdfViewer({ src, onText }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [doc, setDoc] = useState<pdfjs.PDFDocumentProxy | null>(null);
   const [page, setPage] = useState(1);
-  const [scale, setScale] = useState(1.3);
+  const [scale, setScale] = useState(1.0);
   const [error, setError] = useState<string | null>(null);
   const [pageText, setPageText] = useState("");
   const [view, setView] = useState<"pdf" | "text">("pdf");
