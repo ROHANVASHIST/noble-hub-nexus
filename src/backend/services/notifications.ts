@@ -178,7 +178,7 @@ export const buildMilestoneNotifications = async (userId: string): Promise<NewNo
   const hit = (n: number) => steps.filter((s) => n >= s).pop();
   const s = hit(saved), r = hit(read), d = hit(done);
   if (s) out.push({ title: `🏆 Milestone: ${s} paper${s > 1 ? "s" : ""} saved`, message: "Your research library is growing. Keep curating!", type: "achievement", link: "/library" });
-  if (r) out.push({ title: `🎓 Milestone: ${r} paper${r > 1 ? "s" : ""} read`, message: "Great reading streak — try summarising your latest reads with AI.", type: "achievement", link: "/reading-queue" });
+  if (r) out.push({ title: `🎓 Milestone: ${r} paper${r > 1 ? "s" : ""} read`, message: "Great reading streak — try summarising your latest reads with AI.", type: "achievement", link: "/reading-list" });
   if (alerts >= 1) out.push({ title: "📡 Milestone: first research alert set", message: "We'll notify you when new papers appear on your topics.", type: "achievement", link: "/research-alerts" });
   if (d) out.push({ title: `✅ Milestone: ${d} reminder${d > 1 ? "s" : ""} completed`, message: "You're staying on top of your research schedule.", type: "achievement", link: "/reminders" });
   return out;

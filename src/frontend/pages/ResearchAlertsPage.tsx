@@ -59,7 +59,7 @@ const ResearchAlertsPage = () => {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["research-alerts"] });
       setTopic("");
-      toast.success("Alert created");
+      toast.success("Alert created — checking for papers now"); window.dispatchEvent(new Event("notif-engine:run"));
     },
     onError: (e: Error) => toast.error(e.message),
   });
