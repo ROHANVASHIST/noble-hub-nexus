@@ -3,14 +3,14 @@ import * as pdfjs from "pdfjs-dist";
 import workerUrl from "pdfjs-dist/build/pdf.worker.min.mjs?url";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Loader2, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, FileText, Copy } from "lucide-react";
+import { Loader2, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, FileText, Copy, Highlighter } from "lucide-react";
 import { toast } from "sonner";
 
 pdfjs.GlobalWorkerOptions.workerSrc = workerUrl;
 
-type Props = { src: string; onText?: (text: string) => void };
+type Props = { src: string; onText?: (text: string) => void; onQuote?: (quote: string, page: number) => void };
 
-export default function PdfViewer({ src, onText }: Props) {
+export default function PdfViewer({ src, onText, onQuote }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [doc, setDoc] = useState<pdfjs.PDFDocumentProxy | null>(null);
   const [page, setPage] = useState(1);
@@ -92,6 +92,16 @@ export default function PdfViewer({ src, onText }: Props) {
         <Button size="sm" variant={view === "text" ? "secondary" : "ghost"} className="h-8 text-xs" onClick={() => setView(view === "pdf" ? "text" : "pdf")}>
           {view === "pdf" ? "Show text" : "Show PDF"}
         </Button>
+        {view === "text" && onQuote && (
+          <Button size="sm" variant="ghost" className="h-8 text-xs gap-1" aria-label="Add selection to notes"
+            onClick={() => {
+              const sel = window.getSelection()?.toString().trim();
+              if (!sel) { toast.info("Select some text first"); return; }
+              onQuote(sel, page);
+            }}>
+            <Highlighter className="h-4 w-4" /> Quote to notes
+          </Button>
+        )}
         {view === "text" && (
           <Button size="icon" variant="ghost" className="h-8 w-8" aria-label="Copy text"
             onClick={() => { navigator.clipboard.writeText(pageText); toast.success("Page text copied"); }}>

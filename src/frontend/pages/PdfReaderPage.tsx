@@ -22,6 +22,7 @@ const PdfReaderPage = () => {
   const withPdf = papers.filter((p) => toPdf(p));
   const paper = papers.find((p) => p.id === id);
   const [wordCount, setWordCount] = useState(0);
+  const [notesKey, setNotesKey] = useState(0);
 
   if (isLoading) {
     return <PageLayout><div className="flex justify-center py-24"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div></PageLayout>;
@@ -86,7 +87,12 @@ const PdfReaderPage = () => {
         <div className="grid lg:grid-cols-[1fr_360px] gap-4">
           <div className="rounded-2xl border border-border overflow-hidden bg-muted/20 h-[80vh]">
             {pdf ? (
-              <PdfViewer src={pdf} onText={(t) => setWordCount(t.split(/\s+/).filter(Boolean).length)} />
+              <PdfViewer src={pdf} onText={(t) => setWordCount(t.split(/\s+/).filter(Boolean).length)}
+                onQuote={(quote, pg) => {
+                  const next = `${paper.notes ? paper.notes + "\n\n" : ""}> ${quote} (p. ${pg})`;
+                  update.mutate({ id: paper.id, patch: { notes: next } });
+                  setNotesKey((k) => k + 1);
+                }} />
             ) : (
               <div className="h-full flex flex-col items-center justify-center text-center p-8">
                 <FileText className="h-10 w-10 text-muted-foreground mb-3" />
@@ -101,7 +107,7 @@ const PdfReaderPage = () => {
           <aside className="space-y-4 lg:h-[80vh] lg:overflow-y-auto">
             <div className="p-4 rounded-2xl border border-border bg-card/50">
               <h2 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-2">My notes{wordCount > 0 && <span className="normal-case tracking-normal font-normal"> · {wordCount.toLocaleString()} words extracted</span>}</h2>
-              <Textarea key={paper.id} className="min-h-[180px] rounded-xl" placeholder="Notes save when you click away..."
+              <Textarea key={`${paper.id}-${notesKey}-${paper.notes.length}`} className="min-h-[180px] rounded-xl" placeholder="Notes save when you click away..."
                 defaultValue={paper.notes}
                 onBlur={(e) => e.target.value !== paper.notes && update.mutate({ id: paper.id, patch: { notes: e.target.value } })} />
             </div>
