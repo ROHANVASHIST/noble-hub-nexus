@@ -114,6 +114,21 @@ const PaperLibraryPage = () => {
     toast.success("BibTeX exported");
   };
 
+  const exportRis = () => {
+    const ris = filtered.map((p) => [
+      "TY  - JOUR", `TI  - ${p.title}`,
+      ...(p.authors || []).map((a) => `AU  - ${a}`),
+      p.year ? `PY  - ${p.year}` : "", p.venue ? `JO  - ${p.venue}` : "",
+      p.doi ? `DO  - ${p.doi}` : "", `UR  - ${p.url}`,
+      p.abstract ? `AB  - ${p.abstract}` : "", "ER  - ",
+    ].filter(Boolean).join("\r\n")).join("\r\n\r\n");
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([ris], { type: "application/x-research-info-systems" }));
+    a.download = "library.ris";
+    a.click();
+    toast.success("RIS exported — import into Zotero, Mendeley or EndNote");
+  };
+
   return (
     <PageLayout>
       <Seo
@@ -135,6 +150,11 @@ const PaperLibraryPage = () => {
             {filtered.length > 0 && (
               <Button variant="outline" className="rounded-xl gap-1" onClick={exportBibtex}>
                 <FileDown className="h-4 w-4" /> BibTeX
+              </Button>
+            )}
+            {filtered.length > 0 && (
+              <Button variant="outline" className="rounded-xl gap-1" onClick={exportRis}>
+                <FileDown className="h-4 w-4" /> RIS
               </Button>
             )}
           </div>

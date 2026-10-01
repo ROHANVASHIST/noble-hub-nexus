@@ -1,5 +1,6 @@
+// deno-lint-ignore-file no-explicit-any
 // Aggregated research paper search across free academic APIs.
-// Sources: arXiv, Semantic Scholar, OpenAlex, Crossref, PubMed, DOAJ.
+// Sources: arXiv, Semantic Scholar, OpenAlex, Crossref, PubMed, DOAJ, Nobel, Europe PMC, Zenodo, DataCite, DBLP (+ Unpaywall PDFs).
 // All sources are free and require no API key.
 
 const corsHeaders = {
@@ -337,6 +338,129 @@ async function searchNobel(q: string, limit: number, offset = 0): Promise<Paper[
   });
 }
 
+// ---------------- Europe PMC ----------------
+async function searchEuropePMC(q: string, limit: number, offset = 0): Promise<Paper[]> {
+  const page = Math.floor(offset / limit) + 1;
+  const url = `https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=${encodeURIComponent(q)}&format=json&resultType=core&pageSize=${limit}&page=${page}`;
+  const r = await fetch(url);
+  if (!r.ok) return [];
+  const j = await r.json();
+  return (j.resultList?.result ?? []).map((it: Record<string, any>): Paper => {
+    const urls = (it.fullTextUrlList?.fullTextUrl ?? []) as Array<{ documentStyle: string; availabilityCode: string; url: string }>;
+    const pdf = urls.find((u) => u.documentStyle === "pdf" && (u.availabilityCode === "OA" || u.availabilityCode === "F"))?.url
+      ?? (it.pmcid && it.isOpenAccess === "Y" ? `https://europepmc.org/articles/${it.pmcid}?pdf=render` : null);
+    return {
+      id: `epmc:${it.source}-${it.id}`,
+      source: "Europe PMC",
+      title: clean(it.title),
+      authors: ((it.authorList?.author ?? []) as Array<{ fullName?: string }>).map((a) => a.fullName ?? "").filter(Boolean),
+      year: it.pubYear ? Number(it.pubYear) : null,
+      abstract: clean(it.abstractText) || null,
+      url: `https://europepmc.org/article/${it.source}/${it.id}`,
+      pdfUrl: pdf,
+      doi: it.doi ?? null,
+      venue: it.journalInfo?.journal?.title ?? it.bookOrReportDetails?.publisher ?? null,
+      citations: typeof it.citedByCount === "number" ? it.citedByCount : null,
+      meta: { type: it.pubTypeList?.pubType?.[0] ?? null },
+    };
+  });
+}
+
+// ---------------- Zenodo ----------------
+async function searchZenodo(q: string, limit: number, offset = 0): Promise<Paper[]> {
+  const page = Math.floor(offset / limit) + 1;
+  const url = `https://zenodo.org/api/records?q=${encodeURIComponent(q)}&size=${limit}&page=${page}&type=publication`;
+  const r = await fetch(url, { headers: { Accept: "application/json" } });
+  if (!r.ok) return [];
+  const j = await r.json();
+  return (j.hits?.hits ?? []).map((it: Record<string, any>): Paper => {
+    const md = it.metadata ?? {};
+    const files = (it.files ?? []) as Array<{ key: string; links?: { self?: string } }>;
+    const pdf = files.find((f) => f.key?.toLowerCase().endsWith(".pdf"))?.links?.self ?? null;
+    return {
+      id: `zenodo:${it.id}`,
+      source: "Zenodo",
+      title: clean(md.title),
+      authors: ((md.creators ?? []) as Array<{ name: string }>).map((c) => c.name),
+      year: md.publication_date ? Number(String(md.publication_date).slice(0, 4)) : null,
+      abstract: clean(md.description) || null,
+      url: it.links?.self_html ?? `https://zenodo.org/records/${it.id}`,
+      pdfUrl: pdf,
+      doi: it.doi ?? md.doi ?? null,
+      venue: md.journal?.title ?? md.resource_type?.title ?? "Zenodo",
+      citations: null,
+      meta: { type: md.resource_type?.subtype ?? md.resource_type?.type ?? null },
+    };
+  });
+}
+
+// ---------------- DataCite (theses, preprints, proceedings) ----------------
+async function searchDataCite(q: string, limit: number, offset = 0): Promise<Paper[]> {
+  const page = Math.floor(offset / limit) + 1;
+  const url = `https://api.datacite.org/dois?query=${encodeURIComponent(q)}&page[size]=${limit}&page[number]=${page}&resource-type-id=text`;
+  const r = await fetch(url, { headers: { Accept: "application/vnd.api+json" } });
+  if (!r.ok) return [];
+  const j = await r.json();
+  return (j.data ?? []).map((it: Record<string, any>): Paper => {
+    const a = it.attributes ?? {};
+    const desc = (a.descriptions ?? []).find((d: { descriptionType?: string }) => d.descriptionType === "Abstract")?.description;
+    return {
+      id: `datacite:${a.doi}`,
+      source: "DataCite",
+      title: clean(a.titles?.[0]?.title),
+      authors: ((a.creators ?? []) as Array<{ name: string }>).map((c) => c.name),
+      year: a.publicationYear ?? null,
+      abstract: clean(desc) || null,
+      url: a.url ?? `https://doi.org/${a.doi}`,
+      pdfUrl: null,
+      doi: a.doi ?? null,
+      venue: a.publisher?.name ?? a.publisher ?? null,
+      citations: typeof a.citationCount === "number" ? a.citationCount : null,
+      meta: { type: a.types?.resourceTypeGeneral ?? a.types?.resourceType ?? null },
+    };
+  });
+}
+
+// ---------------- DBLP (computer science) ----------------
+async function searchDBLP(q: string, limit: number, offset = 0): Promise<Paper[]> {
+  const url = `https://dblp.org/search/publ/api?q=${encodeURIComponent(q)}&format=json&h=${limit}&f=${offset}`;
+  const r = await fetch(url);
+  if (!r.ok) return [];
+  const j = await r.json();
+  return (j.result?.hits?.hit ?? []).map((h: Record<string, any>): Paper => {
+    const i = h.info ?? {};
+    const au = i.authors?.author;
+    const authors = (Array.isArray(au) ? au : au ? [au] : []).map((a: { text?: string } | string) => typeof a === "string" ? a : a.text ?? "");
+    const ee = Array.isArray(i.ee) ? i.ee[0] : i.ee;
+    return {
+      id: `dblp:${i.key ?? h["@id"]}`,
+      source: "DBLP",
+      title: clean(i.title).replace(/\.$/, ""),
+      authors,
+      year: i.year ? Number(i.year) : null,
+      abstract: null,
+      url: ee ?? i.url ?? "https://dblp.org",
+      pdfUrl: typeof ee === "string" && ee.includes("arxiv.org/abs/") ? ee.replace("/abs/", "/pdf/") : null,
+      doi: i.doi ?? null,
+      venue: i.venue ?? null,
+      citations: null,
+      meta: { type: i.type ?? null },
+    };
+  });
+}
+
+// ---------------- Unpaywall PDF resolver ----------------
+async function resolvePdfs(papers: Paper[]): Promise<void> {
+  const todo = papers.filter((p) => !p.pdfUrl && p.doi).slice(0, 30);
+  await Promise.allSettled(todo.map(async (p) => {
+    const r = await withTimeout(fetch(`https://api.unpaywall.org/v2/${encodeURIComponent(p.doi!)}?email=research@nobelhub.app`), 5000);
+    if (!r || !r.ok) return;
+    const j = await r.json();
+    const pdf = j.best_oa_location?.url_for_pdf ?? null;
+    if (pdf) p.pdfUrl = pdf;
+  }));
+}
+
 const SOURCES: Record<string, (q: string, n: number, offset?: number) => Promise<Paper[]>> = {
   arxiv: searchArxiv,
   semantic_scholar: searchSemanticScholar,
@@ -345,6 +469,10 @@ const SOURCES: Record<string, (q: string, n: number, offset?: number) => Promise
   pubmed: searchPubMed,
   doaj: searchDOAJ,
   nobel: searchNobel,
+  europepmc: searchEuropePMC,
+  zenodo: searchZenodo,
+  datacite: searchDataCite,
+  dblp: searchDBLP,
 };
 
 Deno.serve(async (req) => {
@@ -354,7 +482,7 @@ Deno.serve(async (req) => {
     const url = new URL(req.url);
     const q = (url.searchParams.get("q") ?? "").trim();
     const limit = Math.min(Math.max(Number(url.searchParams.get("limit") ?? 25), 1), 50);
-    const requested = (url.searchParams.get("sources") ?? "arxiv,semantic_scholar,openalex,crossref,pubmed,doaj,nobel")
+    const requested = (url.searchParams.get("sources") ?? "arxiv,semantic_scholar,openalex,crossref,pubmed,doaj,nobel,europepmc,zenodo,datacite,dblp")
       .split(",")
       .map((s) => s.trim().toLowerCase())
       .filter((s) => s in SOURCES);
@@ -386,6 +514,7 @@ Deno.serve(async (req) => {
     });
 
     const merged = Object.values(bySource).flat();
+    if (url.searchParams.get("resolve_pdf") !== "0") await resolvePdfs(merged);
 
     return new Response(
       JSON.stringify({ query: q, count: merged.length, limit, offset, bySource, errors, results: merged }),

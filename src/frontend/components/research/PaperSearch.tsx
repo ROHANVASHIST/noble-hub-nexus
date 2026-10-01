@@ -40,6 +40,10 @@ const SOURCES = [
   { id: "pubmed", label: "PubMed" },
   { id: "doaj", label: "DOAJ" },
   { id: "nobel", label: "Nobel Prize" },
+  { id: "europepmc", label: "Europe PMC" },
+  { id: "zenodo", label: "Zenodo" },
+  { id: "datacite", label: "DataCite" },
+  { id: "dblp", label: "DBLP" },
 ];
 
 const SOURCE_COLOR: Record<string, string> = {
@@ -50,6 +54,10 @@ const SOURCE_COLOR: Record<string, string> = {
   "PubMed": "bg-cyan-500/15 text-cyan-400 border-cyan-500/30",
   "DOAJ": "bg-amber-500/15 text-amber-400 border-amber-500/30",
   "Nobel Prize": "bg-yellow-500/15 text-yellow-300 border-yellow-500/30",
+  "Europe PMC": "bg-teal-500/15 text-teal-400 border-teal-500/30",
+  "Zenodo": "bg-sky-500/15 text-sky-400 border-sky-500/30",
+  "DataCite": "bg-orange-500/15 text-orange-400 border-orange-500/30",
+  "DBLP": "bg-rose-500/15 text-rose-400 border-rose-500/30",
 };
 
 const buildCitation = (p: Paper): string => {
@@ -73,6 +81,11 @@ export default function PaperSearch() {
   const [offset, setOffset] = useState(0);
   const [loadingMore, setLoadingMore] = useState(false);
   const PER_SOURCE = 25;
+  const [pdfOnly, setPdfOnly] = useState(false);
+  const [yearFrom, setYearFrom] = useState("");
+  const [yearTo, setYearTo] = useState("");
+  const [minCites, setMinCites] = useState("");
+  const [sortBy, setSortBy] = useState<"relevance" | "newest" | "cited">("relevance");
 
   const runQuery = async (q: string, nextOffset: number) => {
     const sources = Object.entries(enabledSources).filter(([, v]) => v).map(([k]) => k).join(",");
@@ -212,8 +225,15 @@ export default function PaperSearch() {
     })),
   ];
 
-  const visiblePapers: Paper[] =
+  const rawPapers: Paper[] =
     activeTab === "all" ? (data?.results ?? []) : (data?.bySource[activeTab] ?? []);
+  const visiblePapers = rawPapers
+    .filter((p) => (!pdfOnly || !!p.pdfUrl)
+      && (!yearFrom || (p.year ?? 0) >= Number(yearFrom))
+      && (!yearTo || (p.year ?? 9999) <= Number(yearTo))
+      && (!minCites || (p.citations ?? 0) >= Number(minCites)))
+    .sort((a, b) => sortBy === "newest" ? (b.year ?? 0) - (a.year ?? 0)
+      : sortBy === "cited" ? (b.citations ?? 0) - (a.citations ?? 0) : 0);
 
   return (
     <Card className="border-primary/20 bg-gradient-to-br from-card via-card to-primary/5">
@@ -221,7 +241,7 @@ export default function PaperSearch() {
         <div className="flex items-center gap-2">
           <Sparkles className="h-4 w-4 text-primary" />
           <span className="text-xs font-bold uppercase tracking-[0.25em] text-primary">
-            Live Search across 7 academic APIs · incl. official Nobel Prize
+            Live Search across 11 academic APIs · incl. official Nobel Prize
           </span>
         </div>
 
@@ -261,6 +281,23 @@ export default function PaperSearch() {
               </button>
             );
           })}
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2 text-xs">
+          <label className="flex items-center gap-1.5 cursor-pointer text-muted-foreground">
+            <input type="checkbox" checked={pdfOnly} onChange={(e) => setPdfOnly(e.target.checked)} className="accent-primary" />
+            Free PDF only
+          </label>
+          <Input type="number" placeholder="From year" value={yearFrom} onChange={(e) => setYearFrom(e.target.value)} className="h-8 w-24 text-xs" />
+          <Input type="number" placeholder="To year" value={yearTo} onChange={(e) => setYearTo(e.target.value)} className="h-8 w-24 text-xs" />
+          <Input type="number" placeholder="Min citations" value={minCites} onChange={(e) => setMinCites(e.target.value)} className="h-8 w-28 text-xs" />
+          <select value={sortBy} onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
+            className="h-8 rounded-md border border-input bg-background px-2 text-xs text-foreground">
+            <option value="relevance">Sort: relevance</option>
+            <option value="newest">Sort: newest</option>
+            <option value="cited">Sort: most cited</option>
+          </select>
+          {data && <span className="text-muted-foreground">Showing {visiblePapers.length} of {rawPapers.length}</span>}
         </div>
 
         {data && (
@@ -379,8 +416,7 @@ export default function PaperSearch() {
 
         {!data && !loading && (
           <p className="text-xs text-muted-foreground">
-            Searches arXiv, Semantic Scholar, OpenAlex, Crossref, PubMed and DOAJ in parallel —
-            no API keys required, all free academic sources.
+            Searches arXiv, Semantic Scholar, OpenAlex, Crossref, PubMed, DOAJ, Europe PMC, Zenodo, DataCite, DBLP and the Nobel Prize archive in parallel, and finds free PDFs automatically.
           </p>
         )}
       </CardContent>
