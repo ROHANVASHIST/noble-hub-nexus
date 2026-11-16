@@ -101,7 +101,10 @@
         "npm:vitest@^3.2.4",
         "npm:workbox-window@^7.4.0",
         "npm:zod@^3.25.76"
-      ]
+      ],
+      "overrides": {
+        "esbuild": "$esbuild"
+      }
     }
   }
 }
