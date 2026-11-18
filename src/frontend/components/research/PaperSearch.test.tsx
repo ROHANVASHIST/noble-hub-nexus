@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, screen, waitFor } from "@testing-library/dom";
+import { cleanup, render } from "@testing-library/react";
 import PaperSearch from "./PaperSearch";
 
 const mocks = vi.hoisted(() => ({
