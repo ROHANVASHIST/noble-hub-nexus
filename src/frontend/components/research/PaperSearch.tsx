@@ -1,13 +1,16 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/App";
+import { useSavedPapers } from "@/frontend/hooks/useSavedPapers";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
-  Search, Loader2, ExternalLink, FileDown, Quote, Bookmark, Sparkles,
+  Search, Loader2, ExternalLink, FileDown, Quote, Bookmark, Sparkles, Check,
 } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 interface Paper {
@@ -70,7 +73,12 @@ const buildCitation = (p: Paper): string => {
   return `${authors} ${year}. ${p.title}. ${venue} ${doi}`.replace(/\s+/g, " ").trim();
 };
 
+const GUEST_SAVED_KEY = "nobelhub:saved-papers";
+
 export default function PaperSearch() {
+  const { user } = useAuth();
+  const { papers: savedPapers } = useSavedPapers();
+  const queryClient = useQueryClient();
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<ApiResponse | null>(null);
@@ -86,6 +94,25 @@ export default function PaperSearch() {
   const [yearTo, setYearTo] = useState("");
   const [minCites, setMinCites] = useState("");
   const [sortBy, setSortBy] = useState<"relevance" | "newest" | "cited">("relevance");
+  const [savingIds, setSavingIds] = useState<Set<string>>(new Set());
+  const [guestSavedIds, setGuestSavedIds] = useState<Set<string>>(new Set());
+  const [accountSavedIds, setAccountSavedIds] = useState<Set<string>>(new Set());
+  const savingIdsRef = useRef<Set<string>>(new Set());
+  const userId = user?.id;
+
+  useEffect(() => {
+    setAccountSavedIds(new Set());
+    if (userId) {
+      setGuestSavedIds(new Set());
+      return;
+    }
+    try {
+      const saved = JSON.parse(localStorage.getItem(GUEST_SAVED_KEY) || "[]") as Paper[];
+      setGuestSavedIds(new Set(saved.map((paper) => paper.id)));
+    } catch {
+      setGuestSavedIds(new Set());
+    }
+  }, [userId]);
 
   const runQuery = async (q: string, nextOffset: number) => {
     const sources = Object.entries(enabledSources).filter(([, v]) => v).map(([k]) => k).join(",");
@@ -173,6 +200,13 @@ export default function PaperSearch() {
   };
 
   const saveBookmark = async (p: Paper) => {
+    const alreadySaved = user
+      ? savedPapers.some((saved) => saved.external_id === p.id)
+      : guestSavedIds.has(p.id);
+    if (alreadySaved || savingIdsRef.current.has(p.id)) return;
+
+    savingIdsRef.current.add(p.id);
+    setSavingIds(new Set(savingIdsRef.current));
     try {
       const { data: auth } = await supabase.auth.getUser();
       const userId = auth.user?.id;
@@ -193,26 +227,35 @@ export default function PaperSearch() {
         });
         if (error) {
           if (error.code === "23505") {
+            setAccountSavedIds((ids) => new Set(ids).add(p.id));
+            await queryClient.invalidateQueries({ queryKey: ["saved-papers", userId] });
             toast.info("Already in your library");
             return;
           }
           throw error;
         }
-        toast.success("Saved to your library"); window.dispatchEvent(new Event("notif-engine:run"));
+        setAccountSavedIds((ids) => new Set(ids).add(p.id));
+        await queryClient.invalidateQueries({ queryKey: ["saved-papers", userId] });
+        toast.success("Saved to your library");
+        window.dispatchEvent(new Event("notif-engine:run"));
         return;
       }
-      const KEY = "nobelhub:saved-papers";
-      const raw = localStorage.getItem(KEY);
+      const raw = localStorage.getItem(GUEST_SAVED_KEY);
       const list: Paper[] = raw ? JSON.parse(raw) : [];
       if (list.some((x) => x.id === p.id)) {
+        setGuestSavedIds((ids) => new Set(ids).add(p.id));
         toast.info("Already saved");
         return;
       }
       list.unshift(p);
-      localStorage.setItem(KEY, JSON.stringify(list.slice(0, 200)));
-      toast.success("Saved to your reading list");
+      localStorage.setItem(GUEST_SAVED_KEY, JSON.stringify(list.slice(0, 200)));
+      setGuestSavedIds((ids) => new Set(ids).add(p.id));
+      toast.success("Saved on this device");
     } catch {
       toast.error("Could not save");
+    } finally {
+      savingIdsRef.current.delete(p.id);
+      setSavingIds(new Set(savingIdsRef.current));
     }
   };
 
@@ -378,9 +421,27 @@ export default function PaperSearch() {
                         <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => copyCitation(p)}>
                           <Quote className="h-3 w-3" /> Cite
                         </Button>
-                        <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => saveBookmark(p)}>
-                          <Bookmark className="h-3 w-3" /> Save
-                        </Button>
+                        {(() => {
+                          const isSaved = user
+                            ? accountSavedIds.has(p.id) || savedPapers.some((saved) => saved.external_id === p.id)
+                            : guestSavedIds.has(p.id);
+                          const isSaving = savingIds.has(p.id);
+                          const label = isSaving ? "Saving…" : isSaved ? (user ? "Saved" : "On device") : "Save";
+                          return (
+                            <Button
+                              size="sm"
+                              variant={isSaved ? "secondary" : "ghost"}
+                              className="h-7 min-w-[5.5rem] justify-center text-xs"
+                              onClick={() => saveBookmark(p)}
+                              disabled={isSaving || isSaved}
+                              aria-label={isSaving ? `Saving ${p.title}` : isSaved ? (user ? `Saved ${p.title}` : `Saved on this device: ${p.title}`) : `Save ${p.title}`}
+                              title={isSaved && !user ? "Saved on this device only" : undefined}
+                            >
+                              {isSaving ? <Loader2 className="h-3 w-3 animate-spin" /> : isSaved ? <Check className="h-3 w-3" /> : <Bookmark className="h-3 w-3" />}
+                              {label}
+                            </Button>
+                          );
+                        })()}
                         {p.doi && (
                           <span className="text-[10px] text-muted-foreground/60 ml-auto">
                             DOI: {p.doi}
