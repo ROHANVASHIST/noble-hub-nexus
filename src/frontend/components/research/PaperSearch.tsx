@@ -35,6 +35,11 @@ interface ApiResponse {
   results: Paper[];
 }
 
+interface SearchCriteria {
+  query: string;
+  sourceIds: string[];
+}
+
 const SOURCES = [
   { id: "arxiv", label: "arXiv" },
   { id: "semantic_scholar", label: "Semantic Scholar" },
@@ -82,6 +87,7 @@ export default function PaperSearch() {
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<ApiResponse | null>(null);
+  const [submittedCriteria, setSubmittedCriteria] = useState<SearchCriteria | null>(null);
   const [activeTab, setActiveTab] = useState("all");
   const [enabledSources, setEnabledSources] = useState<Record<string, boolean>>(
     Object.fromEntries(SOURCES.map((s) => [s.id, true]))
@@ -114,8 +120,8 @@ export default function PaperSearch() {
     }
   }, [userId]);
 
-  const runQuery = async (q: string, nextOffset: number) => {
-    const sources = Object.entries(enabledSources).filter(([, v]) => v).map(([k]) => k).join(",");
+  const runQuery = async (q: string, nextOffset: number, sourceIds: string[]) => {
+    const sources = sourceIds.join(",");
     const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
     const url = `https://${projectId}.supabase.co/functions/v1/research-search?q=${encodeURIComponent(q)}&limit=${PER_SOURCE}&offset=${nextOffset}&sources=${sources}`;
     const { data: { session } } = await supabase.auth.getSession();
@@ -127,11 +133,11 @@ export default function PaperSearch() {
   };
 
   const loadMore = async () => {
-    if (!data) return;
+    if (!data || !submittedCriteria) return;
     setLoadingMore(true);
     try {
       const next = offset + PER_SOURCE;
-      const json = await runQuery(query.trim(), next);
+      const json = await runQuery(submittedCriteria.query, next, submittedCriteria.sourceIds);
       const seen = new Set(data.results.map((p) => p.id));
       const fresh = json.results.filter((p) => !seen.has(p.id));
       const mergedBySource: Record<string, Paper[]> = { ...data.bySource };
@@ -179,10 +185,16 @@ export default function PaperSearch() {
     }
     setLoading(true);
     setData(null);
+    setSubmittedCriteria(null);
     setOffset(0);
+    const criteria = {
+      query: q,
+      sourceIds: Object.entries(enabledSources).filter(([, selected]) => selected).map(([id]) => id),
+    };
     try {
-      const json = await runQuery(q, 0);
+      const json = await runQuery(criteria.query, 0, criteria.sourceIds);
       setData(json);
+      setSubmittedCriteria(criteria);
       setActiveTab("all");
       if (json.count === 0) toast.info("No results found across selected sources");
       else toast.success(`Found ${json.count} papers across ${Object.keys(json.bySource).length} sources`);

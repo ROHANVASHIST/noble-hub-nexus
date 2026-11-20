@@ -44,7 +44,7 @@ const paper = {
 };
 
 const mockSearchResults = () => {
-  vi.stubGlobal("fetch", vi.fn().mockResolvedValue({
+  const fetchMock = vi.fn().mockResolvedValue({
     ok: true,
     json: async () => ({
       query: "quantum error correction",
@@ -53,7 +53,9 @@ const mockSearchResults = () => {
       errors: [],
       results: [paper],
     }),
-  }));
+  });
+  vi.stubGlobal("fetch", fetchMock);
+  return fetchMock;
 };
 
 const searchForPaper = async () => {
@@ -154,5 +156,27 @@ describe("PaperSearch save feedback", () => {
     expect(await screen.findByRole("button", { name: `Saved on this device: ${paper.title}` })).toBeDisabled();
     expect(JSON.parse(localStorage.getItem("nobelhub:saved-papers") || "[]")).toEqual([paper]);
     expect(mocks.insert).not.toHaveBeenCalled();
+  });
+
+  it("loads more using the original query and source selection", async () => {
+    const fetchMock = mockSearchResults();
+    render(<PaperSearch />);
+    fireEvent.click(screen.getByRole("button", { name: "DBLP" }));
+    await searchForPaper();
+
+    fireEvent.change(screen.getByPlaceholderText(/Search papers/), {
+      target: { value: "a different topic" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "DBLP" }));
+    fireEvent.click(screen.getByRole("button", { name: "Load more results" }));
+
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
+    const firstRequest = new URL(fetchMock.mock.calls[0][0] as string);
+    const nextRequest = new URL(fetchMock.mock.calls[1][0] as string);
+    expect(firstRequest.searchParams.get("q")).toBe("quantum error correction");
+    expect(nextRequest.searchParams.get("q")).toBe("quantum error correction");
+    expect(nextRequest.searchParams.get("sources")).toBe(firstRequest.searchParams.get("sources"));
+    expect(nextRequest.searchParams.get("sources")).not.toContain("dblp");
+    expect(nextRequest.searchParams.get("offset")).toBe("25");
   });
 });
