@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import PageLayout from "@/frontend/components/layout/PageLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/App";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Library, ExternalLink, FileDown, Trash2, Loader2, Search, Quote, StickyNote } from "lucide-react";
+import { Library, ExternalLink, FileDown, Trash2, Loader2, Search, Quote, StickyNote, BookOpen } from "lucide-react";
 import { toast } from "sonner";
 import Seo from "@/frontend/components/Seo";
 
@@ -231,6 +232,11 @@ const PaperLibraryPage = () => {
                       </button>
                     ))}
                     <div className="flex-1" />
+                    <Button size="sm" variant="outline" className="gap-1 h-8" asChild>
+                      <Link to={`/reader/${p.id}`} aria-label={`Read ${p.title} in reader`}>
+                        <BookOpen className="h-3.5 w-3.5" /> Read
+                      </Link>
+                    </Button>
                     {p.url && (
                       <Button size="sm" variant="ghost" className="gap-1 h-8" asChild>
                         <a href={p.url} target="_blank" rel="noreferrer">
